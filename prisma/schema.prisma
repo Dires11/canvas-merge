@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["neon_auth", "public"]
+}
+
+model NeonAuthUser {
+  rawJson   Json      @map("raw_json")
+  id        String    @id @default(dbgenerated("(raw_json ->> 'id'::text)"))
+  name      String?   @default(dbgenerated("(raw_json ->> 'display_name'::text)"))
+  email     String?   @default(dbgenerated("(raw_json ->> 'primary_email'::text)"))
+  createdAt DateTime? @default(dbgenerated("to_timestamp((trunc((((raw_json ->> 'signed_up_at_millis'::text))::bigint)::double precision) / (1000)::double precision))")) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  CanvasAccount CanvasAccount[]
+
+  @@index([deletedAt])
+  @@map("users_sync")
+  @@schema("neon_auth")
+}
+
+model CanvasAccount {
+  id          String       @id @default(uuid())
+  userId      String
+  user        NeonAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  domain      String
+  accessToken String
+  expired     Boolean      @default(false)
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  @@unique([userId, domain, accessToken])
+  @@schema("public")
+}

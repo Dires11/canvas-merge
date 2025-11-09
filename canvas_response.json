@@ -1,0 +1,568 @@
+{
+  "courses": [
+    {
+      "id": 340499,
+      "course_code": "ART_101_28876FA25W",
+      "name": "ART 101 : Survey Art History I - Huotari K. - FALL 2025 - SECTION# 28876",
+      "term": "Fall 2025",
+      "start_at": "2025-08-18T07:00:00Z",
+      "end_at": "2026-01-04T08:00:00Z"
+    },
+    {
+      "id": 339254,
+      "course_code": "BRDCSTG_026_28244FA25V",
+      "name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "term": "Fall 2025",
+      "start_at": "2025-08-18T07:00:00Z",
+      "end_at": "2026-01-04T08:00:00Z"
+    },
+    {
+      "id": 326405,
+      "course_code": "CINEMA_105_14251FA25V",
+      "name": "CINEMA 105 : History Of Motion Pictures - Swelstad E. - FALL 2025 - SECTION# 14251",
+      "term": "Fall 2025",
+      "start_at": "2025-08-18T07:00:00Z",
+      "end_at": "2026-01-04T08:00:00Z"
+    },
+    {
+      "id": 326429,
+      "course_code": "CINEMA_107_10176FA25V",
+      "name": "CINEMA 107 : Undstn Motion Pctr - Burnett J. - FALL 2025 - SECTION# 10176",
+      "term": "Fall 2025",
+      "start_at": "2025-08-18T07:00:00Z",
+      "end_at": "2026-01-04T08:00:00Z"
+    },
+    {
+      "id": 326702,
+      "course_code": "ENV SCI_001_16384FA25V",
+      "name": "ENV SCI 001 : Intro to Environmental Science - Leonard M. - FALL 2025 - SECTION# 16384",
+      "term": "Fall 2025",
+      "start_at": "2025-08-18T07:00:00Z",
+      "end_at": "2026-01-04T08:00:00Z"
+    }
+  ],
+  "raw": [
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 5735221,
+      "planner_override": null,
+      "plannable_type": "announcement",
+      "new_activity": true,
+      "submissions": false,
+      "plannable_date": "2025-11-03T08:00:13Z",
+      "plannable": {
+        "id": 5735221,
+        "title": "Detailing a scene",
+        "unread_count": 1,
+        "read_state": "unread",
+        "created_at": "2025-09-23T02:35:55Z",
+        "updated_at": "2025-11-03T08:00:13Z"
+      },
+      "html_url": "/courses/339254/discussion_topics/5735221",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 5735225,
+      "planner_override": null,
+      "plannable_type": "announcement",
+      "new_activity": true,
+      "submissions": false,
+      "plannable_date": "2025-11-03T08:00:13Z",
+      "plannable": {
+        "id": 5735225,
+        "title": "Tips for online course",
+        "unread_count": 1,
+        "read_state": "unread",
+        "created_at": "2025-09-23T02:35:55Z",
+        "updated_at": "2025-11-03T08:00:13Z"
+      },
+      "html_url": "/courses/339254/discussion_topics/5735225",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 5789400,
+      "planner_override": null,
+      "plannable_type": "announcement",
+      "new_activity": true,
+      "submissions": false,
+      "plannable_date": "2025-11-03T16:00:02Z",
+      "plannable": {
+        "id": 5789400,
+        "title": "Course Evaluation",
+        "unread_count": 1,
+        "read_state": "unread",
+        "created_at": "2025-10-24T23:09:54Z",
+        "updated_at": "2025-11-03T16:00:02Z"
+      },
+      "html_url": "/courses/339254/discussion_topics/5789400",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 340499,
+      "plannable_id": 5791405,
+      "planner_override": null,
+      "plannable_type": "announcement",
+      "new_activity": true,
+      "submissions": false,
+      "plannable_date": "2025-11-03T16:00:04Z",
+      "plannable": {
+        "id": 5791405,
+        "title": "History is Dynamic",
+        "unread_count": 1,
+        "read_state": "unread",
+        "created_at": "2025-10-25T21:14:52Z",
+        "updated_at": "2025-11-03T16:00:04Z"
+      },
+      "html_url": "/courses/340499/discussion_topics/5791405",
+      "context_name": "ART 101 : Survey Art History I - Huotari K. - FALL 2025 - SECTION# 28876",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/b2b7e91c-ffd2-4b8e-8cfa-8abaa679e756/AAT-1.png?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIxNjM5MDcsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2IyYjdlOTFjLWZmZDItNGI4ZS04Y2ZhLThhYmFhNjc5ZTc1Ni9BQVQtMS5wbmciLCJob3N0IjpudWxsLCJleHAiOjE3NjI3Njg3MDd9.xlaCprD4V2VjkawqNONkcEDcNqczfTzUG2oizVm8hdiNf0M4NWBoDEfUjiLUd5sbncf2kWhKNHgvuJLB2dXX_A"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 326702,
+      "plannable_id": 5810713,
+      "planner_override": null,
+      "plannable_type": "announcement",
+      "new_activity": true,
+      "submissions": false,
+      "plannable_date": "2025-11-04T00:41:54Z",
+      "plannable": {
+        "id": 5810713,
+        "title": "Water Chapter!",
+        "unread_count": 1,
+        "read_state": "unread",
+        "created_at": "2025-11-04T00:41:54Z",
+        "updated_at": "2025-11-04T00:41:54Z"
+      },
+      "html_url": "/courses/326702/discussion_topics/5810713",
+      "context_name": "ENV SCI 001 : Intro to Environmental Science - Leonard M. - FALL 2025 - SECTION# 16384",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/4a032247-26cf-4745-80a9-4874f31242e2/Charles%2BBeyl.jpg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyOTYyNzksInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzLzRhMDMyMjQ3LTI2Y2YtNDc0NS04MGE5LTQ4NzRmMzEyNDJlMi9DaGFybGVzJTJCQmV5bC5qcGciLCJob3N0IjpudWxsLCJleHAiOjE3NjI5MDEwNzl9.7hk-JWrOF-IKoNdSMcyjgv9J1Ihw_tLYdYexuWqXUjE5Gm0NjiDdjuM6cxlPJP1AOsjwo_JFZHVsYzjHS1RByg"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 326702,
+      "plannable_id": 5810870,
+      "planner_override": null,
+      "plannable_type": "announcement",
+      "new_activity": true,
+      "submissions": false,
+      "plannable_date": "2025-11-04T02:28:49Z",
+      "plannable": {
+        "id": 5810870,
+        "title": "Announcement #2 for today (11/03/25) re: Assignment Comments",
+        "unread_count": 1,
+        "read_state": "unread",
+        "created_at": "2025-11-04T02:28:49Z",
+        "updated_at": "2025-11-04T02:28:49Z"
+      },
+      "html_url": "/courses/326702/discussion_topics/5810870",
+      "context_name": "ENV SCI 001 : Intro to Environmental Science - Leonard M. - FALL 2025 - SECTION# 16384",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/4a032247-26cf-4745-80a9-4874f31242e2/Charles%2BBeyl.jpg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyOTYyNzksInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzLzRhMDMyMjQ3LTI2Y2YtNDc0NS04MGE5LTQ4NzRmMzEyNDJlMi9DaGFybGVzJTJCQmV5bC5qcGciLCJob3N0IjpudWxsLCJleHAiOjE3NjI5MDEwNzl9.7hk-JWrOF-IKoNdSMcyjgv9J1Ihw_tLYdYexuWqXUjE5Gm0NjiDdjuM6cxlPJP1AOsjwo_JFZHVsYzjHS1RByg"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 340499,
+      "plannable_id": 5791428,
+      "planner_override": null,
+      "plannable_type": "discussion_topic",
+      "new_activity": true,
+      "submissions": {
+        "submitted": true,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": true,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-04T07:59:00Z",
+      "plannable": {
+        "id": 5791428,
+        "title": "Prehistory and the Ancient Near East",
+        "todo_date": null,
+        "unread_count": 28,
+        "read_state": "read",
+        "created_at": "2025-10-25T21:14:57Z",
+        "updated_at": "2025-11-04T07:48:12Z",
+        "assignment_id": 8945812,
+        "points_possible": 20,
+        "due_at": "2025-11-04T07:59:00Z"
+      },
+      "html_url": "/courses/340499/assignments/8945812/submissions/843625",
+      "context_name": "ART 101 : Survey Art History I - Huotari K. - FALL 2025 - SECTION# 28876",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/b2b7e91c-ffd2-4b8e-8cfa-8abaa679e756/AAT-1.png?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIxNjM5MDcsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2IyYjdlOTFjLWZmZDItNGI4ZS04Y2ZhLThhYmFhNjc5ZTc1Ni9BQVQtMS5wbmciLCJob3N0IjpudWxsLCJleHAiOjE3NjI3Njg3MDd9.xlaCprD4V2VjkawqNONkcEDcNqczfTzUG2oizVm8hdiNf0M4NWBoDEfUjiLUd5sbncf2kWhKNHgvuJLB2dXX_A"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 211710,
+      "plannable_id": 3389470,
+      "planner_override": null,
+      "plannable_type": "calendar_event",
+      "new_activity": false,
+      "submissions": false,
+      "plannable_date": "2025-11-05T02:00:00Z",
+      "plannable": {
+        "id": 3389470,
+        "title": "🌙 Need Help at Night?",
+        "location_name": "LARC 226, Los Angeles Valley College",
+        "created_at": "2025-10-02T20:27:38Z",
+        "updated_at": "2025-10-02T20:27:38Z",
+        "all_day": false,
+        "location_address": "Los Angeles Valley College",
+        "description": "<div style=\"font-family: Arial, Helvetica, sans-serif; color: #222; max-width: 900px; margin: 0 auto;\" role=\"region\" aria-labelledby=\"twilight-title\">\n<div style=\"position: relative; display: flex; align-items: center; gap: 18px; padding: 16px; border-radius: 14px; background: linear-gradient(90deg, #2A69B2 0%, #1f4e88 100%); color: #fff; overflow: hidden;\">\n<div style=\"flex-shrink: 0; background: #fff; padding: 6px 8px; border-radius: 10px; position: relative; z-index: 1;\"><img style=\"width: 90px; height: auto; display: block;\" src=\"/courses/211708/files/68318065/preview\" alt=\"LAVC ARC Logo\" data-api-endpoint=\"https://ilearn.laccd.edu/api/v1/courses/211708/files/68318065\" data-api-returntype=\"File\"></div>\n<div style=\"position: relative; z-index: 1;\">\n<h2 id=\"twilight-title\" style=\"margin: 0; font-size: 1.7rem; line-height: 1.2;\">✨ Twilight Tutoring: Evening Study Lounge &amp; Tutoring</h2>\n<p style=\"margin: 6px 0 0 0; font-size: .98rem;\">📅 <strong>Tuesdays &amp; Thursdays</strong> | <strong>6:00–10:00 pm</strong> &nbsp;&nbsp;•&nbsp;&nbsp; 📍 <strong>LARC 226 (2nd Floor, Library)</strong></p>\n</div>\n</div>\n<div style=\"margin-top: 14px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px;\">\n<p style=\"margin: 0 0 10px 0; font-size: 1rem;\">Looking for the perfect place to <strong>study, connect, and succeed</strong> this semester? Join us for <strong>Twilight Tutoring</strong>—your dedicated evening study space with tutoring support.</p>\n<div style=\"position: relative; border-left: 6px solid #2A69B2; padding: 10px 12px; background: #FFF1C0; border-radius: 8px; margin: 12px 0; overflow: hidden;\">\n<p style=\"margin: 0 0 6px 0; display: flex; align-items: center; gap: 8px;\"><strong>Why it’s awesome...</strong></p>\n<ul style=\"margin: 0; padding-left: 18px;\">\n<li>Open late: <strong>6–10 pm</strong>—perfect for after work, practice, or class.</li>\n<li>Free <strong>coffee &amp; snacks</strong> ☕ to keep you fueled.</li>\n<li><strong>Dedicated study space</strong> with comfy chairs, couches, tables, and whiteboards.</li>\n<li><strong>Friendly tutors</strong> ready to help with Anatomy, Chemistry, Computer Science, English, ESL, Math, Physics, Statistics 101, and Writing.</li>\n<li>A welcoming spot to <strong>build community</strong> and get that extra edge to pass your classes.</li>\n</ul>\n</div>\n<div style=\"display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 6px 0;\">\n<div style=\"position: relative; flex: 1 1 220px; background: #9EBBDC; border: 1px solid #2A69B2; border-radius: 10px; padding: 10px;\">\n<p style=\"margin: 0; font-size: .95rem;\"><span style=\"font-size: 14pt;\"><strong>When</strong></span><br><strong><span style=\"font-size: 12pt;\">Tues &amp; Thurs, 6:00–10:00 pm (starting Tue 10/7)</span></strong></p>\n</div>\n<div style=\"position: relative; flex: 1 1 220px; background: #9EBBDC; border: 1px solid #2A69B2; border-radius: 10px; padding: 10px;\">\n<p style=\"margin: 0; font-size: .95rem;\"><span style=\"font-size: 14pt;\"><strong>Where</strong></span><br><strong><a class=\"inline_disabled\" style=\"color: #314a60ff;\" href=\"https://studentlaccd-my.sharepoint.com/:b:/g/personal/lavc-arc_laccd_edu/EePm1FtJphVAreY5QHjWankBJdCB4QNaPygFEQ-H3w5eRw?e=4gixzz\" target=\"_blank\">LARC 226 (Second Floor of the Library)</a></strong></p>\n</div>\n</div>\n<div style=\"margin-top: 12px; display: flex; flex-wrap: wrap; gap: 10px;\"><strong><a style=\"display: inline-block; text-decoration: none; background: #2A69B2; color: #fff; padding: 10px 14px; border-radius: 10px;\" href=\"https://studentlaccd-my.sharepoint.com/personal/lavc-arc_laccd_edu/_layouts/15/stream.aspx?id=%2Fpersonal%2Flavc%2Darc%5Flaccd%5Fedu%2FDocuments%2FLate%20Night%20Tutoring%2FTwilight%20Tutoring%2FPromo%2FTwilight%20Tutoring%20Pics%20and%20Videos%2FSpring%202024%2FTwilight%2D01%2Emp4&amp;referrer=StreamWebApp%2EWeb&amp;referrerScenario=AddressBarCopied%2Eview%2Edaeed335%2Dde9d%2D40a0%2Da8ca%2D984a09091c83&amp;ga=1\" target=\"_blank\"> ▶️ Watch Twilight Tutoring in Action </a> </strong><a style=\"display: inline-block; text-decoration: none; background: #9EBBDC; color: #0b2540; padding: 10px 14px; border-radius: 10px;\" href=\"mailto:arc@lavc.edu\"> <strong>📧 Email ARC </strong></a><strong> </strong><a style=\"display: inline-block; text-decoration: none; background: #1f4e88; color: #fff; padding: 10px 14px; border-radius: 10px;\" href=\"https://studentlaccd-my.sharepoint.com/:b:/g/personal/lavc-arc_laccd_edu/EZ937vECBPJEiiIH65c1crUBws_vaScaSEFwv-30i26k9Q?e=g2ejkK\" target=\"_blank\"> 📄 Open Flyer (PDF) </a></div>\n</div>\n</div>",
+        "start_at": "2025-11-05T02:00:00Z",
+        "end_at": "2025-11-05T06:00:00Z"
+      },
+      "html_url": "https://ilearn.laccd.edu/calendar?event_id=3389470&include_contexts=course_211710",
+      "context_name": "V-Health and Public Service CAP",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/c83d10f3-0077-4b18-919d-8626a3be269c/Canvas%20Course%20Shell%20Cards%20%281%29.png?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyOTQxMDEsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2M4M2QxMGYzLTAwNzctNGIxOC05MTlkLTg2MjZhM2JlMjY5Yy9DYW52YXMlMjBDb3Vyc2UlMjBTaGVsbCUyMENhcmRzJTIwJTI4MSUyOS5wbmciLCJob3N0IjpudWxsLCJleHAiOjE3NjI4OTg5MDF9.XdMJZlJXYB3aldtU0sq3CCTXxagSydSN9RctHOnqCrnSjIujVNX9gVQo52VS3SiaYDGOlnI5jutvNon0gRJ-pw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 211710,
+      "plannable_id": 3389471,
+      "planner_override": null,
+      "plannable_type": "calendar_event",
+      "new_activity": false,
+      "submissions": false,
+      "plannable_date": "2025-11-07T02:00:00Z",
+      "plannable": {
+        "id": 3389471,
+        "title": "🌙 Need Help at Night?",
+        "location_name": "LARC 226, Los Angeles Valley College",
+        "created_at": "2025-10-02T20:27:38Z",
+        "updated_at": "2025-10-02T20:27:38Z",
+        "all_day": false,
+        "location_address": "Los Angeles Valley College",
+        "description": "<div style=\"font-family: Arial, Helvetica, sans-serif; color: #222; max-width: 900px; margin: 0 auto;\" role=\"region\" aria-labelledby=\"twilight-title\">\n<div style=\"position: relative; display: flex; align-items: center; gap: 18px; padding: 16px; border-radius: 14px; background: linear-gradient(90deg, #2A69B2 0%, #1f4e88 100%); color: #fff; overflow: hidden;\">\n<div style=\"flex-shrink: 0; background: #fff; padding: 6px 8px; border-radius: 10px; position: relative; z-index: 1;\"><img style=\"width: 90px; height: auto; display: block;\" src=\"/courses/211708/files/68318065/preview\" alt=\"LAVC ARC Logo\" data-api-endpoint=\"https://ilearn.laccd.edu/api/v1/courses/211708/files/68318065\" data-api-returntype=\"File\"></div>\n<div style=\"position: relative; z-index: 1;\">\n<h2 id=\"twilight-title\" style=\"margin: 0; font-size: 1.7rem; line-height: 1.2;\">✨ Twilight Tutoring: Evening Study Lounge &amp; Tutoring</h2>\n<p style=\"margin: 6px 0 0 0; font-size: .98rem;\">📅 <strong>Tuesdays &amp; Thursdays</strong> | <strong>6:00–10:00 pm</strong> &nbsp;&nbsp;•&nbsp;&nbsp; 📍 <strong>LARC 226 (2nd Floor, Library)</strong></p>\n</div>\n</div>\n<div style=\"margin-top: 14px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px;\">\n<p style=\"margin: 0 0 10px 0; font-size: 1rem;\">Looking for the perfect place to <strong>study, connect, and succeed</strong> this semester? Join us for <strong>Twilight Tutoring</strong>—your dedicated evening study space with tutoring support.</p>\n<div style=\"position: relative; border-left: 6px solid #2A69B2; padding: 10px 12px; background: #FFF1C0; border-radius: 8px; margin: 12px 0; overflow: hidden;\">\n<p style=\"margin: 0 0 6px 0; display: flex; align-items: center; gap: 8px;\"><strong>Why it’s awesome...</strong></p>\n<ul style=\"margin: 0; padding-left: 18px;\">\n<li>Open late: <strong>6–10 pm</strong>—perfect for after work, practice, or class.</li>\n<li>Free <strong>coffee &amp; snacks</strong> ☕ to keep you fueled.</li>\n<li><strong>Dedicated study space</strong> with comfy chairs, couches, tables, and whiteboards.</li>\n<li><strong>Friendly tutors</strong> ready to help with Anatomy, Chemistry, Computer Science, English, ESL, Math, Physics, Statistics 101, and Writing.</li>\n<li>A welcoming spot to <strong>build community</strong> and get that extra edge to pass your classes.</li>\n</ul>\n</div>\n<div style=\"display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 6px 0;\">\n<div style=\"position: relative; flex: 1 1 220px; background: #9EBBDC; border: 1px solid #2A69B2; border-radius: 10px; padding: 10px;\">\n<p style=\"margin: 0; font-size: .95rem;\"><span style=\"font-size: 14pt;\"><strong>When</strong></span><br><strong><span style=\"font-size: 12pt;\">Tues &amp; Thurs, 6:00–10:00 pm (starting Tue 10/7)</span></strong></p>\n</div>\n<div style=\"position: relative; flex: 1 1 220px; background: #9EBBDC; border: 1px solid #2A69B2; border-radius: 10px; padding: 10px;\">\n<p style=\"margin: 0; font-size: .95rem;\"><span style=\"font-size: 14pt;\"><strong>Where</strong></span><br><strong><a class=\"inline_disabled\" style=\"color: #314a60ff;\" href=\"https://studentlaccd-my.sharepoint.com/:b:/g/personal/lavc-arc_laccd_edu/EePm1FtJphVAreY5QHjWankBJdCB4QNaPygFEQ-H3w5eRw?e=4gixzz\" target=\"_blank\">LARC 226 (Second Floor of the Library)</a></strong></p>\n</div>\n</div>\n<div style=\"margin-top: 12px; display: flex; flex-wrap: wrap; gap: 10px;\"><strong><a style=\"display: inline-block; text-decoration: none; background: #2A69B2; color: #fff; padding: 10px 14px; border-radius: 10px;\" href=\"https://studentlaccd-my.sharepoint.com/personal/lavc-arc_laccd_edu/_layouts/15/stream.aspx?id=%2Fpersonal%2Flavc%2Darc%5Flaccd%5Fedu%2FDocuments%2FLate%20Night%20Tutoring%2FTwilight%20Tutoring%2FPromo%2FTwilight%20Tutoring%20Pics%20and%20Videos%2FSpring%202024%2FTwilight%2D01%2Emp4&amp;referrer=StreamWebApp%2EWeb&amp;referrerScenario=AddressBarCopied%2Eview%2Edaeed335%2Dde9d%2D40a0%2Da8ca%2D984a09091c83&amp;ga=1\" target=\"_blank\"> ▶️ Watch Twilight Tutoring in Action </a> </strong><a style=\"display: inline-block; text-decoration: none; background: #9EBBDC; color: #0b2540; padding: 10px 14px; border-radius: 10px;\" href=\"mailto:arc@lavc.edu\"> <strong>📧 Email ARC </strong></a><strong> </strong><a style=\"display: inline-block; text-decoration: none; background: #1f4e88; color: #fff; padding: 10px 14px; border-radius: 10px;\" href=\"https://studentlaccd-my.sharepoint.com/:b:/g/personal/lavc-arc_laccd_edu/EZ937vECBPJEiiIH65c1crUBws_vaScaSEFwv-30i26k9Q?e=g2ejkK\" target=\"_blank\"> 📄 Open Flyer (PDF) </a></div>\n</div>\n</div>",
+        "start_at": "2025-11-07T02:00:00Z",
+        "end_at": "2025-11-07T06:00:00Z"
+      },
+      "html_url": "https://ilearn.laccd.edu/calendar?event_id=3389471&include_contexts=course_211710",
+      "context_name": "V-Health and Public Service CAP",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/c83d10f3-0077-4b18-919d-8626a3be269c/Canvas%20Course%20Shell%20Cards%20%281%29.png?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyOTQxMDEsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2M4M2QxMGYzLTAwNzctNGIxOC05MTlkLTg2MjZhM2JlMjY5Yy9DYW52YXMlMjBDb3Vyc2UlMjBTaGVsbCUyMENhcmRzJTIwJTI4MSUyOS5wbmciLCJob3N0IjpudWxsLCJleHAiOjE3NjI4OTg5MDF9.XdMJZlJXYB3aldtU0sq3CCTXxagSydSN9RctHOnqCrnSjIujVNX9gVQo52VS3SiaYDGOlnI5jutvNon0gRJ-pw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 2795257,
+      "planner_override": null,
+      "plannable_type": "quiz",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-08T07:59:59Z",
+      "plannable": {
+        "id": 2795257,
+        "title": "Angles",
+        "created_at": "2025-09-23T02:35:52Z",
+        "updated_at": "2025-11-03T08:00:12Z",
+        "assignment_id": 8859003,
+        "points_possible": 10,
+        "due_at": "2025-11-08T07:59:59Z"
+      },
+      "html_url": "/courses/339254/quizzes/2795257",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 8859007,
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-08T07:59:59Z",
+      "plannable": {
+        "id": 8859007,
+        "title": " Aesthetic report selection.",
+        "created_at": "2025-09-23T02:36:06Z",
+        "updated_at": "2025-09-26T18:09:18Z",
+        "points_possible": 0,
+        "due_at": "2025-11-08T07:59:59Z"
+      },
+      "html_url": "/courses/339254/assignments/8859007",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 8859012,
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-08T07:59:59Z",
+      "plannable": {
+        "id": 8859012,
+        "title": "Detailing  a scene",
+        "created_at": "2025-09-23T02:36:07Z",
+        "updated_at": "2025-11-03T08:00:12Z",
+        "points_possible": 10,
+        "due_at": "2025-11-08T07:59:59Z"
+      },
+      "html_url": "/courses/339254/assignments/8859012",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 8859015,
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-08T07:59:59Z",
+      "plannable": {
+        "id": 8859015,
+        "title": "Early Cinema and representation of Blackness",
+        "created_at": "2025-09-23T02:36:09Z",
+        "updated_at": "2025-11-03T08:00:12Z",
+        "points_possible": 25,
+        "due_at": "2025-11-08T07:59:59Z"
+      },
+      "html_url": "/courses/339254/assignments/8859015",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 8859027,
+      "planner_override": null,
+      "plannable_type": "assignment",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-08T07:59:59Z",
+      "plannable": {
+        "id": 8859027,
+        "title": "Week 2 Vocabulary",
+        "created_at": "2025-09-23T02:36:14Z",
+        "updated_at": "2025-11-03T08:00:12Z",
+        "points_possible": 10,
+        "due_at": "2025-11-08T07:59:59Z"
+      },
+      "html_url": "/courses/339254/assignments/8859027",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 339254,
+      "plannable_id": 14051039,
+      "planner_override": null,
+      "plannable_type": "wiki_page",
+      "new_activity": false,
+      "submissions": false,
+      "plannable_date": "2025-11-09T07:59:00Z",
+      "plannable": {
+        "id": 14051039,
+        "title": "Understanding types of Lighting",
+        "todo_date": "2025-11-09T07:59:00Z",
+        "url": "understanding-types-of-lighting",
+        "created_at": "2025-09-23T02:36:06Z",
+        "updated_at": "2025-10-11T03:07:55Z"
+      },
+      "html_url": "/courses/339254/pages/understanding-types-of-lighting",
+      "context_name": "BRDCSTG 026 : Tv/Flm Aesthetics - Williams J. - FALL 2025 - SECTION# 28244",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/af15871a-f731-4a5d-a7fb-f55037df0d26/download.jpeg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyODE2MzgsInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2FmMTU4NzFhLWY3MzEtNGE1ZC1hN2ZiLWY1NTAzN2RmMGQyNi9kb3dubG9hZC5qcGVnIiwiaG9zdCI6bnVsbCwiZXhwIjoxNzYyODg2NDM4fQ.2Imy-BvrwQVFPKBgcBaNadUSlkbavsL0Bq3QV_eNSpwxr_0IYjwOLW1S7EbJPlpBqk3Mjuj-lPF8jchSYSo7gw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 326702,
+      "plannable_id": 2821914,
+      "planner_override": null,
+      "plannable_type": "quiz",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-09T07:59:59Z",
+      "plannable": {
+        "id": 2821914,
+        "title": "9.6 QUIZ: Ch 12*",
+        "created_at": "2025-11-04T00:34:51Z",
+        "updated_at": "2025-11-04T00:41:06Z",
+        "assignment_id": 8976118,
+        "points_possible": 38,
+        "due_at": "2025-11-09T07:59:59Z"
+      },
+      "html_url": "/courses/326702/quizzes/2821914",
+      "context_name": "ENV SCI 001 : Intro to Environmental Science - Leonard M. - FALL 2025 - SECTION# 16384",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/4a032247-26cf-4745-80a9-4874f31242e2/Charles%2BBeyl.jpg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyOTYyNzksInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzLzRhMDMyMjQ3LTI2Y2YtNDc0NS04MGE5LTQ4NzRmMzEyNDJlMi9DaGFybGVzJTJCQmV5bC5qcGciLCJob3N0IjpudWxsLCJleHAiOjE3NjI5MDEwNzl9.7hk-JWrOF-IKoNdSMcyjgv9J1Ihw_tLYdYexuWqXUjE5Gm0NjiDdjuM6cxlPJP1AOsjwo_JFZHVsYzjHS1RByg"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 326405,
+      "plannable_id": 2708724,
+      "planner_override": null,
+      "plannable_type": "quiz",
+      "new_activity": false,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-10T07:59:59Z",
+      "plannable": {
+        "id": 2708724,
+        "title": "Unit 10 quiz",
+        "created_at": "2025-08-13T00:44:41Z",
+        "updated_at": "2025-11-03T08:01:03Z",
+        "assignment_id": 8551262,
+        "points_possible": 12,
+        "due_at": "2025-11-10T07:59:59Z"
+      },
+      "html_url": "/courses/326405/quizzes/2708724",
+      "context_name": "CINEMA 105 : History Of Motion Pictures - Swelstad E. - FALL 2025 - SECTION# 14251",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/ec096a6a-7f1a-4092-bd34-d2a574b96456/vintage-film-projector-and-film-screening-FSH2PGV-scaled.jpg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyMDQ0NjksInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2VjMDk2YTZhLTdmMWEtNDA5Mi1iZDM0LWQyYTU3NGI5NjQ1Ni92aW50YWdlLWZpbG0tcHJvamVjdG9yLWFuZC1maWxtLXNjcmVlbmluZy1GU0gyUEdWLXNjYWxlZC5qcGciLCJob3N0IjpudWxsLCJleHAiOjE3NjI4MDkyNjl9.6OFjnemkBY5fxxeVTGikGgBNYYbWw1yJx1qgPx7v_4VAa09j7NNamzCABE8S4_RzTT7b50D7OlLV3oONrbI7xw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 326405,
+      "plannable_id": 5588763,
+      "planner_override": null,
+      "plannable_type": "discussion_topic",
+      "new_activity": true,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-10T07:59:59Z",
+      "plannable": {
+        "id": 5588763,
+        "title": "Cold war films",
+        "todo_date": null,
+        "unread_count": 3,
+        "read_state": "unread",
+        "created_at": "2025-08-13T00:44:47Z",
+        "updated_at": "2025-11-04T19:32:46Z",
+        "assignment_id": 8551271,
+        "points_possible": 15,
+        "due_at": "2025-11-10T07:59:59Z"
+      },
+      "html_url": "/courses/326405/discussion_topics/5588763",
+      "context_name": "CINEMA 105 : History Of Motion Pictures - Swelstad E. - FALL 2025 - SECTION# 14251",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/ec096a6a-7f1a-4092-bd34-d2a574b96456/vintage-film-projector-and-film-screening-FSH2PGV-scaled.jpg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyMDQ0NjksInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2VjMDk2YTZhLTdmMWEtNDA5Mi1iZDM0LWQyYTU3NGI5NjQ1Ni92aW50YWdlLWZpbG0tcHJvamVjdG9yLWFuZC1maWxtLXNjcmVlbmluZy1GU0gyUEdWLXNjYWxlZC5qcGciLCJob3N0IjpudWxsLCJleHAiOjE3NjI4MDkyNjl9.6OFjnemkBY5fxxeVTGikGgBNYYbWw1yJx1qgPx7v_4VAa09j7NNamzCABE8S4_RzTT7b50D7OlLV3oONrbI7xw"
+    },
+    {
+      "context_type": "Course",
+      "course_id": 326405,
+      "plannable_id": 5588773,
+      "planner_override": null,
+      "plannable_type": "discussion_topic",
+      "new_activity": true,
+      "submissions": {
+        "submitted": false,
+        "excused": false,
+        "graded": false,
+        "posted_at": null,
+        "late": false,
+        "missing": false,
+        "needs_grading": false,
+        "has_feedback": false,
+        "redo_request": false
+      },
+      "plannable_date": "2025-11-10T07:59:59Z",
+      "plannable": {
+        "id": 5588773,
+        "title": "Modern examples of neorealism",
+        "todo_date": null,
+        "unread_count": 3,
+        "read_state": "unread",
+        "created_at": "2025-08-13T00:44:53Z",
+        "updated_at": "2025-11-04T18:45:21Z",
+        "assignment_id": 8551280,
+        "points_possible": 10,
+        "due_at": "2025-11-10T07:59:59Z"
+      },
+      "html_url": "/courses/326405/discussion_topics/5588773",
+      "context_name": "CINEMA 105 : History Of Motion Pictures - Swelstad E. - FALL 2025 - SECTION# 14251",
+      "context_image": "https://inst-fs-iad-prod.inscloudgate.net/files/ec096a6a-7f1a-4092-bd34-d2a574b96456/vintage-film-projector-and-film-screening-FSH2PGV-scaled.jpg?download=1&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NjIyMDQ0NjksInVzZXJfaWQiOm51bGwsInJlc291cmNlIjoiL2ZpbGVzL2VjMDk2YTZhLTdmMWEtNDA5Mi1iZDM0LWQyYTU3NGI5NjQ1Ni92aW50YWdlLWZpbG0tcHJvamVjdG9yLWFuZC1maWxtLXNjcmVlbmluZy1GU0gyUEdWLXNjYWxlZC5qcGciLCJob3N0IjpudWxsLCJleHAiOjE3NjI4MDkyNjl9.6OFjnemkBY5fxxeVTGikGgBNYYbWw1yJx1qgPx7v_4VAa09j7NNamzCABE8S4_RzTT7b50D7OlLV3oONrbI7xw"
+    }
+  ]
+}
