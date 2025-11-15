@@ -9,7 +9,7 @@ import type {
   Announcement,
   ItemsByType,
 } from "@/lib/types";
-import { getAccountInfo } from "@/lib/serverUtils";
+import { getAccountInfo } from "@/lib/canvas";
 
 type Course = {
   id: number;

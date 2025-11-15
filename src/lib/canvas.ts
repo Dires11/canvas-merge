@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { Account } from "@/lib/types";
+import { stackServerApp } from "@/stack/server";
 
-export function isValidDomain(s: string) {
-  try {
-    const u = new URL(s);
-    return u.protocol === "https:"; // require HTTPS
-  } catch {
-    return false;
+export async function requireUser() {
+  const user = await stackServerApp.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
   }
+  return user;
 }
-
 export async function getAccountInfo(account: Account) {
   const url = new URL("/api/v1/users/self", account.domain);
   const accountInfo = await fetch(url.toString(), {
@@ -21,7 +20,7 @@ export async function getAccountInfo(account: Account) {
     const text = await accountInfo.text().catch(() => "");
     return NextResponse.json(
       {
-        error: "Failed to get account info",
+        error: "Failed to connect to Canvas API",
         domain: account.domain,
         status: accountInfo.status,
         details: text.slice(0, 200),
@@ -33,9 +32,9 @@ export async function getAccountInfo(account: Account) {
   const cleanedAccountInfo = {
     id: rawAccountInfo.id,
     name: rawAccountInfo.name,
-    email: rawAccountInfo.email,
+    domain: account.domain,
     avatar_url: rawAccountInfo.avatar_url,
   };
 
-  return NextResponse.json(cleanedAccountInfo);
+  return NextResponse.json(cleanedAccountInfo, { status: 200 });
 }

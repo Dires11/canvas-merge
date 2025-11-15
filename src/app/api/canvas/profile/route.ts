@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { Account } from "@/lib/types";
 
-import { isValidDomain } from "@/lib/serverUtils";
+import { isValidDomain } from "@/lib/canvas";
 
 async function getAccountInfo(account: Account) {
   const url = new URL("/api/v1/users/self", account.domain);

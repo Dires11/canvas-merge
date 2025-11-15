@@ -7,36 +7,54 @@ export type AccountInfo = {
 };
 
 export type ItemBase = {
-  account: AccountInfo;
-  id: string;
+  id: number;
   course_id: number;
-  domain: string;
+  course_name: string;
   title: string;
   type: string;
-  html_url: string;
-  course: string;
+  url: string;
+};
+
+type SubmissionDetails = {
+  submitted: boolean;
+  graded: boolean;
+  late: boolean;
+  missing: boolean;
 };
 
 export type Assignment = ItemBase & {
   due_at: string | null;
-  points_possible: number | null;
-  submissions: {
-    submitted: boolean;
-    excused: boolean;
-    graded: boolean;
-    posted_at: string | null;
-    late: boolean;
-    missing: boolean;
-    needs_grading: boolean;
-    has_feedback: boolean;
-    redo_request: boolean;
-  };
+  points_possible: number;
+  submission: SubmissionDetails;
+};
+export type Announcement = ItemBase & {
+  posted_at: string;
 };
 
-export type Announcement = ItemBase & {};
-
 export type ItemsByType = {
+  account: string;
   assignments: Assignment[];
   announcements: Announcement[];
   other: ItemBase[];
+};
+
+export type MergedAssignment = ItemBase & {
+  due_at: string | null;
+  points_possible: number;
+  accounts: Array<{
+    accountId: string;
+    submission: SubmissionDetails;
+  }>;
+};
+
+export type MergedOther = ItemBase & {
+  accounts: Array<{
+    accountId: string;
+  }>;
+};
+
+export type MergedItems = {
+  assignments: MergedAssignment[];
+  announcements: Announcement[];
+  other: MergedOther[];
 };
