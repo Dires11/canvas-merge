@@ -25,16 +25,18 @@ model users_sync {
 }
 
 model CanvasAccount {
-  id     String     @id @default(uuid())
-  userId String
-  user   users_sync @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String     @id @default(uuid())
+  userId          String
+  user            users_sync @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountCanvasId Int
+  name            String
+  domain          String
+  avatarUrl       String
+  accessToken     String
+  expired         Boolean    @default(false)
+  expiredAt       DateTime?  @map("expired_at")
+  createdAt       DateTime   @default(now()) @map("created_at")
 
-  domain      String
-  name        String
-  accessToken String
-  expired     Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
-
-  @@unique([userId, domain, name])
+  @@unique([userId, domain, accountCanvasId])
   @@schema("public")
 }
