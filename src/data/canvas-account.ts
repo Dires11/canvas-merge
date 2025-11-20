@@ -1,31 +1,16 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import prisma from "@/lib/prisma";
-
-export async function getUserCanvasAccounts(
-  userId: string,
-  includeTokens = false
-) {
-  return prisma.canvasAccount.findMany({
-    where: { userId },
-    select: {
-      id: true,
-      name: true,
-      domain: true,
-      expired: true,
-      accessToken: includeTokens,
-    },
-  });
-}
+import type { AccountInfo } from "@/lib/types";
+import { Prisma } from "@/generated/prisma/client";
 
 export async function createCanvasAccount(
   userId: string,
-  name: string,
-  domain: string,
-  accessToken: string
+  accessToken: string,
+  accountInfo: AccountInfo
 ) {
   try {
     await prisma.canvasAccount.create({
-      data: { userId, name, domain, accessToken },
+      data: { userId, accessToken, ...accountInfo },
     });
     return { ok: true };
   } catch (error: unknown) {
@@ -48,7 +33,7 @@ export async function createCanvasAccount(
   }
 }
 
-export async function deleteCanvasAccount(userId: string, accountId: string) {
+export async function deleteCanvasAccount(accountId: string) {
   try {
     await prisma.canvasAccount.delete({
       where: { id: accountId },
@@ -68,4 +53,34 @@ export async function deleteCanvasAccount(userId: string, accountId: string) {
       return { ok: false, error: "Failed to delete account.", status: 400 };
     }
   }
+}
+
+export async function getUserDomains(userId: string): Promise<string[]> {
+  const uniqueDomains = await prisma.canvasAccount.findMany({
+    where: { userId, expired: false },
+    distinct: ["domain"],
+
+    select: {
+      domain: true,
+    },
+  });
+  return uniqueDomains.map((row) => row.domain);
+}
+
+export async function getUserCanvasAccounts(
+  userId: string,
+  includeTokens = false
+) {
+  return prisma.canvasAccount.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      name: true,
+      domain: true,
+      expired: true,
+      expiredAt: true,
+      avatarUrl: true,
+      accessToken: includeTokens,
+    },
+  });
 }

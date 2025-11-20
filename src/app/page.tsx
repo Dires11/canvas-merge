@@ -1,21 +1,16 @@
-"use client";
-import { useUser } from "@stackframe/stack";
+import { stackServerApp } from "@/stack/server";
 import { Dashboard } from "@/components/dashboard";
+import type { MergedItems } from "@/lib/types";
+import { getWeeklyAssignments } from "./api/planner/weekly-assignments/route";
 
-export default function Home() {
-  const user = useUser();
+export default async function Home() {
+  const user = await stackServerApp.getUser({ or: "redirect" });
 
   return (
-    <main className="max-w-7xl mx-auto p-6 bg-gray-900  text-white min-h-screen">
-      <div>
-        {user
-          ? `Hello, ${user.displayName ?? "anon"}`
-          : "You are not logged in"}
-      </div>
-      <div>
-        <h1>Assignments</h1>
-        <Dashboard />
-      </div>
-    </main>
+    <div className="bg-white">
+      <main className="p-6 text-black min-h-screen max-w-7xl mx-auto">
+        <Dashboard userId={user.id} />
+      </main>
+    </div>
   );
 }

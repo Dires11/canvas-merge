@@ -1,45 +1,91 @@
-"use client";
-import { useEffect, useState, useTransition } from "react";
-export function Dashboard() {
-  const [serverMessage, setServerMessage] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const [plannerData, setPlannerData] = useState<any>(null);
+import { getWeeklyAssignments } from "@/app/api/planner/weekly-assignments/route";
+import { getUserCanvasAccounts } from "@/data/canvas-account";
+import type { MergedItems, MergedItemsByDomain } from "@/lib/types";
+import { AssignmentCard } from "./assignment-card";
+import { AssignmentDashboardClient } from "./assignment-dashboard-client";
 
-  async function loadPlanner(params: { merge: boolean }) {
-    const res = await fetch(
-      `/api/planner/weekly-assignments?merge=${params.merge}`
-    );
-    if (!res.ok) {
-      if (res.status === 404) {
-        setServerMessage("No accounts found");
-        return null;
-      }
-      if (res.status === 400) {
-        setServerMessage("Failed to fetch planner data");
-        return null;
+export async function Dashboard({ userId }: { userId: string }) {
+  let errorMessage = null;
+
+  async function loadPlanner({ merge }: { merge: boolean }) {
+    try {
+      return await getWeeklyAssignments(userId, merge);
+    } catch (error) {
+      if (error instanceof Error) {
+        errorMessage = error.message;
       }
     }
-    return res.json();
   }
 
-  useEffect(() => {
-    startTransition(async () => {
-      const fetched = await loadPlanner({ merge: true });
-      setPlannerData(fetched);
-    });
-  }, []);
+  const resp = await loadPlanner({ merge: true });
+  const plannerData = (resp?.merged as MergedItemsByDomain) || null;
+  const accounts = resp?.accountsSafeInfo || [];
+  const accountMap = new Map(accounts.map((acc) => [acc.id, acc]));
 
   return (
     <div>
       <h1>Dashboard</h1>
-      {isPending && <p>Loading planner data...</p>}
       {plannerData && (
-        <div>
-          <h2>Merged Planner Data</h2>
-          <pre>{JSON.stringify(plannerData, null, 2)}</pre>
-        </div>
+        <AssignmentDashboardClient
+          plannerData={plannerData}
+          accounts={accounts}
+        />
       )}
-      {serverMessage && <p>{serverMessage}</p>}
     </div>
   );
+}
+
+{
+  /* <div key={domain}>
+            <h2>{domain} - Merged Planner Data</h2>
+            <h3>Assignments</h3>
+
+            <ul className="list-disc list-inside">
+              {mergedItems.assignments &&
+                mergedItems.assignments.length > 0 &&
+                mergedItems.assignments.map((assignment) => {
+                  const unsubmittedAccountIds = assignment.accounts
+                    .filter((account) => !account.submission.submitted)
+                    .map((account) => account.accountId);
+                  if (unsubmittedAccountIds.length > 0) {
+                    return (
+                      <div
+                        key={assignment.id}
+                        className="border-red-500 border-2"
+                      >
+                        <li>
+                          {assignment.title}{" "}
+                          {assignment.due_at
+                            ? "Due: " +
+                              new Date(assignment.due_at).toLocaleString()
+                            : "No due Date"}
+                        </li>
+                        <li>
+                          Accounts:{" "}
+                          {unsubmittedAccountIds &&
+                            unsubmittedAccountIds.map((id) => {
+                              const account = accountMap.get(id);
+                              if (account) {
+                                return account.name;
+                              }
+                            })}
+                        </li>
+                      </div>
+                    );
+                  }
+                })}
+              <h3>Announcements</h3>
+              {mergedItems.announcements &&
+                mergedItems.announcements.length > 0 &&
+                mergedItems.announcements.map((announcement) => (
+                  <li key={announcement.id}>{announcement.title}</li>
+                ))}
+              <h3>Other</h3>
+              {mergedItems.other &&
+                mergedItems.other.length > 0 &&
+                mergedItems.other.map((other) => (
+                  <li key={other.id}>{other.title}</li>
+                ))}
+            </ul>
+          </div> */
 }

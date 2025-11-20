@@ -1,9 +1,18 @@
 export type Account = { domain: string; token: string };
 
 export type AccountInfo = {
-  id: number;
+  accountCanvasId: number;
   name: string;
-  avatar_url: string;
+  avatarUrl: string;
+  domain: string;
+};
+
+export type AccountSafeInfo = {
+  id: string;
+  name: string;
+  avatarUrl: string;
+  expired: boolean;
+  expiredAt: Date | null;
 };
 
 export type ItemBase = {
@@ -15,7 +24,7 @@ export type ItemBase = {
   url: string;
 };
 
-type SubmissionDetails = {
+export type SubmissionDetails = {
   submitted: boolean;
   graded: boolean;
   late: boolean;
@@ -38,10 +47,22 @@ export type ItemsByType = {
   other: ItemBase[];
 };
 
+export type ItemsByDomain = {
+  [key: string]: ItemsByType[];
+};
+
 export type MergedAssignment = ItemBase & {
   due_at: string | null;
   points_possible: number;
-  accounts: Array<{
+  accountsSubmitted: Array<{
+    accountId: string;
+    submission: SubmissionDetails;
+  }>;
+  accountsNotSubmitted: Array<{
+    accountId: string;
+    submission: SubmissionDetails;
+  }>;
+  accountsMissingSubmission: Array<{
     accountId: string;
     submission: SubmissionDetails;
   }>;
@@ -58,3 +79,5 @@ export type MergedItems = {
   announcements: Announcement[];
   other: MergedOther[];
 };
+
+export type MergedItemsByDomain = { [key: string]: MergedItems };

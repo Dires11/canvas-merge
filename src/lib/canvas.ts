@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { Account } from "@/lib/types";
+import type { Account, AccountInfo } from "@/lib/types";
 import { stackServerApp } from "@/stack/server";
 
 export async function requireUser() {
@@ -29,11 +29,11 @@ export async function getAccountInfo(account: Account) {
     );
   }
   const rawAccountInfo = await accountInfo.json();
-  const cleanedAccountInfo = {
-    id: rawAccountInfo.id,
+  const cleanedAccountInfo: AccountInfo = {
+    accountCanvasId: rawAccountInfo.id,
     name: rawAccountInfo.name,
     domain: account.domain,
-    avatar_url: rawAccountInfo.avatar_url,
+    avatarUrl: rawAccountInfo.avatar_url,
   };
 
   return NextResponse.json(cleanedAccountInfo, { status: 200 });

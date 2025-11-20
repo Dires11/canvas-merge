@@ -8,7 +8,8 @@ import {
   createCanvasAccount,
   deleteCanvasAccount,
   getUserCanvasAccounts,
-} from "@/data/canvas"; // returns { ok, account?, message?, status? }
+} from "@/data/canvas-account"; // returns { ok, account?, message?, status? }
+import type { AccountInfo } from "@/lib/types";
 // import { encryptToken } from "@/lib/crypto"; // if you encrypt here
 const BodySchema = z.object({
   domain: z.string().min(1, "Institution URL is required"),
@@ -86,19 +87,19 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const profileInfo = await test.json();
+    const profileInfo: AccountInfo = await test.json();
 
     // 5) Encrypt the token here OR inside createCanvasAccount
     // const { tokenCipher, iv, kid } = encryptToken(token);
+    // TODO
 
-    // 6) Save (use upsert inside createCanvasAccount to avoid duplicates)
+    // 6) Save
     console.log("Profile info from Canvas:", profileInfo);
 
     const saved = await createCanvasAccount(
       user.id,
-      profileInfo.name,
-      normalizedDomain,
-      token // or pass tokenCipher, iv, kid if you encrypt here
+      token, // or pass tokenCipher, iv, kid if you encrypt here
+      profileInfo
     );
 
     if (!saved.ok) {
@@ -140,10 +141,7 @@ export async function DELETE(req: NextRequest) {
     );
   }
 
-  const result = await deleteCanvasAccount(
-    user.id,
-    req.nextUrl.searchParams.get("id")!
-  );
+  const result = await deleteCanvasAccount(req.nextUrl.searchParams.get("id")!);
   if (!result.ok) {
     return NextResponse.json(
       { error: result.error },
