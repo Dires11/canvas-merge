@@ -1,6 +1,9 @@
 import { getUserOr401 } from "@/lib/auth-server";
 import { NextRequest, NextResponse } from "next/server";
-import { getUserCanvasAccounts } from "@/data/canvas-account";
+import {
+  getUserCanvasAccounts,
+  markAccountAsExpired,
+} from "@/data/canvas-account";
 import type {
   AccountSafeInfo,
   Announcement,
@@ -25,8 +28,8 @@ function weekBoundsUTC() {
       8,
       0,
       0,
-      0
-    )
+      0,
+    ),
   );
   const end = new Date(start);
   end.setUTCDate(start.getUTCDate() + 7);
@@ -39,7 +42,7 @@ async function getPlannerItems(
   domain: string,
   token: string,
   startISO: string,
-  endISO: string
+  endISO: string,
 ) {
   const url = new URL("/api/v1/planner/items", domain);
   url.searchParams.set("start_date", startISO);
@@ -51,9 +54,33 @@ async function getPlannerItems(
   });
 
   if (!r.ok) {
-    const text = await r.text().catch(() => "");
-    throw new Error(`Canvas ${domain} ${r.status}: ${text.slice(0, 200)}`);
+    let errorBody: any;
+
+    const contentType = r.headers.get("content-type") || "";
+
+    if (contentType.includes("application/json")) {
+      errorBody = await r.json();
+    } else {
+      const text = await r.text().catch(() => "");
+      errorBody = { raw: text };
+    }
+    const expiredAt = errorBody?.errors?.[0]?.expired_at
+      ? new Date(errorBody.errors[0].expired_at)
+      : null;
+
+    const message =
+      errorBody?.errors?.[0]?.message ?? `Canvas ${domain} ${r.status}`;
+
+    const error = new Error(message);
+
+    // attach useful metadata
+    (error as any).status = r.status;
+    (error as any).expiredAt = expiredAt;
+    (error as any).errorBody = errorBody;
+
+    throw error;
   }
+
   return r.json();
 }
 
@@ -230,7 +257,7 @@ function mergeItemsByDomain(itemsByDomain: ItemsByType[]): MergedItems {
 
 export async function getWeeklyAssignments(
   userId: string,
-  merge: boolean = true
+  merge: boolean = true,
 ) {
   const allAccounts = await getUserCanvasAccounts(userId, true);
   if (allAccounts.length === 0) {
@@ -249,38 +276,89 @@ export async function getWeeklyAssignments(
   const { startISO, endISO } = weekBoundsUTC();
 
   let itemsByDomain: ItemsByDomain = {};
-  for (const account of allAccounts) {
+  // for (const account of allAccounts) {
+  //   if (account.expired) {
+  //     accountsWithErrors.push(account.id);
+  //     continue;
+  //   }
+  //   try {
+  //     const raw = await getPlannerItems(
+  //       account.domain,
+  //       account.accessToken,
+  //       startISO,
+  //       endISO,
+  //     );
+  //     const accountItems = normalize(account.id, account.domain, raw);
+
+  //     if (
+  //       accountItems.assignments.length === 0 &&
+  //       accountItems.announcements.length === 0 &&
+  //       accountItems.other.length === 0
+  //     ) {
+  //       continue;
+  //     }
+  //     if (!itemsByDomain[account.domain]) {
+  //       itemsByDomain[account.domain] = [];
+  //     }
+  //     itemsByDomain[account.domain].push(accountItems);
+  //   } catch (error: any) {
+  //     console.error(
+  //       `Error fetching planner items for account ${account.id} (${account.domain}):`,
+  //       error,
+  //     );
+  //     if (error.expiredAt) {
+  //       console.log("Account", account.name, " expired at:", error.expiredAt);
+  //       await markAccountAsExpired(account.id, error.expiredAt);
+  //     }
+  //     accountsWithErrors.push(account.id);
+  //     continue;
+  //   }
+  // }
+  const fetchPromises = allAccounts.map(async (account) => {
     if (account.expired) {
-      accountsWithErrors.push(account.id);
-      continue;
+      return {
+        account,
+        accountItems: null,
+        error: { message: "Account expired" },
+      };
     }
     try {
       const raw = await getPlannerItems(
         account.domain,
         account.accessToken,
         startISO,
-        endISO
+        endISO,
       );
       const accountItems = normalize(account.id, account.domain, raw);
+      return { account, accountItems, error: null };
+    } catch (error: any) {
+      if (error.expiredAt) {
+        await markAccountAsExpired(account.id, error.expiredAt);
+      }
+      return { account, accountItems: null, error };
+    }
+  });
 
+  const results = await Promise.allSettled(fetchPromises);
+
+  for (const result of results) {
+    if (result.status === "fulfilled" && result.value.accountItems) {
+      const { account, accountItems } = result.value;
       if (
-        accountItems.assignments.length === 0 &&
-        accountItems.announcements.length === 0 &&
-        accountItems.other.length === 0
+        accountItems.assignments.length > 0 ||
+        accountItems.announcements.length > 0 ||
+        accountItems.other.length > 0
       ) {
-        continue;
+        if (!itemsByDomain[account.domain]) {
+          itemsByDomain[account.domain] = [];
+        }
+        itemsByDomain[account.domain].push(accountItems);
       }
-      if (!itemsByDomain[account.domain]) {
-        itemsByDomain[account.domain] = [];
-      }
-      itemsByDomain[account.domain].push(accountItems);
-    } catch (error) {
-      console.error(
-        `Error fetching planner items for account ${account.id} (${account.domain}):`,
-        error
-      );
-      accountsWithErrors.push(account.id);
-      continue;
+    } else if (result.status === "fulfilled" && result.value.error) {
+      accountsWithErrors.push(result.value.account.id);
+    } else if (result.status === "rejected") {
+      // Handle rejected promise (uncaught error)
+      console.error("Promise rejected:", result.reason);
     }
   }
   if (accountsWithErrors.length == allAccounts.length) {
@@ -322,70 +400,7 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(
       { error: error.message || "Failed to fetch planner items" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-
-// export async function GET(req: NextRequest) {
-//   const { user, response } = await getUserOr401();
-//   if (response) return response;
-//   const params = req.nextUrl.searchParams;
-//   const merge = params.get("merge") === "true";
-
-//   const accounts = await getUserCanvasAccounts(user.id, true);
-//   if (accounts.length === 0) {
-//     return NextResponse.json({ error: "No accounts found" }, { status: 404 });
-//   }
-//   const accountsWithErrors = [];
-//   const { startISO, endISO } = weekBoundsUTC();
-
-//   let itemsByDomain: ItemsByDomain = {};
-//   for (const account of accounts) {
-//     if (account.expired) {
-//       accountsWithErrors.push(account);
-//       continue;
-//     }
-//     try {
-//       const raw = await getPlannerItems(
-//         account.domain,
-//         account.accessToken,
-//         startISO,
-//         endISO
-//       );
-//       const accountItems = normalize(account.id, account.domain, raw);
-//       if (
-//         accountItems.assignments.length === 0 &&
-//         accountItems.announcements.length === 0 &&
-//         accountItems.other.length === 0
-//       ) {
-//         continue;
-//       }
-//       if (!itemsByDomain[account.domain]) {
-//         itemsByDomain[account.domain] = [];
-//       }
-//       itemsByDomain[account.domain].push(accountItems);
-//     } catch (error) {
-//       console.error(
-//         `Error fetching planner items for account ${account.id} (${account.domain}):`,
-//         error
-//       );
-//       accountsWithErrors.push(account);
-//       continue;
-//     }
-//   }
-//   if (accountsWithErrors.length == accounts.length) {
-//     return NextResponse.json(
-//       { error: "All accounts failed to fetch planner items" },
-//       { status: 500 }
-//     );
-//   }
-//   if (merge) {
-//     const itemsByDomainMerged: { [key: string]: MergedItems } = {};
-//     for (const domain in itemsByDomain) {
-//       itemsByDomainMerged[domain] = mergeItemsByDomain(itemsByDomain[domain]);
-//     }
-//     return NextResponse.json(itemsByDomainMerged, { status: 200 });
-//   }
-//   return NextResponse.json(itemsByDomain, { status: 200 });
-// }
