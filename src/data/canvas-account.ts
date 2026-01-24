@@ -6,7 +6,7 @@ import { Prisma } from "@/generated/prisma/client";
 export async function createCanvasAccount(
   userId: string,
   accessToken: string,
-  accountInfo: AccountInfo
+  accountInfo: AccountInfo,
 ) {
   try {
     await prisma.canvasAccount.create({
@@ -69,7 +69,7 @@ export async function getUserDomains(userId: string): Promise<string[]> {
 
 export async function getUserCanvasAccounts(
   userId: string,
-  includeTokens = false
+  includeTokens = false,
 ) {
   return prisma.canvasAccount.findMany({
     where: { userId },
@@ -83,4 +83,20 @@ export async function getUserCanvasAccounts(
       accessToken: includeTokens,
     },
   });
+}
+
+export async function markAccountAsExpired(accountId: string, expiredAt: Date) {
+  try {
+    await prisma.canvasAccount.update({
+      where: { id: accountId },
+      data: {
+        expired: true,
+        expiredAt: expiredAt,
+      },
+    });
+    return { ok: true };
+  } catch (error) {
+    console.error("Failed to mark account as expired:", error);
+    return { ok: false };
+  }
 }
