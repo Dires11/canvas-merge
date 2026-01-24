@@ -5,6 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { loadAccounts } from "@/lib/accounts";
+import { ManageAccountForm } from "@/components/manage-account-form";
+import { Modal } from "@/components/modal";
 
 const FormSchema = z.object({
   domain: z.url({ message: "Please enter a valid URL for the institution" }),
@@ -19,6 +21,7 @@ export default function ManageAccountsPage() {
   const [accountsError, setAccountsError] = useState<string | null>(null);
   const [accountsLoading, setAccountsLoading] = useState<boolean>(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const [manageAccountFormOpen, setManageAccountFormOpen] = useState(false);
 
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
@@ -78,7 +81,7 @@ export default function ManageAccountsPage() {
       setServerMsg(
         e?.name === "AbortError"
           ? "Request timed out. Please try again."
-          : e?.message ?? "Network error. Please try again."
+          : (e?.message ?? "Network error. Please try again."),
       );
     } finally {
       clearTimeout(t);
@@ -87,6 +90,14 @@ export default function ManageAccountsPage() {
         next.delete(id);
         return next;
       });
+    }
+  }
+
+  async function handleUpdate(id: string) {
+    const account = accounts.find((a) => a.id === id);
+    if (!account) {
+      setError("root", { type: "server", message: "Account not found" });
+      return;
     }
   }
 
@@ -120,7 +131,7 @@ export default function ManageAccountsPage() {
         message:
           e?.name === "AbortError"
             ? "Request timed out. Please try again."
-            : e?.message ?? "Network error. Please try again.",
+            : (e?.message ?? "Network error. Please try again."),
       });
     } finally {
       clearTimeout(t);
@@ -131,61 +142,129 @@ export default function ManageAccountsPage() {
     load();
   }, []);
   return (
-    <div className="min-h-screen bg-gray-50 max-w-7xl mx-auto text-black dark:bg-gray-900 dark:text-white">
-      <nav className="flex justify-between items-baseline mb-8 bg-gray-800 px-5 py-2">
-        <h1 className="text-2xl font-bold mb-4">Hi {user.displayName}!</h1>
-        <UserButton />
-      </nav>
-      <main className="px-5">
-        <h2>Linked Accounts</h2>
-        {accountsLoading && !hasLoadedOnce && <p>Loading accounts…</p>}
-        {accountsError && (
-          <p className="text-sm text-red-600 mb-4">{accountsError}</p>
-        )}
-        {/* {accountsLoading && hasLoadedOnce && (
-          <p className="text-xs text-gray-500 mb-2">Refreshing accounts…</p>
-        )} */}
-        {!accountsLoading &&
-          hasLoadedOnce &&
-          accounts.length === 0 &&
-          !accountsError && (
-            <p className="text-sm text-gray-600 mb-4">
-              No linked Canvas accounts yet.
-            </p>
+    <div className="min-h-screen text-black dark:text-white">
+      {/* background */}
+      <div className="fixed inset-0 -z-10 bg-linear-to-br from-slate-50 via-sky-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
+      <div className="fixed inset-0 -z-10 opacity-30 [background:radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(99,102,241,0.30),transparent_40%),radial-gradient(circle_at_50%_80%,rgba(236,72,153,0.18),transparent_45%)]" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <nav className="mb-8 flex items-center justify-between rounded-2xl border border-white/20 bg-white/20 px-5 py-3 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+          <h1 className="text-xl font-semibold tracking-tight">
+            Hi {user.displayName}!
+          </h1>
+          <UserButton />
+        </nav>
+        <main className="space-y-5">
+          <div className="flex justify-between items-center mb-5">
+            <h2 className="text-lg font-semibold tracking-tight">
+              Linked Accounts
+            </h2>
+            <button
+              className="inline-flex items-center justify-center rounded-xl px-4 py-2 bg-blue-600 text-white font-medium shadow-lg shadow-blue-600/25 hover:bg-blue-700 transition active:scale-[0.99]"
+              onClick={() => setManageAccountFormOpen(true)}
+            >
+              Add Account
+            </button>
+          </div>
+          {serverMsg && (
+            <div className="rounded-2xl border border-white/20 bg-white/30 px-4 py-3 text-sm shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              {serverMsg}
+            </div>
           )}
-        {accounts.length > 0 && (
-          <ul className="mb-8 space-y-4">
-            {accounts.map((account) => (
-              <li
-                key={account.id}
-                className="border rounded-2xl p-4 bg-white dark:bg-gray-800 flex justify-between items-baseline"
-              >
-                <div>
-                  <h3 className="text-lg font-medium">{account.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {account.domain}
-                  </p>
-                  {account.expired && (
-                    <p className="text-sm text-red-600 mt-1">Token expired</p>
-                  )}
-                </div>
-                <div className="flex items-end gap-2">
-                  <button className="bg-orange-600 text-white px-3 py-1 rounded-2xl mt-4 hover:bg-red-700 text-sm hover:cursor-pointer">
-                    Update
-                  </button>
-                  <button
-                    className="bg-red-600 text-white px-3 py-1 rounded-2xl mt-4 hover:bg-red-700 text-sm hover:cursor-pointer"
-                    onClick={() => handleDelete(account.id)}
-                    disabled={deletingIds.has(account.id)}
+          {manageAccountFormOpen && (
+            <Modal onClose={() => setManageAccountFormOpen(false)}>
+              <ManageAccountForm
+                onSuccess={() => {
+                  setManageAccountFormOpen(false);
+                  load();
+                }}
+              />
+            </Modal>
+          )}
+          {accountsLoading && !hasLoadedOnce && <p>Loading accounts…</p>}
+          {accountsError && (
+            <p className="text-sm text-red-600 mb-4">{accountsError}</p>
+          )}
+          {!accountsLoading &&
+            hasLoadedOnce &&
+            accounts.length === 0 &&
+            !accountsError && (
+              <p className="text-sm text-gray-600 mb-4">
+                No linked Canvas accounts yet.
+              </p>
+            )}
+          {accounts.length > 0 && (
+            <div className="rounded-2xl border border-white/20 bg-white/20 p-4 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              <ul className="space-y-4">
+                {accounts.map((account) => (
+                  <li
+                    key={account.id}
+                    className="
+                    rounded-2xl p-5
+                    border border-white/30 dark:border-white/10
+                    bg-white/30 dark:bg-white/5
+                    shadow-lg backdrop-blur-sm
+                    flex items-center justify-between gap-4
+                    transition
+                    hover:bg-white/50 hover:shadow-xl
+                    dark:hover:bg-white/10
+                  "
                   >
-                    {deletingIds.has(account.id) ? "Deleting…" : "Delete"}
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-        <form
+                    <div>
+                      <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+                        {account.name}
+                      </h3>
+                      <p className="text-sm text-gray-700/80 dark:text-gray-300/80">
+                        {account.domain}
+                      </p>
+                      {account.expired && (
+                        <span className="mt-2 inline-flex items-center rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium text-white dark:text-gray-900">
+                          Token expired
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-end gap-2">
+                      <button
+                        className="
+                         inline-flex items-center gap-1.5
+                         rounded-full px-3 py-1.5 text-xs font-medium
+                         text-blue-700 dark:text-blue-300
+                         border border-blue-200/60 dark:border-blue-500/20
+                         bg-blue-50/40 dark:bg-blue-500/10
+                         backdrop-blur transition-all
+                         hover:bg-blue-100/70 hover:border-blue-300/70 hover:shadow-md
+                         dark:hover:bg-blue-500/20 dark:hover:border-blue-400/30
+                       "
+                        onClick={() => handleUpdate(account.id)}
+                      >
+                        Update
+                      </button>
+
+                      <button
+                        className="
+                          inline-flex items-center gap-1.5
+                          rounded-full px-3 py-1.5 text-xs font-medium
+                          text-red-700 dark:text-red-300
+                          border border-red-200/60 dark:border-red-500/20
+                          bg-red-50/40 dark:bg-red-500/10
+                          backdrop-blur transition-all transform
+                          hover:bg-red-100/70 hover:border-red-300/70 hover:shadow-md 
+                          dark:hover:bg-red-500/20 dark:hover:border-red-400/30
+                          disabled:opacity-60 disabled:pointer-events-none
+                          "
+                        onClick={() => handleDelete(account.id)}
+                        disabled={deletingIds.has(account.id)}
+                      >
+                        {deletingIds.has(account.id) ? "Deleting…" : "Delete"}
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* <form
           noValidate
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 rounded-2xl p-4 border"
@@ -244,8 +323,9 @@ export default function ManageAccountsPage() {
               {serverMsg}
             </p>
           )}
-        </form>
-      </main>
+        </form> */}
+        </main>
+      </div>
     </div>
   );
 }

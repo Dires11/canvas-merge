@@ -54,7 +54,7 @@ export function AssignmentDashboardClient({ plannerData, accounts }: Props) {
   // build map on client
   const accountMap = useMemo<Map<string, AccountSafeInfo>>(
     () => new Map(accounts.map((acc) => [acc.id, acc])),
-    [accounts]
+    [accounts],
   );
 
   const groupedByDomain = useMemo(() => {
@@ -66,10 +66,12 @@ export function AssignmentDashboardClient({ plannerData, accounts }: Props) {
 
     for (const [domain, mergedItems] of Object.entries(plannerData)) {
       const assignments = mergedItems.assignments.filter(
-        (assignment) => assignment.accountsNotSubmitted.length != 0
+        (assignment) => assignment.accountsNotSubmitted.length != 0,
       );
 
-      result[domain] = groupAssignmentsByDueDateLocal(assignments);
+      if (assignments.length > 0) {
+        result[domain] = groupAssignmentsByDueDateLocal(assignments);
+      }
     }
 
     return result;
@@ -83,7 +85,7 @@ export function AssignmentDashboardClient({ plannerData, accounts }: Props) {
 
           {Object.entries(groups).map(([label, assignments]) => (
             <div key={label} className="mt-1">
-              <h2 className="text-lg font-semibold">{label}</h2>
+              <h2 className="text-lg font-semibold ">{label}</h2>
 
               <div className="flex flex-col gap-1.5">
                 {assignments.map((assignment) => (

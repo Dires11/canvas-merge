@@ -20,11 +20,28 @@ export async function Dashboard({ userId }: { userId: string }) {
   const resp = await loadPlanner({ merge: true });
   const plannerData = (resp?.merged as MergedItemsByDomain) || null;
   const accounts = resp?.accountsSafeInfo || [];
-  const accountMap = new Map(accounts.map((acc) => [acc.id, acc]));
+  const accountsWithErrors = resp?.accountsWithErrors || [];
 
   return (
     <div>
       <h1>Dashboard</h1>
+      {accountsWithErrors.length > 0 && (
+        <div className="bg-red-500 text-white p-2 rounded-md">
+          <h2>Accounts with errors</h2>
+          <ul>
+            {accountsWithErrors.map((accountId) => {
+              const account = accounts.find((acc) => acc.id === accountId);
+              return (
+                <li key={accountId}>
+                  {account?.name} expired at{" "}
+                  {account?.expiredAt?.toLocaleString()}{" "}
+                  {account?.expired ? "expired" : "not expired"}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
       {plannerData && (
         <AssignmentDashboardClient
           plannerData={plannerData}

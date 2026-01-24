@@ -1,13 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-geist-mono);  
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -120,3 +120,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .form-input {
+    @apply
+      w-full rounded-xl px-4 py-3
+      bg-white/70
+      text-gray-900 placeholder-gray-500
+      border border-white/60
+      focus:outline-none focus:ring-2 focus:ring-blue-500/40;
+  }
+  .form-input-error {
+    @apply
+
+    border-red-300
+    focus:ring-red-500/30
+  }
+}
+
