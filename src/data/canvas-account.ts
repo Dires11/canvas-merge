@@ -33,10 +33,10 @@ export async function createCanvasAccount(
   }
 }
 
-export async function deleteCanvasAccount(accountId: string) {
+export async function deleteCanvasAccount(accountId: string, userId: string) {
   try {
     await prisma.canvasAccount.delete({
-      where: { id: accountId },
+      where: { id: accountId, userId },
     });
     return { ok: true };
   } catch (e: any) {
@@ -53,6 +53,24 @@ export async function deleteCanvasAccount(accountId: string) {
       return { ok: false, error: "Failed to delete account.", status: 400 };
     }
   }
+}
+
+export async function updateCanvasAccountToken(
+  accountID: string,
+  userId: string,
+  token: string,
+) {
+  if (!accountID || typeof accountID !== "string") {
+    throw new Error("updateCanvasAccountToken: accountID is missing/invalid");
+  }
+  return prisma.canvasAccount.updateMany({
+    where: { id: accountID, userId },
+    data: {
+      accessToken: token,
+      expired: false,
+      expiredAt: null,
+    },
+  });
 }
 
 export async function getUserDomains(userId: string): Promise<string[]> {
@@ -99,4 +117,16 @@ export async function markAccountAsExpired(accountId: string, expiredAt: Date) {
     console.error("Failed to mark account as expired:", error);
     return { ok: false };
   }
+}
+
+export async function getUserCanvasAccount(accountID: string, userId: string) {
+  return prisma.canvasAccount.findFirst({
+    where: { id: accountID, userId },
+    select: {
+      id: true,
+      name: true,
+      domain: true,
+      accountCanvasId: true,
+    },
+  });
 }

@@ -1,18 +1,12 @@
 "use client";
 import { useUser, UserButton } from "@stackframe/stack";
 import { useEffect, useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+
 import { loadAccounts } from "@/lib/accounts";
 import { ManageAccountForm } from "@/components/manage-account-form";
 import { Modal } from "@/components/modal";
 
-const FormSchema = z.object({
-  domain: z.url({ message: "Please enter a valid URL for the institution" }),
-  token: z.string().min(10, "Personal access token is required"),
-});
-type FormValues = z.infer<typeof FormSchema>;
+type ModalState = { open: boolean; accountId?: string; domain?: string };
 
 export default function ManageAccountsPage() {
   const user = useUser({ or: "redirect" });
@@ -21,19 +15,12 @@ export default function ManageAccountsPage() {
   const [accountsError, setAccountsError] = useState<string | null>(null);
   const [accountsLoading, setAccountsLoading] = useState<boolean>(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
-  const [manageAccountFormOpen, setManageAccountFormOpen] = useState(false);
-
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
-  });
+  const [modal, setModal] = useState<ModalState>({ open: false });
+
+  // const [manageAccountFormOpen, setManageAccountFormOpen] = useState(false);
+  // const [domainUpdate, setDomainUpdate] = useState(null);
 
   async function load() {
     setAccountsLoading(true);
@@ -63,7 +50,7 @@ export default function ManageAccountsPage() {
     const ac = new AbortController();
     const t = setTimeout(() => ac.abort(), 15_000);
     try {
-      const r = await fetch(`/api/accounts?id=${id}`, {
+      const r = await fetch(`/api/accounts/${id}`, {
         method: "DELETE",
         signal: ac.signal,
       });
@@ -93,62 +80,64 @@ export default function ManageAccountsPage() {
     }
   }
 
-  async function handleUpdate(id: string) {
-    const account = accounts.find((a) => a.id === id);
-    if (!account) {
-      setError("root", { type: "server", message: "Account not found" });
-      return;
+  function openAdd() {
+    setModal({ open: true });
+  }
+
+  function openUpdate(accountId: string, domain: string) {
+    console.log("openUpdate:", accountId, domain);
+    setModal({ open: true, accountId, domain });
+  }
+
+  async function submitAdd(
+    data: { domain: string; token: string },
+    signal: AbortSignal,
+  ) {
+    console.log("submitting for accountId:", modal.accountId);
+    const r = await fetch("/api/accounts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      signal,
+    });
+
+    const json = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      throw new Error(json.error ?? "Failed to add account");
     }
   }
 
-  async function onSubmit(data: FormValues) {
-    setServerMsg(null);
+  async function submitUpdate(
+    accountId: string,
+    data: { token: string },
+    signal: AbortSignal,
+  ) {
+    console.log("submitting for accountId:", modal.accountId);
+    const r = await fetch(`/api/accounts/${accountId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: data.token }),
+      signal,
+    });
 
-    const ac = new AbortController();
-    const t = setTimeout(() => ac.abort(), 15_000);
-
-    try {
-      const r = await fetch("/api/accounts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        signal: ac.signal,
-      });
-
-      let json = await r.json();
-
-      if (!r.ok) {
-        setError("root", { type: "server", message: json.error });
-        return;
-      }
-
-      setServerMsg(`Linked ${json.name}'s account successfully.`);
-      await load();
-      reset((prev) => ({ ...prev, token: "" }));
-    } catch (e: any) {
-      setError("root", {
-        type: "server",
-        message:
-          e?.name === "AbortError"
-            ? "Request timed out. Please try again."
-            : (e?.message ?? "Network error. Please try again."),
-      });
-    } finally {
-      clearTimeout(t);
+    const json = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      throw new Error(json.error ?? "Failed to update token");
     }
   }
 
   useEffect(() => {
     load();
   }, []);
+
   return (
     <div className="min-h-screen text-black dark:text-white">
       {/* background */}
-      <div className="fixed inset-0 -z-10 bg-linear-to-br from-slate-50 via-sky-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
-      <div className="fixed inset-0 -z-10 opacity-30 [background:radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(99,102,241,0.30),transparent_40%),radial-gradient(circle_at_50%_80%,rgba(236,72,153,0.18),transparent_45%)]" />
+      {/* <div className="fixed inset-0 -z-10 bg-linear-to-br from-slate-50 via-sky-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
+      <div className="fixed inset-0 -z-10 opacity-30 [background:radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(99,102,241,0.30),transparent_40%),radial-gradient(circle_at_50%_80%,rgba(236,72,153,0.18),transparent_45%)]" /> */}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <nav className="mb-8 flex items-center justify-between rounded-2xl border border-white/20 bg-white/20 px-5 py-3 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+        <nav className="mb-8 flex items-center justify-between rounded-2xl border border-white/20 bg-background/50 px-5 py-3 shadow-lg backdrop-blur-xl dark:border-white/10">
           <h1 className="text-xl font-semibold tracking-tight">
             Hi {user.displayName}!
           </h1>
@@ -160,8 +149,8 @@ export default function ManageAccountsPage() {
               Linked Accounts
             </h2>
             <button
-              className="inline-flex items-center justify-center rounded-xl px-4 py-2 bg-blue-600 text-white font-medium shadow-lg shadow-blue-600/25 hover:bg-blue-700 transition active:scale-[0.99]"
-              onClick={() => setManageAccountFormOpen(true)}
+              className="inline-flex items-center justify-center rounded-xl px-4 py-2 bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/25 hover:bg-primary-hover transition active:scale-[0.99]"
+              onClick={() => openAdd()}
             >
               Add Account
             </button>
@@ -171,11 +160,26 @@ export default function ManageAccountsPage() {
               {serverMsg}
             </div>
           )}
-          {manageAccountFormOpen && (
-            <Modal onClose={() => setManageAccountFormOpen(false)}>
+          {modal.open && (
+            <Modal onClose={() => setModal({ open: false })}>
               <ManageAccountForm
+                accountId={modal.accountId}
+                initialDomain={modal.domain}
+                onSubmit={(data, signal) => {
+                  if (modal.accountId) {
+                    return submitUpdate(
+                      modal.accountId,
+                      { token: data.token },
+                      signal,
+                    );
+                  }
+                  return submitAdd(
+                    { domain: data.domain!, token: data.token },
+                    signal,
+                  );
+                }}
                 onSuccess={() => {
-                  setManageAccountFormOpen(false);
+                  setModal({ open: false });
                   load();
                 }}
               />
@@ -194,7 +198,7 @@ export default function ManageAccountsPage() {
               </p>
             )}
           {accounts.length > 0 && (
-            <div className="rounded-2xl border border-white/20 bg-white/20 p-4 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+            <div className="rounded-2xl border border-white/20 bg-background/50 p-4 shadow-sm backdrop-blur-xl dark:border-white/10">
               <ul className="space-y-4">
                 {accounts.map((account) => (
                   <li
@@ -202,7 +206,7 @@ export default function ManageAccountsPage() {
                     className="
                     rounded-2xl p-5
                     border border-white/30 dark:border-white/10
-                    bg-white/30 dark:bg-white/5
+                    bg-card/30 dark:bg-white/5
                     shadow-lg backdrop-blur-sm
                     flex items-center justify-between gap-4
                     transition
@@ -235,7 +239,7 @@ export default function ManageAccountsPage() {
                          hover:bg-blue-100/70 hover:border-blue-300/70 hover:shadow-md
                          dark:hover:bg-blue-500/20 dark:hover:border-blue-400/30
                        "
-                        onClick={() => handleUpdate(account.id)}
+                        onClick={() => openUpdate(account.id, account.domain)}
                       >
                         Update
                       </button>
@@ -263,67 +267,6 @@ export default function ManageAccountsPage() {
               </ul>
             </div>
           )}
-
-          {/* <form
-          noValidate
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 rounded-2xl p-4 border"
-        >
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Institution URL
-            </label>
-            <input
-              type="url"
-              placeholder="e.g. canvas.mycollege.edu"
-              className="w-full rounded-xl border px-3 py-2"
-              {...register("domain")}
-            />
-            {errors.domain && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.domain.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Canvas Personal Access Token
-            </label>
-            <input
-              type="password"
-              placeholder="Paste your PAT"
-              className="w-full rounded-xl border px-3 py-2"
-              autoComplete="new-password"
-              {...register("token")}
-            />
-            {errors.token && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.token.message}
-              </p>
-            )}
-            <p className="text-xs text-gray-500 mt-2">
-              We never store your token in plain text. It's encrypted at rest
-              and validated once before saving.
-            </p>
-          </div>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="rounded-2xl px-4 py-2 border shadow-sm disabled:opacity-60"
-          >
-            {isSubmitting ? "Linking…" : "Link Canvas Account"}
-          </button>
-          {errors.root && (
-            <p className="text-sm text-red-600 mt-2" aria-live="polite">
-              {errors.root.message}
-            </p>
-          )}
-          {serverMsg && (
-            <p className="text-sm mt-2 text-green-600" aria-live="polite">
-              {serverMsg}
-            </p>
-          )}
-        </form> */}
         </main>
       </div>
     </div>

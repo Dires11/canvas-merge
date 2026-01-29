@@ -15,6 +15,7 @@ import type {
   MergedItemsByDomain,
   SubmissionDetails,
 } from "@/lib/types";
+import { decryptToken } from "@/lib/crypto";
 
 function weekBoundsUTC() {
   const now = new Date();
@@ -276,44 +277,6 @@ export async function getWeeklyAssignments(
   const { startISO, endISO } = weekBoundsUTC();
 
   let itemsByDomain: ItemsByDomain = {};
-  // for (const account of allAccounts) {
-  //   if (account.expired) {
-  //     accountsWithErrors.push(account.id);
-  //     continue;
-  //   }
-  //   try {
-  //     const raw = await getPlannerItems(
-  //       account.domain,
-  //       account.accessToken,
-  //       startISO,
-  //       endISO,
-  //     );
-  //     const accountItems = normalize(account.id, account.domain, raw);
-
-  //     if (
-  //       accountItems.assignments.length === 0 &&
-  //       accountItems.announcements.length === 0 &&
-  //       accountItems.other.length === 0
-  //     ) {
-  //       continue;
-  //     }
-  //     if (!itemsByDomain[account.domain]) {
-  //       itemsByDomain[account.domain] = [];
-  //     }
-  //     itemsByDomain[account.domain].push(accountItems);
-  //   } catch (error: any) {
-  //     console.error(
-  //       `Error fetching planner items for account ${account.id} (${account.domain}):`,
-  //       error,
-  //     );
-  //     if (error.expiredAt) {
-  //       console.log("Account", account.name, " expired at:", error.expiredAt);
-  //       await markAccountAsExpired(account.id, error.expiredAt);
-  //     }
-  //     accountsWithErrors.push(account.id);
-  //     continue;
-  //   }
-  // }
   const fetchPromises = allAccounts.map(async (account) => {
     if (account.expired) {
       return {
@@ -325,7 +288,7 @@ export async function getWeeklyAssignments(
     try {
       const raw = await getPlannerItems(
         account.domain,
-        account.accessToken,
+        decryptToken(account.accessToken),
         startISO,
         endISO,
       );
