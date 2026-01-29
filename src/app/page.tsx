@@ -7,10 +7,8 @@ export default async function Home() {
   const user = await stackServerApp.getUser({ or: "redirect" });
 
   return (
-    <div className="bg-white">
-      <main className="p-6 text-black min-h-screen max-w-7xl mx-auto">
-        <Dashboard userId={user.id} />
-      </main>
-    </div>
+    <main className="p-6 text-black min-h-screen max-w-7xl mx-auto">
+      <Dashboard userId={user.id} />
+    </main>
   );
 }

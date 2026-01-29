@@ -33,6 +33,7 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: oklch(from var(--primary) calc(l - 0.06) c h);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -49,8 +50,9 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: oklch(54.6% 0.245 262.881);
+  --primary-hover: oklch(from var(--primary) calc(l - 0.06) c h);
+  --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -68,25 +70,23 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary: oklch(0.62 0.18 255);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
+  --background: oklch(0.98 0.01 250);
   --foreground: oklch(0.145 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.27 0.05 268);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.2 0 0);  
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -128,8 +128,13 @@
       bg-white/70
       text-gray-900 placeholder-gray-500
       border border-white/60
-      focus:outline-none focus:ring-2 focus:ring-blue-500/40;
-  }
+      focus:outline-none focus:ring-2 focus:ring-blue-500/40
+      read-only:bg-muted
+      read-only:text-muted-foreground
+      read-only:cursor-not-allowed
+      read-only:focus:ring-0;
+    
+      }
   .form-input-error {
     @apply
 

@@ -27,10 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <StackProvider app={stackClientApp}>
-          <StackTheme>{children}</StackTheme>
+          <StackTheme>
+            <div className="fixed inset-0 -z-10 bg-linear-to-br from-slate-50 via-sky-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
+            <div className="fixed inset-0 -z-10 opacity-30 [background:radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(99,102,241,0.30),transparent_40%),radial-gradient(circle_at_50%_80%,rgba(236,72,153,0.18),transparent_45%)]" />
+
+            {children}
+          </StackTheme>
         </StackProvider>
       </body>
     </html>

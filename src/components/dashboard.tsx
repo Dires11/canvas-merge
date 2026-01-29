@@ -33,7 +33,7 @@ export async function Dashboard({ userId }: { userId: string }) {
               const account = accounts.find((acc) => acc.id === accountId);
               return (
                 <li key={accountId}>
-                  {account?.name} expired at{" "}
+                  {account?.name}
                   {account?.expiredAt?.toLocaleString()}{" "}
                   {account?.expired ? "expired" : "not expired"}
                 </li>
