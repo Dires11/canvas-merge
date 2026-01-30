@@ -17,18 +17,18 @@ export function Modal({ children, onClose }: ModalProps) {
   return createPortal(
     <div className="fixed inset-0 z-9999">
       {/* backdrop */}
-      <div
-        className="absolute inset-0 bg-black/20 backdrop-blur-xs"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-xs" />
 
       {/* modal content wrapper */}
-      <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 flex items-center justify-center p-4 "
+        onClick={onClose}
+      >
         <div
           className="
             relative w-full max-w-md rounded-2xl p-6
-            bg-white/45
-            border border-white/45
+            bg-card/45
+            border border-card/45
             shadow-2xl
           "
           onClick={(e) => e.stopPropagation()}
@@ -40,8 +40,8 @@ export function Modal({ children, onClose }: ModalProps) {
             className="
               absolute right-3 top-3
               rounded-lg p-1
-              text-gray-700
-              hover:bg-white/40
+              text-card-foreground
+              hover:bg-card/40
               focus:outline-none focus:ring-2 focus:ring-blue-500
             "
           >

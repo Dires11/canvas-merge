@@ -1,14 +1,24 @@
-import { stackServerApp } from "@/stack/server";
+import { neonAuth } from "@neondatabase/auth/next/server";
 import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
+import "server-only";
 
-export async function getUserOr401() {
-  const user = await stackServerApp.getUser();
-  if (user) {
-    return { user, response: null as null };
+export async function requireUser() {
+  const { user } = await neonAuth();
+  if (!user) {
+    redirect("/sign-in");
   }
-  const response = NextResponse.json(
-    { error: "User not authenticated" },
-    { status: 401 },
-  );
-  return { user: null, response };
+
+  return user; // guaranteed non-null
+}
+export async function requireUserApi() {
+  const { user } = await neonAuth();
+
+  if (!user) {
+    throw NextResponse.json(
+      { error: "User not authenticated" },
+      { status: 401 },
+    );
+  }
+  return user;
 }

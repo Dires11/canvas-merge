@@ -1,7 +1,7 @@
 // app/api/accounts/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getUserOr401 } from "@/lib/auth-server";
+import { requireUserApi } from "@/lib/auth-server";
 import { normalizeAndValidateDomain } from "@/lib/domain";
 import { getAccountInfo } from "@/lib/canvas";
 import {
@@ -70,9 +70,7 @@ export async function validateJson<T>(
 }
 
 export async function GET() {
-  const { user, response } = await getUserOr401();
-  if (response) return response;
-
+  const user = await requireUserApi();
   try {
     const accounts = await getUserCanvasAccounts(user.id);
     return NextResponse.json({ accounts }, { status: 200 });
@@ -87,8 +85,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   // 1) Auth (don’t let userId be client-provided)
-  const { user, response } = await getUserOr401();
-  if (response) return response;
+  const user = await requireUserApi();
 
   // 2) Validating the body.
   const result = await validateJson(req, BodySchema);

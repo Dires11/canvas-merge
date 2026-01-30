@@ -1,10 +1,8 @@
-import { stackServerApp } from "@/stack/server";
 import { Dashboard } from "@/components/dashboard";
-import type { MergedItems } from "@/lib/types";
-import { getWeeklyAssignments } from "./api/planner/weekly-assignments/route";
+import { requireUser } from "@/lib/auth-server";
 
 export default async function Home() {
-  const user = await stackServerApp.getUser({ or: "redirect" });
+  const user = await requireUser();
 
   return (
     <main className="p-6 text-black min-h-screen max-w-7xl mx-auto">

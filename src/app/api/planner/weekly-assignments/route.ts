@@ -1,4 +1,3 @@
-import { getUserOr401 } from "@/lib/auth-server";
 import { NextRequest, NextResponse } from "next/server";
 import {
   getUserCanvasAccounts,
@@ -16,6 +15,7 @@ import type {
   SubmissionDetails,
 } from "@/lib/types";
 import { decryptToken } from "@/lib/crypto";
+import { requireUserApi } from "@/lib/auth-server";
 
 function weekBoundsUTC() {
   const now = new Date();
@@ -343,8 +343,7 @@ export async function getWeeklyAssignments(
 }
 
 export async function GET(req: NextRequest) {
-  const { user, response } = await getUserOr401();
-  if (response) return response;
+  const user = await requireUserApi();
   const params = req.nextUrl.searchParams;
   const merge = params.get("merge") === "true";
 

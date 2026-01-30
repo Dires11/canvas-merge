@@ -1,5 +1,6 @@
 // src/lib/crypto.ts
 import crypto from "crypto";
+import "server-only";
 
 const ALG = "aes-256-gcm";
 const KEY_B64 = process.env.CANVAS_TOKEN_KEY; // base64-encoded 32 bytes

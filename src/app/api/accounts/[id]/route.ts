@@ -1,7 +1,7 @@
 // app/api/accounts/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getUserOr401 } from "@/lib/auth-server";
+import { requireUserApi } from "@/lib/auth-server";
 import { getAccountInfo } from "@/lib/canvas";
 import {
   deleteCanvasAccount,
@@ -19,8 +19,7 @@ export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
-  const { user, response } = await getUserOr401();
-  if (response) return response;
+  const user = await requireUserApi();
   const { id } = await context.params;
 
   const result = await validateJson(req, UpdateBodySchema);
@@ -32,15 +31,6 @@ export async function PATCH(
   if (!account) {
     return NextResponse.json({ error: "Account not found" }, { status: 404 });
   }
-
-  console.log(
-    "===================================================================",
-  );
-
-  console.log("DOMAIN: ", account.domain, "TOKEN: ", token, "ACCOUND ID: ", id);
-  console.log(
-    "===================================================================",
-  );
 
   // verify token belongs to same Canvas account
   const testConnection = await getAccountInfo({
@@ -88,9 +78,7 @@ export async function DELETE(
   _req: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
-  const { user, response } = await getUserOr401();
-  if (response) return response;
-
+  const user = await requireUserApi();
   const { id } = await context.params;
   // IMPORTANT: ensure the delete function enforces user ownership internally,
   // or switch to a deleteMany({ where: { id: params.id, userId: user.id } })
