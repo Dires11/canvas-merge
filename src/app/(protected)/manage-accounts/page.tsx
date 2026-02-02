@@ -1,6 +1,4 @@
 "use client";
-import { UserButton } from "@neondatabase/auth/react";
-import { useSession } from "@/lib/auth/client";
 import { useEffect, useState } from "react";
 
 import { loadAccounts } from "@/lib/accounts";
@@ -10,8 +8,6 @@ import { Modal } from "@/components/modal";
 type ModalState = { open: boolean; accountId?: string; domain?: string };
 
 export default function ManageAccountsPage() {
-  const { data } = useSession();
-  const user = data?.user;
   const [serverMsg, setServerMsg] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Array<any>>([]);
   const [accountsError, setAccountsError] = useState<string | null>(null);
@@ -131,17 +127,13 @@ export default function ManageAccountsPage() {
   return (
     <>
       <div className="min-h-screen text-black dark:text-white">
-        {/* background */}
-        {/* <div className="fixed inset-0 -z-10 bg-linear-to-br from-slate-50 via-sky-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
-      <div className="fixed inset-0 -z-10 opacity-30 [background:radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(99,102,241,0.30),transparent_40%),radial-gradient(circle_at_50%_80%,rgba(236,72,153,0.18),transparent_45%)]" /> */}
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <nav className="mb-8 flex items-center justify-between rounded-2xl border border-white/20 bg-background/50 px-5 py-3 shadow-lg backdrop-blur-xl dark:border-white/10">
+          {/* <nav className="mb-8 flex items-center justify-between rounded-2xl border border-white/20 bg-background/50 px-5 py-3 shadow-lg backdrop-blur-xl dark:border-white/10">
             <h1 className="text-xl font-semibold tracking-tight">
               Hi {user?.name}!
             </h1>
             <UserButton size="icon" />
-          </nav>
+          </nav> */}
           <main className="space-y-5">
             <div className="flex justify-between items-center mb-5">
               <h2 className="text-lg font-semibold tracking-tight">

@@ -1,5 +1,9 @@
-// ./lib/auth/server.ts
-import { createAuthServer } from "@neondatabase/auth/next/server";
+// lib/auth/server.ts
+import { createNeonAuth } from "@neondatabase/auth/next/server";
 
-// to use in react server components
-export const authServer = createAuthServer();
+export const auth = createNeonAuth({
+  baseUrl: process.env.NEON_AUTH_BASE_URL!,
+  cookies: {
+    secret: process.env.NEON_AUTH_COOKIE_SECRET!,
+  },
+});

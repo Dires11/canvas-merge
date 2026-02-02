@@ -1,7 +1,5 @@
 import { getWeeklyAssignments } from "@/app/api/planner/weekly-assignments/route";
-import { getUserCanvasAccounts } from "@/data/canvas-account";
 import type { MergedItems, MergedItemsByDomain } from "@/lib/types";
-import { AssignmentCard } from "./assignment-card";
 import { AssignmentDashboardClient } from "./assignment-dashboard-client";
 
 export async function Dashboard({ userId }: { userId: string }) {

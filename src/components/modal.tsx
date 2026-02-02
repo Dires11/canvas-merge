@@ -27,7 +27,7 @@ export function Modal({ children, onClose }: ModalProps) {
         <div
           className="
             relative w-full max-w-md rounded-2xl p-6
-            bg-card/45
+            bg-card/40
             border border-card/45
             shadow-2xl
           "
@@ -42,7 +42,7 @@ export function Modal({ children, onClose }: ModalProps) {
               rounded-lg p-1
               text-card-foreground
               hover:bg-card/40
-              focus:outline-none focus:ring-2 focus:ring-blue-500
+              focus:outline-none focus:ring-2 focus:ring-primary
             "
           >
             ✕

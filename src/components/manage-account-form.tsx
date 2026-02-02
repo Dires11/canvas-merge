@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "./form-input";
+import { Input } from "./input";
 
 const UpdateSchema = z.object({
   token: z
@@ -97,7 +97,7 @@ export function ManageAccountForm({
     >
       {!isUpdate && (
         <div>
-          <label className="block text-sm font-medium  dark:text-white">
+          <label className="block text-sm font-medium mb-2">
             Institution URL
           </label>
           <Input
@@ -113,7 +113,7 @@ export function ManageAccountForm({
       )}
 
       <div>
-        <label className="block text-sm font-medium mb- dark:text-white">
+        <label className="block text-sm font-medium mb-2">
           Canvas Personal Access Token
         </label>
         <Input
@@ -130,7 +130,7 @@ export function ManageAccountForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-xl px-4 py-2 bg-primary text-white font-medium shadow-lg disabled:opacity-60 disabled:pointer-events-none hover:bg-primary-hover transition"
+        className="w-full rounded-xl px-4 py-2 bg-primary text-primary-foreground font-medium shadow-lg disabled:opacity-60 disabled:pointer-events-none hover:bg-primary-hover transition"
       >
         {isSubmitting
           ? isUpdate

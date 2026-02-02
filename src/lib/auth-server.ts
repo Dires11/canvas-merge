@@ -1,24 +1,25 @@
-import { neonAuth } from "@neondatabase/auth/next/server";
+import { auth } from "@/lib/auth/server";
 import { NextResponse } from "next/server";
 import { redirect } from "next/navigation";
 import "server-only";
 
 export async function requireUser() {
-  const { user } = await neonAuth();
-  if (!user) {
-    redirect("/sign-in");
+  console.log("requireUser called");
+  const { data: session } = await auth.getSession();
+  if (!session) {
+    redirect("/auth/sign-in");
   }
 
-  return user; // guaranteed non-null
+  return session.user; // guaranteed non-null
 }
 export async function requireUserApi() {
-  const { user } = await neonAuth();
+  const { data: session } = await auth.getSession();
 
-  if (!user) {
+  if (!session) {
     throw NextResponse.json(
       { error: "User not authenticated" },
       { status: 401 },
     );
   }
-  return user;
+  return session.user;
 }
