@@ -11,7 +11,6 @@ export type AccountSafeInfo = {
   id: string;
   name: string;
   avatarUrl: string;
-  expired: boolean;
   expiredAt: Date | null;
 };
 

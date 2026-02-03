@@ -1,41 +1,34 @@
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "../src/generated"
 }
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["neon_auth", "public"]
-}
-
-model users_sync {
-  raw_json   Json
-  id         String    @id @default(dbgenerated("(raw_json ->> 'id'::text)"))
-  name       String?   @default(dbgenerated("(raw_json ->> 'display_name'::text)"))
-  email      String?   @default(dbgenerated("(raw_json ->> 'primary_email'::text)"))
-  created_at DateTime? @default(dbgenerated("to_timestamp((trunc((((raw_json ->> 'signed_up_at_millis'::text))::bigint)::double precision) / (1000)::double precision))")) @db.Timestamptz(6)
-  updated_at DateTime? @db.Timestamptz(6)
-  deleted_at DateTime? @db.Timestamptz(6)
-
-  CanvasAccount CanvasAccount[]
-
-  @@index([deleted_at])
-  @@schema("neon_auth")
+  schemas  = ["public"]
 }
 
 model CanvasAccount {
-  id              String     @id @default(uuid())
-  userId          String
-  user            users_sync @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accountCanvasId Int
-  name            String
+  id              String    @id @default(uuid())
+  userId          String    @db.Uuid
   domain          String
-  avatarUrl       String
+  name            String
   accessToken     String
-  expired         Boolean    @default(false)
-  expiredAt       DateTime?  @map("expired_at")
-  createdAt       DateTime   @default(now()) @map("created_at")
+  expiredAt       DateTime? @map("expired_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  avatarUrl       String
+  accountCanvasId Int
 
   @@unique([userId, domain, accountCanvasId])
+  @@schema("public")
+}
+
+model UserSettings {
+  userId            String   @id @db.Uuid
+  preferredTimezone String?  @map("preferred_timezone")
+  detectedTimezone  String   @default("UTC") @map("detected_timezone")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt
+
   @@schema("public")
 }

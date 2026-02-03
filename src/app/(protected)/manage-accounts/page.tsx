@@ -212,7 +212,7 @@ export default function ManageAccountsPage() {
                         <p className="text-sm text-gray-700/80 dark:text-gray-300/80">
                           {account.domain}
                         </p>
-                        {account.expired && (
+                        {account.expiredAt !== null && (
                           <span className="mt-2 inline-flex items-center rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium text-white dark:text-gray-900">
                             Token expired
                           </span>

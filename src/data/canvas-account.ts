@@ -1,4 +1,5 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "@db/client";
+
 import { prisma } from "@/lib/prisma";
 import type { AccountInfo } from "@/lib/types";
 
@@ -15,7 +16,7 @@ export async function createCanvasAccount(
   } catch (error: unknown) {
     console.error("createCanvasAccount failed:", error);
 
-    if (error instanceof PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // Prisma known error (constraint, invalid data, etc.)
       if (error.code === "P2002") {
         // Unique constraint violation (duplicate)
@@ -39,7 +40,7 @@ export async function deleteCanvasAccount(accountId: string, userId: string) {
     });
     return { ok: true };
   } catch (e: any) {
-    if (e instanceof PrismaClientKnownRequestError) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2025") {
         return { ok: false, error: "Account not found", status: 404 };
       }
@@ -66,7 +67,6 @@ export async function updateCanvasAccountToken(
     where: { id: accountID, userId },
     data: {
       accessToken: token,
-      expired: false,
       expiredAt: null,
     },
   });
@@ -74,14 +74,14 @@ export async function updateCanvasAccountToken(
 
 export async function getUserDomains(userId: string): Promise<string[]> {
   const uniqueDomains = await prisma.canvasAccount.findMany({
-    where: { userId, expired: false },
+    where: { userId, expiredAt: null },
     distinct: ["domain"],
 
     select: {
       domain: true,
     },
   });
-  return uniqueDomains.map((row) => row.domain);
+  return uniqueDomains.map((row: { domain: string }) => row.domain);
 }
 
 export async function getUserCanvasAccounts(
@@ -94,7 +94,6 @@ export async function getUserCanvasAccounts(
       id: true,
       name: true,
       domain: true,
-      expired: true,
       expiredAt: true,
       avatarUrl: true,
       accessToken: includeTokens,
@@ -107,7 +106,6 @@ export async function markAccountAsExpired(accountId: string, expiredAt: Date) {
     await prisma.canvasAccount.update({
       where: { id: accountId },
       data: {
-        expired: true,
         expiredAt: expiredAt,
       },
     });

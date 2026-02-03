@@ -16,25 +16,22 @@ import type {
 } from "@/lib/types";
 import { decryptToken } from "@/lib/crypto";
 import { requireUserApi } from "@/lib/auth-server";
+import { DateTime } from "luxon";
+import { getDetectedTimeZoneForUser } from "@/data/user-settings";
 
-function weekBoundsUTC() {
-  const now = new Date();
-  const day = now.getUTCDay();
-  const mondayOffset = (day + 6) % 7;
-  const start = new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() - mondayOffset,
-      8,
-      0,
-      0,
-      0,
-    ),
-  );
-  const end = new Date(start);
-  end.setUTCDate(start.getUTCDate() + 7);
-  return { startISO: start.toISOString(), endISO: end.toISOString() };
+function getUTCWeekRange(timezone: string, baseDate: Date = new Date()) {
+  // 1. Create the time in the target timezone
+  const localDt = DateTime.fromJSDate(baseDate).setZone(timezone);
+
+  // 2. Find the start of the week (Monday 00:00) in that timezone
+  const startOfMondayLocal = localDt.startOf("week");
+  const nextMondayLocal = startOfMondayLocal.plus({ days: 7 });
+
+  // 3. Convert both to UTC
+  return {
+    startISO: startOfMondayLocal.toUTC().toISO() as string,
+    endISO: nextMondayLocal.toUTC().toISO() as string,
+  };
 }
 
 const ASSIGNMENT_TYPE = new Set(["assignment", "discussion_topic", "quiz"]);
@@ -269,16 +266,17 @@ export async function getWeeklyAssignments(
     id: acc.id,
     name: acc.name,
     avatarUrl: acc.avatarUrl,
-    expired: acc.expired,
     expiredAt: acc.expiredAt,
   }));
 
   const accountsWithErrors: string[] = [];
-  const { startISO, endISO } = weekBoundsUTC();
+  const { startISO, endISO } = getUTCWeekRange(
+    (await getDetectedTimeZoneForUser(userId)) || "UTC",
+  );
 
   let itemsByDomain: ItemsByDomain = {};
   const fetchPromises = allAccounts.map(async (account) => {
-    if (account.expired) {
+    if (account.expiredAt !== null) {
       return {
         account,
         accountItems: null,

@@ -33,7 +33,7 @@ export async function Dashboard({ userId }: { userId: string }) {
                 <li key={accountId}>
                   {account?.name}
                   {account?.expiredAt?.toLocaleString()}{" "}
-                  {account?.expired ? "expired" : "not expired"}
+                  {account?.expiredAt !== null ? "expired" : "not expired"}
                 </li>
               );
             })}

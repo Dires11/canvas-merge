@@ -10,10 +10,6 @@ import {
 } from "@/data/canvas-account";
 import { encryptToken } from "@/lib/crypto";
 
-const UpdateBodySchema = z.object({
-  token: z.string().min(10, "Personal access token is too short"),
-});
-
 const BodySchema = z.object({
   domain: z.string().min(1, "Institution URL is required"),
   token: z.string().min(10, "Personal access token is too short"),
