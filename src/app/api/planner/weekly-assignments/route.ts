@@ -18,13 +18,14 @@ import { decryptToken } from "@/lib/crypto";
 import { requireUserApi } from "@/lib/auth-server";
 import { DateTime } from "luxon";
 import { getDetectedTimeZoneForUser } from "@/data/user-settings";
+import { getPlannerItems } from "@/lib/canvas";
 
 function getUTCWeekRange(timezone: string, baseDate: Date = new Date()) {
   // 1. Create the time in the target timezone
   const localDt = DateTime.fromJSDate(baseDate).setZone(timezone);
 
   // 2. Find the start of the week (Monday 00:00) in that timezone
-  const startOfMondayLocal = localDt.startOf("week");
+  const startOfMondayLocal = localDt.set({ weekday: 1 }).startOf("day");
   const nextMondayLocal = startOfMondayLocal.plus({ days: 7 });
 
   // 3. Convert both to UTC
@@ -35,52 +36,6 @@ function getUTCWeekRange(timezone: string, baseDate: Date = new Date()) {
 }
 
 const ASSIGNMENT_TYPE = new Set(["assignment", "discussion_topic", "quiz"]);
-
-async function getPlannerItems(
-  domain: string,
-  token: string,
-  startISO: string,
-  endISO: string,
-) {
-  const url = new URL("/api/v1/planner/items", domain);
-  url.searchParams.set("start_date", startISO);
-  url.searchParams.set("end_date", endISO);
-  url.searchParams.set("per_page", "100");
-
-  const r = await fetch(url.toString(), {
-    headers: { Authorization: `Bearer ${token}` }, // PAT
-  });
-
-  if (!r.ok) {
-    let errorBody: any;
-
-    const contentType = r.headers.get("content-type") || "";
-
-    if (contentType.includes("application/json")) {
-      errorBody = await r.json();
-    } else {
-      const text = await r.text().catch(() => "");
-      errorBody = { raw: text };
-    }
-    const expiredAt = errorBody?.errors?.[0]?.expired_at
-      ? new Date(errorBody.errors[0].expired_at)
-      : null;
-
-    const message =
-      errorBody?.errors?.[0]?.message ?? `Canvas ${domain} ${r.status}`;
-
-    const error = new Error(message);
-
-    // attach useful metadata
-    (error as any).status = r.status;
-    (error as any).expiredAt = expiredAt;
-    (error as any).errorBody = errorBody;
-
-    throw error;
-  }
-
-  return r.json();
-}
 
 function normalize(accountId: string, domain: string, items: any) {
   const itemsByType: ItemsByType = {
@@ -155,7 +110,7 @@ type BucketKey =
   | "accountsNotSubmitted";
 
 function getBucket(submission: SubmissionDetails): BucketKey {
-  if (submission.submitted) return "accountsSubmitted";
+  if (submission.submitted || submission.graded) return "accountsSubmitted";
   if (!submission.submitted && submission.missing)
     return "accountsMissingSubmission";
   return "accountsNotSubmitted";
@@ -240,15 +195,15 @@ function mergeItemsByDomain(itemsByDomain: ItemsByType[]): MergedItems {
       return 0;
     }
   });
-  // Sort by date posted
-  merged.announcements.sort((a, b) => {
-    return new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime();
-  });
+  // // Sort by date posted
+  // merged.announcements.sort((a, b) => {
+  //   return new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime();
+  // });
 
-  // Sort by title
-  merged.other.sort((a, b) => {
-    return a.title.localeCompare(b.title);
-  });
+  // // Sort by title
+  // merged.other.sort((a, b) => {
+  //   return a.title.localeCompare(b.title);
+  // });
 
   return merged;
 }
@@ -283,21 +238,24 @@ export async function getWeeklyAssignments(
         error: { message: "Account expired" },
       };
     }
-    try {
-      const raw = await getPlannerItems(
-        account.domain,
-        decryptToken(account.accessToken),
-        startISO,
-        endISO,
-      );
-      const accountItems = normalize(account.id, account.domain, raw);
-      return { account, accountItems, error: null };
-    } catch (error: any) {
-      if (error.expiredAt) {
-        await markAccountAsExpired(account.id, error.expiredAt);
+    const raw = await getPlannerItems(
+      account.domain,
+      decryptToken(account.accessToken),
+      startISO,
+      endISO,
+    );
+    if (!raw.ok) {
+      if (raw.error.expiredAt) {
+        await markAccountAsExpired(account.id, raw.error.expiredAt);
       }
-      return { account, accountItems: null, error };
+      return {
+        account,
+        accountItems: null,
+        error: raw.error,
+      };
     }
+    const accountItems = normalize(account.id, account.domain, raw.data);
+    return { account, accountItems, error: null };
   });
 
   const results = await Promise.allSettled(fetchPromises);
@@ -331,6 +289,7 @@ export async function getWeeklyAssignments(
     for (const domain in itemsByDomain) {
       itemsByDomainMerged[domain] = mergeItemsByDomain(itemsByDomain[domain]);
     }
+    console.log("Merged planner data prepared.", itemsByDomainMerged);
     return {
       merged: itemsByDomainMerged,
       accountsSafeInfo,

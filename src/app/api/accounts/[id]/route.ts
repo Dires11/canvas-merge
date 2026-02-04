@@ -80,8 +80,6 @@ export async function DELETE(
 ) {
   const user = await requireUserApi();
   const { id } = await context.params;
-  // IMPORTANT: ensure the delete function enforces user ownership internally,
-  // or switch to a deleteMany({ where: { id: params.id, userId: user.id } })
   const result = await deleteCanvasAccount(id, user.id);
 
   if (!result.ok) {

@@ -11,11 +11,17 @@ const CanvasErrorSchema = z.object({
     .optional(),
 });
 
-export async function readCanvasError(res: Response) {
+export type CanvasError = {
+  message?: string;
+  expiredAt?: Date;
+  raw: string;
+};
+
+export async function readCanvasError(res: Response): Promise<CanvasError> {
   const text = await res.text().catch(() => "");
   if (!text)
     return {
-      raw: "lib/canvas/errors.ts. Something went wrong when connecting to CANVAS API. No body response provided.",
+      raw: "No response body returned.",
     };
 
   try {
