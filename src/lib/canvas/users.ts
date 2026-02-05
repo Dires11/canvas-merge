@@ -41,3 +41,26 @@ export async function getAccountInfo(
     },
   };
 }
+
+export async function getAccountCourses(
+  account: Account,
+): Promise<CanvasResult<any[]>> {
+  const res = await canvasFetchJson<any[]>(
+    account.domain,
+    "/api/v1/users/self/courses",
+    {
+      token: account.token,
+      searchParams: {
+        include: "term",
+        enrollment_state: "active",
+        per_page: 100,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    return { ok: false, status: res.status, error: res.error };
+  }
+
+  return { ok: true, status: res.status, data: res.data };
+}
