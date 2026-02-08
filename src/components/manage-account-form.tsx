@@ -1,26 +1,9 @@
 "use client";
 
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./input";
-
-const UpdateSchema = z.object({
-  token: z
-    .string()
-    .min(10, "Personal token too short. Make sure it's correct."),
-  // allow domain but ignore it
-  domain: z.string().optional(),
-});
-
-const AddSchema = z.object({
-  domain: z.url({
-    message: "Please enter a valid URL for the institution",
-  }),
-  token: z
-    .string()
-    .min(10, "Personal token too short. Make sure it's correct."),
-});
+import { AddSchema, UpdateSchema } from "@/lib/schemas/manage-accounts";
 
 type FormValues = {
   domain: string; // always present in form type
@@ -101,7 +84,10 @@ export function ManageAccountForm({
             Institution URL
           </label>
           <Input
-            type="url"
+            type="text"
+            autoComplete="true"
+            autoCapitalize="false"
+            spellCheck="false"
             placeholder="e.g. canvas.mycollege.edu"
             error={!!errors.domain}
             {...register("domain")}
@@ -118,7 +104,7 @@ export function ManageAccountForm({
         </label>
         <Input
           type="password"
-          placeholder="Paste your PAT"
+          placeholder="Paste your Canvas token here"
           error={!!errors.token}
           {...register("token")}
         />

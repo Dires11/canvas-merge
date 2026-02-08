@@ -128,12 +128,6 @@ export default function ManageAccountsPage() {
     <>
       <div className="min-h-screen text-black dark:text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* <nav className="mb-8 flex items-center justify-between rounded-2xl border border-white/20 bg-background/50 px-5 py-3 shadow-lg backdrop-blur-xl dark:border-white/10">
-            <h1 className="text-xl font-semibold tracking-tight">
-              Hi {user?.name}!
-            </h1>
-            <UserButton size="icon" />
-          </nav> */}
           <main className="space-y-5">
             <div className="flex justify-between items-center mb-5">
               <h2 className="text-lg font-semibold tracking-tight">

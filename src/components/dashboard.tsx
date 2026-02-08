@@ -5,10 +5,13 @@ import { getWeeklyAssignmentsForUser } from "@/lib/planner/weekly-assignments";
 
 export async function Dashboard() {
   const user = await requireUser();
-  const data = await getWeeklyAssignmentsForUser(user.id, true);
-  if (!("merged" in data)) {
-    throw new Error("Expected merged planner result");
+  try {
+    const data = await getWeeklyAssignmentsForUser(user.id, true);
+    if (!("merged" in data)) {
+      throw new Error("Expected merged planner result");
+    }
+    return <AssignmentDashboardClient initialData={data} />;
+  } catch (e: any) {
+    return <h1 className="text-foreground text-2xl ">{e.message}</h1>;
   }
-
-  return <AssignmentDashboardClient initialData={data} />;
 }

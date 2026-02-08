@@ -26,6 +26,17 @@ export async function getAccountInfo(
   );
 
   if (!res.ok) {
+    if (res.status === 0) {
+      return {
+        ok: false,
+        status: 400,
+        error: {
+          message:
+            "This URL doesn't appear to host Canvas. Please make sure to include the full URL.",
+          raw: res.error.raw,
+        },
+      };
+    }
     return { ok: false, status: res.status, error: res.error };
   }
 

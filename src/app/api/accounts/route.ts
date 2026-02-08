@@ -2,18 +2,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireUserApi } from "@/lib/auth-server";
-import { normalizeAndValidateDomain } from "@/lib/domain";
 import { getAccountInfo } from "@/lib/canvas";
 import {
   createCanvasAccount,
   getUserCanvasAccounts,
 } from "@/data/canvas-account";
 import { encryptToken } from "@/lib/crypto";
+import { AddSchema, DomainSchema } from "@/lib/schemas/manage-accounts";
 
-const BodySchema = z.object({
-  domain: z.string().min(1, "Institution URL is required"),
-  token: z.string().min(10, "Personal access token is too short"),
-});
+// const BodySchema = z.object({
+//   domain: z.string().min(1, "Institution URL is required"),
+//   token: z.string().min(10, "Personal access token is too short"),
+// });
 
 type ValidateResult<T> =
   | { ok: true; data: T }
@@ -49,7 +49,7 @@ export async function validateJson<T>(
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     const flat = z.flattenError(parsed.error);
-
+    console.warn("Validation failed:", flat);
     return {
       ok: false,
       response: NextResponse.json(
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
   const user = await requireUserApi();
 
   // 2) Validating the body.
-  const result = await validateJson(req, BodySchema);
+  const result = await validateJson(req, AddSchema);
 
   if (!result.ok) {
     return result.response;
@@ -92,25 +92,27 @@ export async function POST(req: NextRequest) {
 
   let { domain, token } = result.data;
 
-  // 3) Validate URL
-  try {
-    domain = normalizeAndValidateDomain(domain);
-  } catch (e: any) {
-    return NextResponse.json(
-      {
-        error: "Invalid input",
-        fieldErrors: { domain: e?.message ?? "Invalid domain." },
-      },
-      { status: 400 },
-    );
-  }
+  // // 3) Validate URL
+  // try {
+  //   domain = DomainSchema.parse(domain);
+  // } catch (e: any) {
+  //   return NextResponse.json(
+  //     {
+  //       error: "Invalid input 1",
+  //       fieldErrors: { domain: e.message ?? "Invalid domain." },
+  //     },
+  //     { status: 400 },
+  //   );
+  // }
 
   // 4) Test the connection with CANVAS API
+  console.log(`Testing connection to Canvas at ${domain}...`);
   const testConnection = await getAccountInfo({ domain, token });
   if (!testConnection.ok) {
+    console.error("Connection test failed:", testConnection);
     return NextResponse.json(
       {
-        error: testConnection.error.message ?? "Failed to conenct to Canvas",
+        error: testConnection.error.message ?? "Failed to connect to Canvas",
         expiredAt: testConnection.error.expiredAt,
       },
       { status: testConnection.status },

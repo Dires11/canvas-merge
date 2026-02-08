@@ -1,5 +1,3 @@
-import type { Account, AccountInfo } from "@/lib/types";
-import { type CanvasError, readCanvasError } from "./errors";
 import { canvasFetchJson, CanvasResult } from "./fetch";
 
 /**

@@ -8,10 +8,12 @@ import type {
   AccountSafeInfo,
   MergedAssignment,
 } from "@/lib/types";
+import { TriangleAlert } from "lucide-react";
 
 import { useTheme } from "next-themes";
 import { getBuiltInPaletteCss } from "@/lib/colors/get-palette";
 import type { WeeklyAssignmentsMergedResponse } from "@/lib/planner/weekly-assignments";
+import Link from "next/link";
 
 const KEY = "/api/planner/weekly-assignments?merge=true";
 
@@ -164,32 +166,48 @@ export function AssignmentDashboardClient({ initialData }: Props) {
       </div>
 
       {accountsWithErrors.length > 0 && (
-        <div className="rounded-md bg-red-500 p-2 text-white">
-          <h2>Accounts with errors</h2>
+        <div className="rounded-2xl bg-destructive/20 border-white/20  border px-4 py-2 text-destructive flex justify-between items-center shadow-lg hover:shadow-xl">
           <ul>
+            <div className="flex items-center gap-1.5 font-bold ">
+              <TriangleAlert className="h-5 w-5" />
+              <span>Accounts needing attention</span>
+            </div>
             {accountsWithErrors.map((accountId) => {
-              const account = accounts.find((acc) => acc.id === accountId);
+              const account = accountMap.get(accountId);
 
               // NOTE: expiredAt coming from API is a string|null, not Date
               const expiredLabel = account?.expiredAt
-                ? new Date(account.expiredAt as any).toLocaleString()
+                ? new Date(account.expiredAt as any).toLocaleString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })
                 : null;
 
               return (
                 <li key={accountId}>
                   {account?.name ?? accountId}{" "}
-                  {expiredLabel ? `${expiredLabel} expired` : ""}
+                  {expiredLabel ? ` - expired  ${expiredLabel}` : ""}
                 </li>
               );
             })}
           </ul>
+
+          <Link
+            className="bg-white/20 border-white/10 border shadow-md text-destructive-foreground rounded-xl px-4 py-2 tracking-tight font-semibold dark:bg-white/5 dark:hover:bg-white/10 hover:bg-white/40  transition"
+            href="/manage-accounts"
+          >
+            Manage Accounts
+          </Link>
         </div>
       )}
 
       {Object.entries(groupedByDomain).map(([domain, groups]) => (
-        <div key={domain} className="flex flex-col gap-2">
+        <div
+          className="rounded-2xl border border-white/20 bg-background/50 p-4 shadow-sm backdrop-blur-xl dark:border-white/10 flex flex-col gap-2"
+          key={domain}
+        >
           <h1 className="text-xl font-bold">{domain}</h1>
-
           {Object.entries(groups).map(([label, assignments]) => (
             <div key={label} className="mt-1">
               <h2 className="text-lg font-semibold">{label}</h2>
@@ -204,7 +222,7 @@ export function AssignmentDashboardClient({ initialData }: Props) {
                       backgroundColor={
                         "oklch(from var(--course-" +
                         String((assignmentIndex % 30) + 1) +
-                        ") l c h / 0.5)"
+                        ") l c h / 0.40)"
                       }
                       accountMap={accountMap}
                       merged={true}

@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import "server-only";
 
 export async function requireUser() {
-  console.log("requireUser called");
   const { data: session } = await auth.getSession();
   if (!session) {
     redirect("/auth/sign-in");
