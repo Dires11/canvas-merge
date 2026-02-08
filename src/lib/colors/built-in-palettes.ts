@@ -1,11 +1,10 @@
 export type Oklch = { l: number; c: number; h: number }; // l: 0..1, c: 0..~0.4, h: 0..360
 
-export type BuiltInPaletteId =
-  | "builtin:bright"
-  | "builtin:pastel"
-  | "builtin:cool"
-  | "builtin:earth"
-  | "builtin:dark";
+export type BuiltInPaletteId = "builtin:bright";
+// | "builtin:pastel"
+// | "builtin:cool"
+// | "builtin:earth"
+// | "builtin:dark";
 
 export const BUILTIN_PALETTES: Record<BuiltInPaletteId, Oklch[]> = {
   "builtin:bright": [
