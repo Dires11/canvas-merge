@@ -87,9 +87,14 @@ export async function getUserDomains(userId: string): Promise<string[]> {
 export async function getUserCanvasAccounts(
   userId: string,
   includeTokens = false,
+  accountIds?: string[],
 ) {
   return prisma.canvasAccount.findMany({
-    where: { userId },
+    where: {
+      userId,
+      ...(accountIds?.length && { id: { in: accountIds } }),
+    },
+    orderBy: [{ domain: "asc" }, { name: "asc" }],
     select: {
       id: true,
       name: true,
