@@ -9,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { HoverOrTap } from "./hover-or-tap";
 
 export function AssignmentCard({
   item,
@@ -22,6 +23,8 @@ export function AssignmentCard({
   backgroundColor: string;
 }) {
   const course = item.course_name.split(" ");
+  for (let word of course) {
+  }
   const courseDisplayName =
     course[0] + " " + course[1] + " " + course[course.length - 1];
   const unsubmittedAccounts = item.accountsNotSubmitted;
@@ -31,57 +34,51 @@ export function AssignmentCard({
 
   return (
     <div
-      className="  rounded-2xl px-5 py-3
-                    border border-white/30 dark:border-white/10
-                    bg-card/30 dark:bg-white/5
-                    shadow-lg items-center backdrop-blur-sm
-                    flex justify-between gap-4
-                    transition hover:bg-white/50 hover:shadow-xl
-                    dark:hover:bg-white/10"
+      className="bg-card/30 flex items-center justify-between gap-4 rounded-2xl border border-white/30 px-5 py-3 shadow-lg backdrop-blur-sm transition hover:bg-white/50 hover:shadow-xl dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
       style={{ backgroundColor }}
     >
-      <div className="flex flex-col space-y-1.5">
+      <div className="flex min-w-0 flex-col space-y-1.5">
         <div>
-          <p className="text-sm font-semibold text-card-foreground/40">
-            {courseDisplayName}
+          <p className="text-card-foreground/40 block truncate text-sm font-semibold">
+            {item.course_name}
           </p>
           <Link
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:underline text-card-foreground font-bold text-lg"
+            className="text-card-foreground text-lg font-bold hover:underline"
           >
             {item.title}
           </Link>
         </div>
-        {unsubmittedAccounts.map((acc) => {
-          const account = accountMap.get(acc.accountId);
-          if (!account) return;
-          return (
-            <div key={account.id} className="flex">
-              <Tooltip>
-                <TooltipTrigger asChild>
+        <div className="flex space-x-2">
+          {unsubmittedAccounts.map((acc) => {
+            const account = accountMap.get(acc.accountId);
+            if (!account) return;
+            return (
+              <HoverOrTap
+                key={acc.accountId}
+                trigger={
                   <img
                     src={account.avatarUrl}
                     alt={`${account.name}'s avatar`}
                     width={35}
                     height={35}
-                    className="rounded-full"
+                    className="ring-card-foreground/20 rounded-full ring"
                   />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{account.name}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          );
-        })}
+                }
+              >
+                <p>{account.name}</p>
+              </HoverOrTap>
+            );
+          })}
+        </div>
       </div>
       <div className="flex flex-col items-end">
-        <p className="font-medium text-lg text-card-foreground/70">
+        <p className="text-card-foreground/70 text-lg font-medium">
           {item.points_possible ? ` ${item.points_possible} pts` : ""}
         </p>
-        <p className="text-sm text-card-foreground/50">
+        <p className="text-card-foreground/50 text-sm">
           Due:{" "}
           {item.due_at
             ? new Date(item.due_at).toLocaleString("en-US", {
@@ -94,29 +91,6 @@ export function AssignmentCard({
             : " No due date"}
         </p>
       </div>
-
-      {/* {unsubmittedAccounts.map((acc) => {
-        const account = accountMap.get(acc.accountId);
-        if (!account) return;
-        return (
-          <div key={account.id} className="flex">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <img
-                  src={account.avatarUrl}
-                  alt={`${account.name}'s avatar`}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{account.name}</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        );
-      })} */}
     </div>
   );
 }

@@ -194,7 +194,7 @@ export function AssignmentDashboardClient({ initialData }: Props) {
           </ul>
 
           <Link
-            className="bg-white/20 border-white/10 border shadow-md text-destructive-foreground rounded-xl px-4 py-2 tracking-tight font-semibold dark:bg-white/5 dark:hover:bg-white/10 hover:bg-white/40  transition"
+            className="bg-destructive/70 border-white/10 border shadow-md text-destructive-foreground rounded-xl px-4 py-2 tracking-tight font-semibold hover:bg-destructive/80  transition"
             href="/manage-accounts"
           >
             Manage Accounts
