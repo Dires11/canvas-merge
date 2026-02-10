@@ -51,7 +51,7 @@ export function AssignmentCard({
             {item.title}
           </Link>
         </div>
-        <div className="flex space-x-2">
+        <div className="scrollbar-hide flex min-w-0 space-x-2 overflow-x-auto">
           {unsubmittedAccounts.map((acc) => {
             const account = accountMap.get(acc.accountId);
             if (!account) return;
