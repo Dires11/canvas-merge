@@ -7,6 +7,7 @@ import { NextResponse, type NextRequest } from "next/server";
  * Next.js 16 Proxy Function
  * Runs on Node.js only. Used for authentication checks and redirects.
  */
+
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -14,6 +15,9 @@ export default async function proxy(request: NextRequest) {
   // This helps auth.getSession() retrieve the __Secure-neon-auth.session_token
   await headers();
   const { data: session } = await auth.getSession();
+
+  console.log("SESSION:", session);
+  console.log("PATHNAME:", pathname);
 
   // 2. REDIRECT AUTHENTICATED USERS: If logged in and hitting an auth page
   if (
