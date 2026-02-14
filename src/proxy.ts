@@ -33,10 +33,5 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/account/:path*",
-    "/manage-accounts/:path*",
-    "/auth/:path*", // Required to trigger the check on sign-in pages
-    "/",
-  ],
+  matcher: ["/account/:path*", "/manage-accounts/:path*", "/"],
 };
