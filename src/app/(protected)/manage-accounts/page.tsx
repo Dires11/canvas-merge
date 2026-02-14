@@ -22,8 +22,7 @@ export default function ManageAccountsPage() {
 
   async function load() {
     setAccountsLoading(true);
-    const resp = await fetch("/api/accounts");
-    const result = await resp.json();
+    const result = await loadAccounts();
     if (!result.ok) {
       setAccountsError(result.error);
     } else {
