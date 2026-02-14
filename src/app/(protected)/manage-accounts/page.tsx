@@ -22,7 +22,8 @@ export default function ManageAccountsPage() {
 
   async function load() {
     setAccountsLoading(true);
-    const result = await loadAccounts();
+    const resp = await fetch("/api/accounts");
+    const result = await resp.json();
     if (!result.ok) {
       setAccountsError(result.error);
     } else {
@@ -127,14 +128,14 @@ export default function ManageAccountsPage() {
   return (
     <>
       <div className="min-h-screen text-black dark:text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <main className="space-y-5">
-            <div className="flex justify-between items-center mb-5">
+            <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-semibold tracking-tight">
                 Linked Accounts
               </h2>
               <button
-                className="inline-flex items-center justify-center rounded-xl px-4 py-2 bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/25 hover:bg-primary-hover transition active:scale-[0.99]"
+                className="bg-primary text-primary-foreground shadow-primary/25 hover:bg-primary-hover inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium shadow-lg transition active:scale-[0.99]"
                 onClick={() => openAdd()}
               >
                 Add Account
@@ -172,32 +173,23 @@ export default function ManageAccountsPage() {
             )}
             {accountsLoading && !hasLoadedOnce && <p>Loading accounts…</p>}
             {accountsError && (
-              <p className="text-sm text-red-600 mb-4">{accountsError}</p>
+              <p className="mb-4 text-sm text-red-600">{accountsError}</p>
             )}
             {!accountsLoading &&
               hasLoadedOnce &&
               accounts.length === 0 &&
               !accountsError && (
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="mb-4 text-sm text-gray-600">
                   No linked Canvas accounts yet.
                 </p>
               )}
             {accounts.length > 0 && (
-              <div className="rounded-2xl border border-white/20 bg-background/50 p-4 shadow-sm backdrop-blur-xl dark:border-white/10">
+              <div className="bg-background/50 rounded-2xl border border-white/20 p-4 shadow-sm backdrop-blur-xl dark:border-white/10">
                 <ul className="space-y-4">
                   {accounts.map((account) => (
                     <li
                       key={account.id}
-                      className="
-                    rounded-2xl p-5
-                    border border-white/30 dark:border-white/10
-                    bg-card/30 dark:bg-white/5
-                    shadow-lg backdrop-blur-sm
-                    flex items-center justify-between gap-4
-                    transition
-                    hover:bg-white/50 hover:shadow-xl
-                    dark:hover:bg-white/10
-                  "
+                      className="bg-card/30 flex items-center justify-between gap-4 rounded-2xl border border-white/30 p-5 shadow-lg backdrop-blur-sm transition hover:bg-white/50 hover:shadow-xl dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
                     >
                       <div>
                         <h3 className="text-base font-semibold text-gray-900 dark:text-white">
@@ -214,33 +206,14 @@ export default function ManageAccountsPage() {
                       </div>
                       <div className="flex items-end gap-2">
                         <button
-                          className="
-                         inline-flex items-center gap-1.5
-                         rounded-full px-3 py-1.5 text-xs font-medium
-                         text-blue-700 dark:text-blue-300
-                         border border-blue-200/60 dark:border-blue-500/20
-                         bg-blue-50/40 dark:bg-blue-500/10
-                         backdrop-blur transition-all
-                         hover:bg-blue-100/70 hover:border-blue-300/70 hover:shadow-md
-                         dark:hover:bg-blue-500/20 dark:hover:border-blue-400/30
-                       "
+                          className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/40 px-3 py-1.5 text-xs font-medium text-blue-700 backdrop-blur transition-all hover:border-blue-300/70 hover:bg-blue-100/70 hover:shadow-md dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:border-blue-400/30 dark:hover:bg-blue-500/20"
                           onClick={() => openUpdate(account.id, account.domain)}
                         >
                           Update
                         </button>
 
                         <button
-                          className="
-                          inline-flex items-center gap-1.5
-                          rounded-full px-3 py-1.5 text-xs font-medium
-                          text-red-700 dark:text-red-300
-                          border border-red-200/60 dark:border-red-500/20
-                          bg-red-50/40 dark:bg-red-500/10
-                          backdrop-blur transition-all transform
-                          hover:bg-red-100/70 hover:border-red-300/70 hover:shadow-md 
-                          dark:hover:bg-red-500/20 dark:hover:border-red-400/30
-                          disabled:opacity-60 disabled:pointer-events-none
-                          "
+                          className="inline-flex transform items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/40 px-3 py-1.5 text-xs font-medium text-red-700 backdrop-blur transition-all hover:border-red-300/70 hover:bg-red-100/70 hover:shadow-md disabled:pointer-events-none disabled:opacity-60 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300 dark:hover:border-red-400/30 dark:hover:bg-red-500/20"
                           onClick={() => handleDelete(account.id)}
                           disabled={deletingIds.has(account.id)}
                         >
