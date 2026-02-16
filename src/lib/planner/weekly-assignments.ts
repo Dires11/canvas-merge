@@ -37,7 +37,7 @@ const perAccountPlannerCache = new LRUCache<
   PerAccountPlannerCacheEntry
 >({
   max: 2000,
-  ttl: 2 * 60 * 60 * 1000, // 2 hours
+  ttl: 6 * 60 * 60 * 1000, // 3 hours
   updateAgeOnGet: true,
 });
 
@@ -49,7 +49,7 @@ type MergedCacheEntry = {
 
 const mergedCache = new LRUCache<string, MergedCacheEntry>({
   max: 300,
-  ttl: 15 * 60 * 1000, // 15 minutes
+  ttl: 5 * 60 * 60 * 1000, // 2 hour
   updateAgeOnGet: true,
 });
 
@@ -122,12 +122,15 @@ function buildSignature(outcomes: AccountOutcome[]) {
 
 function getUTCWeekRange(timezone: string, baseDate: Date = new Date()) {
   const localDt = DateTime.fromJSDate(baseDate).setZone(timezone);
-  const startOfMondayLocal = localDt.set({ weekday: 1 }).startOf("day");
-  const nextMondayLocal = startOfMondayLocal.plus({ days: 7 });
+  const PreviousSaturday = localDt
+    .set({ weekday: 1 })
+    .minus({ days: 2 })
+    .startOf("day");
+  const sevenDays = localDt.plus({ days: 8 }).startOf("day");
 
   return {
-    startISO: startOfMondayLocal.toUTC().toISO() as string,
-    endISO: nextMondayLocal.toUTC().toISO() as string,
+    startISO: PreviousSaturday.toUTC().toISO() as string,
+    endISO: sevenDays.toUTC().toISO() as string,
   };
 }
 
