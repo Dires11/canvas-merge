@@ -385,7 +385,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   CanvasAccount: 'CanvasAccount',
-  UserSettings: 'UserSettings'
+  UserSettings: 'UserSettings',
+  CourseMetadata: 'CourseMetadata'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "canvasAccount" | "userSettings"
+    modelProps: "canvasAccount" | "userSettings" | "courseMetadata"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -553,6 +554,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CourseMetadata: {
+      payload: Prisma.$CourseMetadataPayload<ExtArgs>
+      fields: Prisma.CourseMetadataFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CourseMetadataFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CourseMetadataFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>
+        }
+        findFirst: {
+          args: Prisma.CourseMetadataFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CourseMetadataFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>
+        }
+        findMany: {
+          args: Prisma.CourseMetadataFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>[]
+        }
+        create: {
+          args: Prisma.CourseMetadataCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>
+        }
+        createMany: {
+          args: Prisma.CourseMetadataCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CourseMetadataCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>[]
+        }
+        delete: {
+          args: Prisma.CourseMetadataDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>
+        }
+        update: {
+          args: Prisma.CourseMetadataUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>
+        }
+        deleteMany: {
+          args: Prisma.CourseMetadataDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CourseMetadataUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CourseMetadataUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>[]
+        }
+        upsert: {
+          args: Prisma.CourseMetadataUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseMetadataPayload>
+        }
+        aggregate: {
+          args: Prisma.CourseMetadataAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCourseMetadata>
+        }
+        groupBy: {
+          args: Prisma.CourseMetadataGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourseMetadataGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CourseMetadataCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourseMetadataCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -616,6 +691,19 @@ export const UserSettingsScalarFieldEnum = {
 } as const
 
 export type UserSettingsScalarFieldEnum = (typeof UserSettingsScalarFieldEnum)[keyof typeof UserSettingsScalarFieldEnum]
+
+
+export const CourseMetadataScalarFieldEnum = {
+  courseId: 'courseId',
+  domain: 'domain',
+  userId: 'userId',
+  l: 'l',
+  c: 'c',
+  h: 'h',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourseMetadataScalarFieldEnum = (typeof CourseMetadataScalarFieldEnum)[keyof typeof CourseMetadataScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -800,6 +888,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   canvasAccount?: Prisma.CanvasAccountOmit
   userSettings?: Prisma.UserSettingsOmit
+  courseMetadata?: Prisma.CourseMetadataOmit
 }
 
 /* Types for Logging */

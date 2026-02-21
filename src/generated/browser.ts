@@ -27,3 +27,8 @@ export type CanvasAccount = Prisma.CanvasAccountModel
  * 
  */
 export type UserSettings = Prisma.UserSettingsModel
+/**
+ * Model CourseMetadata
+ * 
+ */
+export type CourseMetadata = Prisma.CourseMetadataModel

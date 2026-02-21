@@ -10,32 +10,34 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { HoverOrTap } from "./hover-or-tap";
+import { convertToDark } from "@/lib/colors/colors";
 
 export function AssignmentCard({
   item,
   merged,
   accountMap,
-  backgroundColor,
+  color,
 }: {
   item: MergedAssignment;
   merged: boolean;
   accountMap: Map<string, AccountSafeInfo>;
-  backgroundColor: string;
+  color: { l: number; c: number; h: number };
 }) {
-  const course = item.course_name.split(" ");
-  for (let word of course) {
-  }
-  const courseDisplayName =
-    course[0] + " " + course[1] + " " + course[course.length - 1];
   const unsubmittedAccounts = item.accountsNotSubmitted;
   if (unsubmittedAccounts.length == 0) {
     return;
   }
+  const dark = convertToDark(color);
 
   return (
     <div
-      className="bg-card/30 flex items-center justify-between gap-4 rounded-2xl border border-white/30 px-5 py-3 shadow-lg backdrop-blur-sm transition hover:bg-white/50 hover:shadow-xl dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
-      style={{ backgroundColor }}
+      className="flex items-center justify-between gap-4 rounded-2xl border bg-[oklch(var(--c-light)/0.7)] px-5 py-3 shadow-lg backdrop-blur-sm transition hover:shadow-xl dark:bg-[oklch(var(--c-dark)/0.7)]"
+      style={
+        {
+          "--c-light": `${color.l} ${color.c} ${color.h}`,
+          "--c-dark": `${dark.l} ${dark.c} ${dark.h}`,
+        } as React.CSSProperties
+      }
     >
       <div className="flex min-w-0 flex-col space-y-1.5">
         <div>

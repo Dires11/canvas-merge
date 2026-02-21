@@ -8,6 +8,6 @@ export default async function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await requireUser();
+  await requireUser();
   return <>{children}</>;
 }

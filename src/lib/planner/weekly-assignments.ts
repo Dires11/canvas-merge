@@ -303,6 +303,14 @@ export type WeeklyAssignmentsResult =
 
 export async function getWeeklyAssignmentsForUser(
   userId: string,
+  merge: true,
+): Promise<WeeklyAssignmentsMergedResponse>;
+export async function getWeeklyAssignmentsForUser(
+  userId: string,
+  merge: false,
+): Promise<WeeklyAssignmentsRawResponse>;
+export async function getWeeklyAssignmentsForUser(
+  userId: string,
   merge: boolean = true,
 ): Promise<WeeklyAssignmentsResult> {
   const allAccounts = await getUserCanvasAccounts(userId, true);

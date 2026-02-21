@@ -4,6 +4,8 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
+import { Moon, Sun, SunMoon } from "lucide-react";
+import { Button } from "./ui/button";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -11,13 +13,13 @@ export function Navbar() {
 
   return (
     <SignedIn>
-      <nav className="my-8 max-w-7xl mx-auto flex items-center justify-between rounded-2xl border border-white/20 bg-white/40 dark:bg-white/5 shadow-lg backdrop-blur-xl dark:border-white/10 px-4 py-3">
-        <div className="flex justify-between space-x-5 text-lg font-semibold tracking-tight text-foreground/80">
+      <nav className="mx-auto my-8 flex max-w-7xl items-center justify-between rounded-2xl border border-white/20 bg-white/40 px-4 py-3 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+        <div className="text-foreground/80 flex justify-between space-x-5 text-lg font-semibold tracking-tight">
           <Link
-            href="/"
+            href="/dashboard"
             className={clsx(
               "hover:text-foreground",
-              pathname === "/" && "text-foreground",
+              pathname === "/dashboard" && "text-foreground",
             )}
           >
             Dashboard
@@ -32,10 +34,19 @@ export function Navbar() {
             Manage Accounts
           </Link>
         </div>
-        <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-          Change Theme
-        </button>
-        <UserButton size="icon" />
+        <div className="flex items-center space-x-5">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="hover:cursor-pointer"
+          >
+            {theme === "dark" ? (
+              <Moon className="text-foreground/80 hover:text-foreground size-5" />
+            ) : (
+              <Sun className="text-foreground/80 hover:text-foreground size-5" />
+            )}
+          </button>
+          <UserButton size="icon" />
+        </div>
       </nav>
     </SignedIn>
   );

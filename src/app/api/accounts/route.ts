@@ -92,21 +92,7 @@ export async function POST(req: NextRequest) {
 
   let { domain, token } = result.data;
 
-  // // 3) Validate URL
-  // try {
-  //   domain = DomainSchema.parse(domain);
-  // } catch (e: any) {
-  //   return NextResponse.json(
-  //     {
-  //       error: "Invalid input 1",
-  //       fieldErrors: { domain: e.message ?? "Invalid domain." },
-  //     },
-  //     { status: 400 },
-  //   );
-  // }
-
   // 4) Test the connection with CANVAS API
-  console.log(`Testing connection to Canvas at ${domain}...`);
   const testConnection = await getAccountInfo({ domain, token });
   if (!testConnection.ok) {
     console.error("Connection test failed:", testConnection);

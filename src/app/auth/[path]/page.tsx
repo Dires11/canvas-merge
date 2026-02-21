@@ -12,7 +12,7 @@ export default async function AuthPage({
   const { path } = await params;
 
   const { data: session } = await auth.getSession();
-  console.log("Inside /auth pathname- ", path);
+  console.log("Inside /auth pathname- ", path, "SESSION", session);
   if (session && path != "sign-out") {
     redirect("/");
   }

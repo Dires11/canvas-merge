@@ -4,14 +4,18 @@ import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
 import type {
-  MergedItemsByDomain,
   AccountSafeInfo,
   MergedAssignment,
+  UserCourse,
 } from "@/lib/types";
-import { TriangleAlert } from "lucide-react";
+import { TriangleAlert, ChevronDown } from "lucide-react";
 
-import { useTheme } from "next-themes";
-import { getBuiltInPaletteCss } from "@/lib/colors/get-palette";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
 import type { WeeklyAssignmentsMergedResponse } from "@/lib/planner/weekly-assignments";
 import Link from "next/link";
 
@@ -74,9 +78,10 @@ function groupAssignmentsByDueDateLocal(assignments: MergedAssignment[]) {
 
 type Props = {
   initialData?: WeeklyAssignmentsMergedResponse | null;
+  courses: UserCourse[];
 };
 
-export function AssignmentDashboardClient({ initialData }: Props) {
+export function AssignmentDashboardClient({ initialData, courses }: Props) {
   const { data, error, isLoading, isValidating, mutate } = useSWR(
     KEY,
     fetcher,
@@ -118,6 +123,14 @@ export function AssignmentDashboardClient({ initialData }: Props) {
 
     return new Map(accounts.map((acc) => [acc.id, acc]));
   }, [data.signature]);
+  const coursesMap = useMemo<Map<string, UserCourse>>(() => {
+    console.log("Building courses map");
+    const map = new Map<string, UserCourse>();
+    for (const course of courses) {
+      map.set(`${course.domain}|${course.id}`, course);
+    }
+    return map;
+  }, [courses]);
 
   const dayKey = useDayKey();
 
@@ -136,24 +149,10 @@ export function AssignmentDashboardClient({ initialData }: Props) {
     return result;
   }, [data.signature, dayKey]);
 
-  const { theme } = useTheme();
-
-  const vars = useMemo(() => {
-    const colors = getBuiltInPaletteCss(
-      "builtin:bright",
-      theme === "dark" ? "dark" : "light",
-    );
-    const style: Record<string, string> = {};
-    colors.forEach((c, i) => {
-      style[`--course-${String(i + 1)}`] = c;
-    });
-    return style;
-  }, [theme]);
-
   let assignmentIndex = 0;
 
   return (
-    <div className="flex flex-col gap-4 text-foreground" style={vars}>
+    <div className="text-foreground flex flex-col gap-4">
       <div className="flex items-center gap-3">
         <button
           disabled={isValidating}
@@ -166,9 +165,9 @@ export function AssignmentDashboardClient({ initialData }: Props) {
       </div>
 
       {accountsWithErrors.length > 0 && (
-        <div className="rounded-2xl bg-destructive/20 border-white/20  border px-4 py-2 text-destructive flex justify-between items-center shadow-lg hover:shadow-xl">
+        <div className="bg-destructive/20 text-destructive flex items-center justify-between rounded-2xl border border-white/20 px-4 py-2 shadow-lg hover:shadow-xl">
           <ul>
-            <div className="flex items-center gap-1.5 font-bold ">
+            <div className="flex items-center gap-1.5 font-bold">
               <TriangleAlert className="h-5 w-5" />
               <span>Accounts needing attention</span>
             </div>
@@ -194,7 +193,7 @@ export function AssignmentDashboardClient({ initialData }: Props) {
           </ul>
 
           <Link
-            className="bg-destructive/70 border-white/10 border shadow-md text-destructive-foreground rounded-xl px-4 py-2 tracking-tight font-semibold hover:bg-destructive/80  transition"
+            className="bg-destructive/70 text-destructive-foreground hover:bg-destructive/80 rounded-xl border border-white/10 px-4 py-2 font-semibold tracking-tight shadow-md transition"
             href="/manage-accounts"
           >
             Manage Accounts
@@ -203,36 +202,41 @@ export function AssignmentDashboardClient({ initialData }: Props) {
       )}
 
       {Object.entries(groupedByDomain).map(([domain, groups]) => (
-        <div
-          className="rounded-2xl border border-white/20 bg-background/50 p-4 shadow-sm backdrop-blur-xl dark:border-white/10 flex flex-col gap-2"
+        <Collapsible
+          defaultOpen
           key={domain}
+          className="bg-background/50 flex w-full flex-col gap-2 rounded-2xl border border-white/20 p-4 shadow-sm backdrop-blur-xl dark:border-white/10"
         >
-          <h1 className="text-xl font-bold">{domain}</h1>
-          {Object.entries(groups).map(([label, assignments]) => (
-            <div key={label} className="mt-1">
-              <h2 className="text-lg font-semibold">{label}</h2>
+          <CollapsibleTrigger className="group flex items-center justify-between text-lg font-bold hover:cursor-pointer">
+            {domain}
+            <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
+            {Object.entries(groups).map(([label, assignments]) => (
+              <div key={label} className="mt-1">
+                <h2 className="text-lg font-semibold">{label}</h2>
 
-              <div className="flex flex-col gap-1.5">
-                {assignments.map((assignment) => {
-                  assignmentIndex++;
-                  return (
-                    <AssignmentCard
-                      key={`${assignment.course_id}:${assignment.id}`}
-                      item={assignment}
-                      backgroundColor={
-                        "oklch(from var(--course-" +
-                        String((assignmentIndex % 30) + 1) +
-                        ") l c h / 0.40)"
-                      }
-                      accountMap={accountMap}
-                      merged={true}
-                    />
-                  );
-                })}
+                <div className="flex flex-col gap-1.5">
+                  {assignments.map((assignment) => {
+                    assignmentIndex++;
+                    return (
+                      <AssignmentCard
+                        key={`${assignment.course_id}:${assignment.id}`}
+                        item={assignment}
+                        color={
+                          coursesMap.get(`${domain}|${assignment.course_id}`)
+                            ?.color ?? { l: 0.7, c: 0.1, h: 250 }
+                        }
+                        accountMap={accountMap}
+                        merged={true}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </CollapsibleContent>
+        </Collapsible>
       ))}
     </div>
   );

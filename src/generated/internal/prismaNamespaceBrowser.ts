@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   CanvasAccount: 'CanvasAccount',
-  UserSettings: 'UserSettings'
+  UserSettings: 'UserSettings',
+  CourseMetadata: 'CourseMetadata'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -95,6 +96,19 @@ export const UserSettingsScalarFieldEnum = {
 } as const
 
 export type UserSettingsScalarFieldEnum = (typeof UserSettingsScalarFieldEnum)[keyof typeof UserSettingsScalarFieldEnum]
+
+
+export const CourseMetadataScalarFieldEnum = {
+  courseId: 'courseId',
+  domain: 'domain',
+  userId: 'userId',
+  l: 'l',
+  c: 'c',
+  h: 'h',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourseMetadataScalarFieldEnum = (typeof CourseMetadataScalarFieldEnum)[keyof typeof CourseMetadataScalarFieldEnum]
 
 
 export const SortOrder = {

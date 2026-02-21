@@ -1,4 +1,4 @@
-import type { Account, AccountInfo } from "@/lib/types";
+import type { Account, AccountInfo, Course } from "@/lib/types";
 import { canvasFetchJson, CanvasResult } from "./fetch";
 
 type CanvasUserSelf = {
@@ -55,8 +55,8 @@ export async function getAccountInfo(
 
 export async function getAccountCourses(
   account: Account,
-): Promise<CanvasResult<any[]>> {
-  const res = await canvasFetchJson<any[]>(
+): Promise<CanvasResult<Course[]>> {
+  const res = await canvasFetchJson<Course[]>(
     account.domain,
     "/api/v1/users/self/courses",
     {
@@ -72,6 +72,20 @@ export async function getAccountCourses(
   if (!res.ok) {
     return { ok: false, status: res.status, error: res.error };
   }
-
-  return { ok: true, status: res.status, data: res.data };
+  const raw = res.data;
+  return {
+    ok: true,
+    status: res.status,
+    data: raw.map((course) => ({
+      id: course.id,
+      name: course.name,
+      course_code: course.course_code,
+      term: {
+        id: course.term.id,
+        name: course.term.name,
+        start_at: course.term.start_at,
+        end_at: course.term.end_at,
+      },
+    })),
+  };
 }

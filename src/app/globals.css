@@ -59,7 +59,7 @@
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
+  --accent: oklch(0.9 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.57 0.215 27.325);
   --destructive-foreground: oklch(0.985 0 0);
@@ -81,6 +81,8 @@
   --sidebar-ring: oklch(0.708 0 0);
   --background: oklch(0.98 0.01 250);
   --foreground: oklch(0.145 0 0);
+  --course-lightness: 0.6;
+  --course-chroma: 0.15;
 }
 
 .dark {
@@ -95,7 +97,7 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent:oklch(0.6 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.49 0.145 27.325);
   --border: oklch(1 0 0 / 10%);
@@ -114,6 +116,8 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --course-lightness: 0.5;
+  --course-chroma: 0.15;
 }
 
 @layer base {
@@ -124,31 +128,57 @@
     @apply bg-background text-foreground;
   }
 
-    /* Hide scrollbar but keep scrolling */
+  /* Hide scrollbar but keep scrolling */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE & Edge */
-    scrollbar-width: none;     /* Firefox */
+    -ms-overflow-style: none; /* IE & Edge */
+    scrollbar-width: none; /* Firefox */
   }
 
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;             /* Chrome, Safari */
+    display: none; /* Chrome, Safari */
+  }
+
+  /* Target the sidebar container */
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 6px; /* Very thin for a sleek look */
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    @apply bg-foreground/10 border-foreground/5 rounded-lg border;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    @apply bg-foreground/20;
   }
 }
 
-/* @layer components {
-  input.cm-input {
-    @apply w-full rounded-xl px-4 py-3
-      bg-white/70
-      text-gray-900 placeholder-gray-500
-      border border-white/60
-      focus:outline-none focus:ring-2 focus:ring-blue-500/40
-      read-only:bg-muted
-      read-only:text-muted-foreground
-      read-only:cursor-not-allowed
-      read-only:focus:ring-0;
+@keyframes collapsible-down {
+  from {
+    height: 0;
   }
-  .cm-error {
-    @apply border-red-300
-    focus:ring-red-500/30;
+  to {
+    height: var(--radix-collapsible-content-height);
   }
-} */
+}
+
+@keyframes collapsible-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@layer utilities {
+  .animate-collapsible-down {
+    animation: collapsible-down 50ms ease-out;
+  }
+  .animate-collapsible-up {
+    animation: collapsible-up 50ms ease-out;
+  }
+}

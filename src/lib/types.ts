@@ -80,3 +80,21 @@ export type MergedItems = {
 };
 
 export type MergedItemsByDomain = { [key: string]: MergedItems };
+
+export type Course = {
+  id: number;
+  name: string;
+  course_code: string;
+  term: {
+    id: number;
+    name: string;
+    start_at: string | null;
+    end_at: string | null;
+  };
+};
+
+export type UserCourse = Course & {
+  domain: string;
+  accountIds: string[];
+  color: { l: number; c: number; h: number };
+};
