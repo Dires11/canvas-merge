@@ -32,3 +32,19 @@ model UserSettings {
 
   @@schema("public")
 }
+
+model CourseMetadata {
+  courseId Int
+  domain   String
+  userId   String
+
+  l Float
+  c Float
+  h Float
+
+  updatedAt DateTime @updatedAt
+
+  // The unique "fingerprint" for a course setting
+  @@id([courseId, domain, userId])
+  @@schema("public")
+}
