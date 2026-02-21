@@ -1,4 +1,3 @@
-// app/api/planner/weekly-assignments/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { requireUserApi } from "@/lib/auth-server";
 import { getWeeklyAssignmentsForUser } from "@/lib/planner/weekly-assignments";
@@ -18,7 +17,11 @@ export async function GET(req: NextRequest) {
         userId: user.id,
         merge,
       });
-      return await getWeeklyAssignmentsForUser(user.id, merge);
+      if (merge) {
+        return await getWeeklyAssignmentsForUser(user.id, true);
+      } else {
+        return await getWeeklyAssignmentsForUser(user.id, false);
+      }
     });
 
     return NextResponse.json(data, {

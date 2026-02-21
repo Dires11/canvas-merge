@@ -1,14 +1,11 @@
 import { getUserCanvasAccounts } from "@/data/canvas-account";
 import { getAccountCourses } from "../canvas";
 import { decryptToken } from "../crypto";
-import { Course, UserCourse } from "../types";
-import { Redis } from "@upstash/redis";
+import { UserCourse } from "../types";
 import { prisma } from "@/lib/prisma";
 import { resolveCourseColor } from "../colors/colors";
 import { deleteCourseMetadataMany } from "@/data/course-metadata";
 import { after } from "next/server";
-
-export const redis = Redis.fromEnv();
 
 export async function getUserCourses(userId: string, accountIds?: string[]) {
   const [accounts, dbMetadata] = await Promise.all([
