@@ -22,3 +22,11 @@ export async function requireUserApi() {
   }
   return session.user;
 }
+
+export async function requireUserAction() {
+  const { data: session } = await auth.getSession();
+  if (!session) {
+    throw new Error("UNAUTHORIZED");
+  }
+  return session.user;
+}

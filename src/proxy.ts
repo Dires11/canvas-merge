@@ -8,6 +8,17 @@ import { NextResponse, type NextRequest } from "next/server";
  */
 
 export default async function proxy(request: NextRequest) {
+  // ✅ 1) Bypass Next.js Server Actions (critical)
+  if (request.headers.has("next-action")) {
+    return NextResponse.next();
+  }
+
+  // ✅ 2) Bypass Next internals (safe)
+  const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/_next")) {
+    return NextResponse.next();
+  }
+
   return auth.middleware({
     loginUrl: "/auth/sign-in",
   })(request);

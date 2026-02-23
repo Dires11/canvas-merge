@@ -8,6 +8,7 @@ import { AssignmentDashboardClient } from "@/components/assignment-dashboard-cli
 import { updateCourseColor } from "@/app/actions/course-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseTab } from "./course/course-tab";
+import { useRouter } from "next/navigation";
 
 export function DashboardShell({
   initialCourses,
@@ -17,12 +18,15 @@ export function DashboardShell({
   assignmentData: WeeklyAssignmentsMergedResponse | null;
 }) {
   const [courses, setCourses] = useState<UserCourse[]>(initialCourses);
+  const router = useRouter();
 
   const handleColorChange = async (
     courseId: number,
     domain: string,
     newColor: any,
   ) => {
+    const prevCourses = courses;
+
     // optimistic UI
     setCourses((prev) =>
       prev.map((c) =>
@@ -33,7 +37,17 @@ export function DashboardShell({
     );
 
     // persist
-    await updateCourseColor(courseId, domain, newColor);
+    try {
+      await updateCourseColor(courseId, domain, newColor);
+    } catch (error: any) {
+      if (error?.message?.includes("UNAUTHORIZED")) {
+        router.push("/auth/sign-in");
+        return;
+      }
+
+      console.error("Failed to update course color:", error);
+      setCourses(prevCourses); // rollback
+    }
   };
 
   return (
