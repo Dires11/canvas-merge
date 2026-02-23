@@ -274,10 +274,19 @@ function mergeItemsByDomain(itemsByDomain: ItemsByType[]): MergedItems {
   };
 
   merged.assignments.sort((a, b) => {
-    if (a.due_at && b.due_at) return +new Date(a.due_at) - +new Date(b.due_at);
-    if (a.due_at) return -1;
-    if (b.due_at) return 1;
-    return 0;
+    const aDate = a.due_at ? new Date(a.due_at).getTime() : Infinity;
+    const bDate = b.due_at ? new Date(b.due_at).getTime() : Infinity;
+
+    // 1️⃣ Sort by date first
+    if (aDate !== bDate) {
+      return aDate - bDate;
+    }
+
+    // 2️⃣ If same date, sort by name
+    const aName = a.title ?? "";
+    const bName = b.title ?? "";
+
+    return aName.localeCompare(bName);
   });
 
   return merged;
