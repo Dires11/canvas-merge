@@ -25,7 +25,7 @@ export function CourseList({
         return (
           <li
             key={course.id}
-            className="text-foreground/90 relative mb-2 rounded-lg bg-[oklch(var(--c-light)/0.7)] p-2 text-sm shadow-sm hover:bg-[oklch(var(--c-light)/0.8)] hover:shadow-md dark:bg-[oklch(var(--c-dark)/0.7)] dark:hover:bg-[oklch(var(--c-dark)/0.9)]"
+            className="glass-border text-foreground/90 relative mb-2 flex overflow-hidden rounded-lg bg-[oklch(var(--c-light)/0.1)] pr-5 text-sm shadow-sm dark:bg-[oklch(var(--c-dark)/0.1)]"
             style={
               {
                 "--c-light": `${course.color.l} ${course.color.c} ${course.color.h}`,
@@ -33,18 +33,24 @@ export function CourseList({
               } as React.CSSProperties
             }
           >
-            <p className="w-5/6">{course.name}</p>
+            <div className="w-3 shrink-0 self-stretch bg-[oklch(var(--c-light))] dark:bg-[oklch(var(--c-dark))]"></div>
+            <div className="px-2 pt-1 pb-5">
+              <p className="text-[0.65rem] tracking-tight opacity-60 md:text-sm">
+                {course.domain.split("//")[1]}
+              </p>
+              <p className="text-xs md:text-sm">{course.name}</p>
+            </div>
             <Popover>
               <PopoverTrigger asChild>
                 <button
-                  className="absolute top-1 right-1 rounded-full bg-white/20 p-1 hover:cursor-pointer hover:bg-white/30"
+                  className="bg-glass/10 hover:bg-glass/20 absolute top-1 right-1 rounded-full p-1 hover:cursor-pointer"
                   title="Change Color"
                 >
-                  <Palette className="h-4 w-4" />
+                  <Palette className="size-4" />
                 </button>
               </PopoverTrigger>
               <PopoverContent
-                className="grid w-fit grid-cols-8 gap-3"
+                className="bg-background grid w-fit grid-cols-8 gap-3"
                 align="start"
               >
                 {COURSE_PALETTE_40.map((color) => {

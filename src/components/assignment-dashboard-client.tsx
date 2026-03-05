@@ -63,7 +63,6 @@ function getDueLabelLocal(due_at: string | null): string {
   if (diffDays < 0) return "Overdue";
   if (diffDays === 0) return "Due today";
   if (diffDays === 1) return "Due tomorrow";
-  if (diffDays === 2) return "Due in 2 days";
   return `Due in ${diffDays} days`;
 }
 
@@ -205,16 +204,16 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
         <Collapsible
           defaultOpen
           key={domain}
-          className="bg-background/50 flex w-full flex-col gap-2 rounded-2xl border border-white/20 p-4 shadow-sm backdrop-blur-xl dark:border-white/10"
+          className="bg-glass/5 glass-border flex w-full flex-col gap-2 rounded-2xl p-4 shadow-sm"
         >
-          <CollapsibleTrigger className="group flex items-center justify-between text-lg font-bold hover:cursor-pointer">
+          <CollapsibleTrigger className="group flex items-center justify-between text-lg tracking-tight hover:cursor-pointer">
             {domain}
             <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
             {Object.entries(groups).map(([label, assignments]) => (
               <div key={label} className="mt-1">
-                <h2 className="text-lg font-semibold">{label}</h2>
+                <h2 className="text-lg tracking-tight">{label}</h2>
 
                 <div className="flex flex-col gap-1.5">
                   {assignments.map((assignment) => {

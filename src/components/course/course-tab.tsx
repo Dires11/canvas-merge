@@ -1,5 +1,6 @@
 "use client";
 import type { UserCourse } from "../../lib/types";
+import { GlassContainer } from "../glass-container";
 import { CourseList } from "./course-list";
 export function CourseTab({
   courses,
@@ -9,8 +10,8 @@ export function CourseTab({
   onColorChange: (courseId: number, domain: string, newColor: any) => void;
 }) {
   return (
-    <div className="px-2">
+    <GlassContainer>
       <CourseList courses={courses} onColorChange={onColorChange} />
-    </div>
+    </GlassContainer>
   );
 }

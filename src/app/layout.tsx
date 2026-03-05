@@ -39,10 +39,8 @@ export default function RootLayout({
           redirectTo="/dashboard"
           emailOTP
           social={{ providers: ["google"] }}
-          // defaultTheme="light"
         >
           <div className="fixed inset-0 -z-10 bg-linear-to-br from-slate-50 via-sky-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
-          <div className="[background:radial-gradient(circle_at_20%_20%,rgb(152, 14, 14),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(0, 4, 255, 0.3),transparent_40%),radial-gradient(circle_at_50%_80%,rgba(236,72,153,0.18),transparent_45%)] fixed inset-0 -z-10 opacity-30" />
           <SyncTimezone />
           <header>
             <Navbar />
