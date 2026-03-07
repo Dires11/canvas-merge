@@ -4,7 +4,7 @@ import type {
   AccountSafeInfo,
 } from "@/lib/types";
 import Link from "next/link";
-import { HoverOrTap } from "./hover-or-tap";
+import { HoverOrTap } from "../hover-or-tap";
 import { convertToDark } from "@/lib/colors/colors";
 import {
   NotebookPen,

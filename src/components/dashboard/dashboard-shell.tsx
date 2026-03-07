@@ -4,10 +4,10 @@ import { useState } from "react";
 import type { UserCourse } from "@/lib/types";
 import type { WeeklyAssignmentsMergedResponse } from "@/lib/planner/weekly-assignments";
 import { CourseSidebar } from "@/components/course/course-sidebar";
-import { AssignmentDashboardClient } from "@/components/assignment-dashboard-client";
+import { AssignmentDashboardClient } from "@/components/assignment/assignment-dashboard-client";
 import { updateCourseColor } from "@/app/actions/course-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseTab } from "./course/course-tab";
+import { CourseTab } from "../course/course-tab";
 import { useRouter } from "next/navigation";
 
 export function DashboardShell({
@@ -79,7 +79,6 @@ export function DashboardShell({
       {/* ✅ Desktop: Sidebar + Assignments */}
       <div className="hidden min-h-screen grid-cols-[320px_minmax(0,1fr)] gap-4 p-4 md:grid">
         <CourseSidebar courses={courses} onColorChange={handleColorChange} />
-
         <main className="min-w-0">
           <div className="mx-auto w-full max-w-4xl">
             <AssignmentDashboardClient

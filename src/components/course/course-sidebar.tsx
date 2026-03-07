@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 import type { UserCourse } from "../../lib/types";
 import { GlassContainer } from "../glass-container";
 import { CourseList } from "./course-list";

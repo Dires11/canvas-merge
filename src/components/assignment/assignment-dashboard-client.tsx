@@ -18,6 +18,7 @@ import {
 
 import type { WeeklyAssignmentsMergedResponse } from "@/lib/planner/weekly-assignments";
 import Link from "next/link";
+import { GlassContainer } from "../glass-container";
 
 const KEY = "/api/planner/weekly-assignments?merge=true";
 
@@ -87,6 +88,7 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
     {
       fallbackData: initialData ?? undefined, // instant render
       revalidateOnFocus: true,
+      revalidateIfStale: false,
       revalidateOnReconnect: true,
       dedupingInterval: 10_000,
       keepPreviousData: true,
@@ -201,41 +203,43 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
       )}
 
       {Object.entries(groupedByDomain).map(([domain, groups]) => (
-        <Collapsible
-          defaultOpen
-          key={domain}
-          className="bg-glass/5 glass-border flex w-full flex-col gap-2 rounded-2xl p-4 shadow-sm"
-        >
-          <CollapsibleTrigger className="group flex items-center justify-between text-lg tracking-tight hover:cursor-pointer">
-            {domain}
-            <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
-          </CollapsibleTrigger>
-          <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
-            {Object.entries(groups).map(([label, assignments]) => (
-              <div key={label} className="mt-1">
-                <h2 className="text-lg tracking-tight">{label}</h2>
+        <GlassContainer key={domain} className="w-full">
+          <Collapsible
+            defaultOpen
+            key={domain}
+            className="flex w-full flex-col gap-2 rounded-2xl"
+          >
+            <CollapsibleTrigger className="group flex items-center justify-between text-lg tracking-tight hover:cursor-pointer">
+              {domain}
+              <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
+              {Object.entries(groups).map(([label, assignments]) => (
+                <div key={label} className="mt-1">
+                  <h2 className="text-lg tracking-tight">{label}</h2>
 
-                <div className="flex flex-col gap-1.5">
-                  {assignments.map((assignment) => {
-                    assignmentIndex++;
-                    return (
-                      <AssignmentCard
-                        key={`${assignment.course_id}:${assignment.id}`}
-                        item={assignment}
-                        color={
-                          coursesMap.get(`${domain}|${assignment.course_id}`)
-                            ?.color ?? { l: 0.7, c: 0.1, h: 250 }
-                        }
-                        accountMap={accountMap}
-                        merged={true}
-                      />
-                    );
-                  })}
+                  <div className="flex flex-col gap-1.5">
+                    {assignments.map((assignment) => {
+                      assignmentIndex++;
+                      return (
+                        <AssignmentCard
+                          key={`${assignment.course_id}:${assignment.id}`}
+                          item={assignment}
+                          color={
+                            coursesMap.get(`${domain}|${assignment.course_id}`)
+                              ?.color ?? { l: 0.7, c: 0.1, h: 250 }
+                          }
+                          accountMap={accountMap}
+                          merged={true}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </CollapsibleContent>
-        </Collapsible>
+              ))}
+            </CollapsibleContent>
+          </Collapsible>
+        </GlassContainer>
       ))}
     </div>
   );

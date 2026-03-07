@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
 export function GlassContainer({
   children,
@@ -9,7 +9,7 @@ export function GlassContainer({
 }) {
   return (
     <div
-      className={clsx(
+      className={cn(
         "glass-border bg-glass/5 rounded-2xl p-4 shadow-sm",
         className,
       )}

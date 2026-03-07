@@ -1,4 +1,4 @@
-import { DashboardShell } from "@/components/dashboard-shell";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { requireUser } from "@/lib/auth-server";
 import { getUserCourses } from "@/lib/planner/user-courses";
 import { getWeeklyAssignmentsForUser } from "@/lib/planner/weekly-assignments";

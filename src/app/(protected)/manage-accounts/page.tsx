@@ -18,9 +18,6 @@ export default function ManageAccountsPage() {
 
   const [modal, setModal] = useState<ModalState>({ open: false });
 
-  // const [manageAccountFormOpen, setManageAccountFormOpen] = useState(false);
-  // const [domainUpdate, setDomainUpdate] = useState(null);
-
   async function load() {
     setAccountsLoading(true);
     const result = await loadAccounts();
