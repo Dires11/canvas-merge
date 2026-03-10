@@ -9,6 +9,7 @@ import { updateCourseColor } from "@/app/actions/course-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseTab } from "../course/course-tab";
 import { useRouter } from "next/navigation";
+import { GlassContainer } from "../glass-container";
 
 export function DashboardShell({
   initialCourses,
@@ -55,15 +56,19 @@ export function DashboardShell({
       {/* ✅ Mobile: Tabs */}
       <div className="p-4 md:hidden">
         <Tabs defaultValue="assignments" className="w-full">
-          <TabsList className="mb-4 w-full" variant="line">
-            <TabsTrigger value="courses" className="flex-1">
-              Courses
-            </TabsTrigger>
-            <TabsTrigger value="assignments" className="flex-1">
-              Assignments
-            </TabsTrigger>
-          </TabsList>
-
+          <GlassContainer className="mb-4 w-full p-0">
+            <TabsList className="w-full bg-inherit">
+              <TabsTrigger
+                value="courses"
+                className=":bg-red-500 flex-1 rounded-lg border-0"
+              >
+                Courses
+              </TabsTrigger>
+              <TabsTrigger value="assignments" className="flex-1 border-0">
+                Assignments
+              </TabsTrigger>
+            </TabsList>
+          </GlassContainer>
           <TabsContent value="courses" className="min-w-0">
             <CourseTab courses={courses} onColorChange={handleColorChange} />
           </TabsContent>

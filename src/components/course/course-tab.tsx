@@ -10,7 +10,7 @@ export function CourseTab({
   onColorChange: (courseId: number, domain: string, newColor: any) => void;
 }) {
   return (
-    <GlassContainer>
+    <GlassContainer className="mt-11">
       <CourseList courses={courses} onColorChange={onColorChange} />
     </GlassContainer>
   );

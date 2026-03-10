@@ -34,11 +34,11 @@ export function CourseList({
             }
           >
             <div className="w-3 shrink-0 self-stretch bg-[oklch(var(--c-light))] dark:bg-[oklch(var(--c-dark))]"></div>
-            <div className="px-2 pt-1 pb-5">
-              <p className="text-[0.65rem] tracking-tight opacity-60 md:text-sm">
+            <div className="min-h-28 px-2 pt-1 pb-5 md:min-h-22">
+              <p className="racking-tight text-sm opacity-60">
                 {course.domain.split("//")[1]}
               </p>
-              <p className="text-xs md:text-sm">{course.name}</p>
+              <p className="text-base md:text-sm">{course.name}</p>
             </div>
             <Popover>
               <PopoverTrigger asChild>
