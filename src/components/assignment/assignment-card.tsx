@@ -13,6 +13,35 @@ import {
   ListTodo,
   type LucideIcon,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ClockAlert } from "lucide-react";
+
+function DueLabel({
+  dueDate,
+  isDueAtMidnight,
+  className,
+}: {
+  dueDate: string | null;
+  isDueAtMidnight: boolean;
+  className?: string;
+}) {
+  return (
+    <p
+      className={cn(
+        "text-card-foreground/50 flex items-center gap-1 text-xs tracking-tight md:text-sm",
+        className,
+      )}
+    >
+      <span>Due: {dueDate}</span>
+
+      {!isDueAtMidnight && (
+        <HoverOrTap trigger={<ClockAlert className="size-4 text-red-400" />}>
+          <span>Not due at midnight.</span>
+        </HoverOrTap>
+      )}
+    </p>
+  );
+}
 
 export function AssignmentCard({
   item,
@@ -33,6 +62,23 @@ export function AssignmentCard({
 
   const IconComponent = IconMap[item.type] || ListTodo;
   const unsubmittedAccounts = item.accountsNotSubmitted;
+  let dueDate = null;
+  let isDueAtMidnight = false;
+
+  if (item.due_at) {
+    const date = new Date(item.due_at);
+
+    dueDate = date.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    isDueAtMidnight = date.getHours() === 23 && date.getMinutes() === 59;
+  }
+
   if (unsubmittedAccounts.length == 0) {
     return;
   }
@@ -68,19 +114,11 @@ export function AssignmentCard({
         >
           {item.title}
         </Link>
-        <p className="text-card-foreground/70 text-xs md:hidden">
-          {item.points_possible ? ` ${item.points_possible} pts | ` : ""}
-          Due:{" "}
-          {item.due_at
-            ? new Date(item.due_at).toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-              })
-            : " No due date"}
-        </p>
+        <DueLabel
+          dueDate={dueDate}
+          isDueAtMidnight={isDueAtMidnight}
+          className="md:hidden"
+        />
         <div className="scrollbar-hide mt-2 flex min-w-0 gap-1.5 overflow-x-auto">
           {unsubmittedAccounts.map((acc) => {
             const account = accountMap.get(acc.accountId);
@@ -105,21 +143,10 @@ export function AssignmentCard({
         </div>
       </div>
       <div className="hidden flex-none flex-col items-end self-center pr-2 md:flex">
-        <p className="text-card-foreground/70 text-md font-medium lg:text-lg">
+        <p className="text-card-foreground/60 text-base font-medium lg:text-lg">
           {item.points_possible ? ` ${item.points_possible} pts` : ""}
         </p>
-        <p className="text-card-foreground/50 text-xs md:text-sm">
-          Due:{" "}
-          {item.due_at
-            ? new Date(item.due_at).toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-              })
-            : " No due date"}
-        </p>
+        <DueLabel dueDate={dueDate} isDueAtMidnight={isDueAtMidnight} />
       </div>
     </div>
   );
