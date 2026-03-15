@@ -10,7 +10,7 @@ export function GlassContainer({
   return (
     <div
       className={cn(
-        "glass-border bg-glass/5 rounded-2xl p-4 shadow-sm",
+        "glass-border bg-glass/5 rounded-2xl p-4 shadow-sm backdrop-blur-lg",
         className,
       )}
     >

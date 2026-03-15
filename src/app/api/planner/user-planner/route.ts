@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUserApi } from "@/lib/auth-server";
-import { getWeeklyAssignmentsForUser } from "@/lib/planner/weekly-assignments";
+import { getUserPlanner } from "@/lib/planner/get-user-planner";
 import { dedupeWithTtl } from "@/lib/dedupe";
 
 export async function GET(req: NextRequest) {
@@ -17,11 +17,7 @@ export async function GET(req: NextRequest) {
         userId: user.id,
         merge,
       });
-      if (merge) {
-        return await getWeeklyAssignmentsForUser(user.id, true);
-      } else {
-        return await getWeeklyAssignmentsForUser(user.id, false);
-      }
+      return await getUserPlanner(user.id, merge);
     });
 
     return NextResponse.json(data, {

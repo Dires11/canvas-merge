@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import type { UserCourse } from "@/lib/types";
-import type { WeeklyAssignmentsMergedResponse } from "@/lib/planner/weekly-assignments";
+import type { UserPlanner } from "@/lib/planner/get-user-planner";
 import { CourseSidebar } from "@/components/course/course-sidebar";
-import { AssignmentDashboardClient } from "@/components/assignment/assignment-dashboard-client";
+import { AssignmentDashboardClient } from "@/components/assignment/dashboard-client";
 import { updateCourseColor } from "@/app/actions/course-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseTab } from "../course/course-tab";
@@ -13,10 +13,10 @@ import { GlassContainer } from "../glass-container";
 
 export function DashboardShell({
   initialCourses,
-  assignmentData,
+  plannerData,
 }: {
   initialCourses: UserCourse[];
-  assignmentData: WeeklyAssignmentsMergedResponse | null;
+  plannerData: UserPlanner | null;
 }) {
   const [courses, setCourses] = useState<UserCourse[]>(initialCourses);
   const router = useRouter();
@@ -74,7 +74,7 @@ export function DashboardShell({
           </TabsContent>
           <TabsContent value="assignments" className="min-w-0">
             <AssignmentDashboardClient
-              initialData={assignmentData}
+              initialData={plannerData}
               courses={courses}
             />
           </TabsContent>
@@ -87,7 +87,7 @@ export function DashboardShell({
         <main className="min-w-0">
           <div className="mx-auto w-full max-w-4xl">
             <AssignmentDashboardClient
-              initialData={assignmentData}
+              initialData={plannerData}
               courses={courses}
             />
           </div>

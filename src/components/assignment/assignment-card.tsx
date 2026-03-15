@@ -35,7 +35,11 @@ function DueLabel({
       <span>Due: {dueDate}</span>
 
       {!isDueAtMidnight && (
-        <HoverOrTap trigger={<ClockAlert className="size-4 text-red-400" />}>
+        <HoverOrTap
+          trigger={
+            <ClockAlert strokeWidth={2} className="size-4 text-red-400" />
+          }
+        >
           <span>Not due at midnight.</span>
         </HoverOrTap>
       )}
@@ -61,7 +65,11 @@ export function AssignmentCard({
   };
 
   const IconComponent = IconMap[item.type] || ListTodo;
-  const unsubmittedAccounts = item.accountsNotSubmitted;
+  const unsubmittedAccounts = [
+    ...item.accountsNotSubmitted,
+    ...item.accountsMissingSubmission,
+  ];
+
   let dueDate = null;
   let isDueAtMidnight = false;
 
@@ -79,9 +87,6 @@ export function AssignmentCard({
     isDueAtMidnight = date.getHours() === 23 && date.getMinutes() === 59;
   }
 
-  if (unsubmittedAccounts.length == 0) {
-    return;
-  }
   const dark = convertToDark(color);
 
   return (

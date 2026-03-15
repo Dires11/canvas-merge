@@ -7,6 +7,13 @@ import { resolveCourseColor } from "../colors/colors";
 import { deleteCourseMetadataMany } from "@/data/course-metadata";
 import { after } from "next/server";
 
+export type CourseFailure = {
+  accountId: string;
+  domain: string;
+  status: number;
+  error: unknown;
+};
+
 export async function getUserCourses(userId: string, accountIds?: string[]) {
   const [accounts, dbMetadata] = await Promise.all([
     getUserCanvasAccounts(userId, true, accountIds),
@@ -37,12 +44,7 @@ export async function getUserCourses(userId: string, accountIds?: string[]) {
   // Build a single deduped list
   const seen = new Map<string, UserCourse>();
 
-  const failures: Array<{
-    accountId: string;
-    domain: string;
-    status: number;
-    error: unknown;
-  }> = [];
+  const failures: CourseFailure[] = [];
 
   for (let i = 0; i < results.length; i++) {
     const r = results[i];

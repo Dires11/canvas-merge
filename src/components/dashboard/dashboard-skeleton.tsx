@@ -1,6 +1,6 @@
 import { CourseSidebarSkeleton } from "../course/course-sidebar-skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { AssignmentDashboardSkeleton } from "../assignment/assignment-dashboard-skeleton";
+import { AssignmentDashboardSkeleton } from "../assignment/dashboard-skeleton";
 
 export function DashboardSkeleton() {
   return (

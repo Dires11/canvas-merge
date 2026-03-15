@@ -10,6 +10,7 @@ export type AccountInfo = {
 export type AccountSafeInfo = {
   id: string;
   name: string;
+  domain: string;
   avatarUrl: string;
   expiredAt: Date | null;
 };
@@ -46,9 +47,8 @@ export type ItemsByType = {
   other: ItemBase[];
 };
 
-export type ItemsByDomain = {
-  [key: string]: ItemsByType[];
-};
+export type ItemsByAccount = Record<string, ItemsByType>;
+export type ItemsByDomain = Record<string, ItemsByAccount>;
 
 export type MergedAssignment = ItemBase & {
   due_at: string | null;
@@ -79,7 +79,7 @@ export type MergedItems = {
   other: MergedOther[];
 };
 
-export type MergedItemsByDomain = { [key: string]: MergedItems };
+export type MergedItemsByDomain = Record<string, MergedItems>;
 
 export type Course = {
   id: number;

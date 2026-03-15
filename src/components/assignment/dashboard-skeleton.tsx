@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { GlassContainer } from "../glass-container";
 import { Skeleton } from "../ui/skeleton";
-import { AssignmentSkeleton } from "./assignment-skeleton";
+import { AssignmentSkeleton } from "./skeleton";
 
 export function AssignmentDashboardSkeleton() {
   return (

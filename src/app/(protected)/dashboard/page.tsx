@@ -1,24 +1,47 @@
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { requireUser } from "@/lib/auth-server";
-import { getUserCourses } from "@/lib/planner/user-courses";
-import { getWeeklyAssignmentsForUser } from "@/lib/planner/weekly-assignments";
-
+import {
+  type CourseFailure,
+  getUserCourses,
+} from "@/lib/planner/get-user-courses";
+import { getUserPlanner, UserPlanner } from "@/lib/planner/get-user-planner";
+import type { UserCourse } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
   const user = await requireUser();
-  const [coursesResult, assignmentsResult] = await Promise.allSettled([
+
+  const [coursesResult, plannerResult] = await Promise.allSettled([
     getUserCourses(user.id),
-    getWeeklyAssignmentsForUser(user.id, true),
+    getUserPlanner(user.id, true),
   ]);
 
-  // Extract data or handle errors
-  const { courses = [], failures = [] } =
-    coursesResult.status === "fulfilled" ? coursesResult.value : {};
-  const assignmentData =
-    assignmentsResult.status === "fulfilled" ? assignmentsResult.value : null;
+  let courses: UserCourse[] = [];
+  let courseFailures: CourseFailure[] = [];
+  let courseError: string | null = null;
+  let plannerData: UserPlanner | null = null;
+  let plannerError: string | null = null;
 
-  return (
-    <DashboardShell initialCourses={courses} assignmentData={assignmentData} />
-  );
+  if (coursesResult.status === "fulfilled") {
+    courses = coursesResult.value.courses ?? [];
+    courseFailures = coursesResult.value.failures ?? [];
+  } else {
+    console.error("Failed to load courses:", coursesResult.reason);
+    courseError =
+      coursesResult.reason instanceof Error
+        ? coursesResult.reason.message
+        : "Unknown error loading courses";
+  }
+
+  if (plannerResult.status === "fulfilled") {
+    plannerData = plannerResult.value;
+  } else {
+    console.error("Failed to load planner data:", plannerResult.reason);
+    plannerError =
+      plannerResult.reason instanceof Error
+        ? plannerResult.reason.message
+        : "Unknown error loading planner data";
+  }
+
+  return <DashboardShell initialCourses={courses} plannerData={plannerData} />;
 }

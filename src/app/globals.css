@@ -1,6 +1,8 @@
+@import "@neondatabase/auth/ui/tailwind";
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@neondatabase/auth/ui/tailwind";
+
+@layer neon-auth, base, components, utilities;
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -52,7 +54,7 @@
   --radius: 0.625rem;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
+  --popover: oklch(80.4% 0.046 257.417, 0.95);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(54.6% 0.245 262.881);
   --primary-hover: oklch(from var(--primary) calc(l - 0.06) c h);
@@ -83,7 +85,7 @@
   --sidebar-ring: oklch(0.708 0 0);
   --background: oklch(0.985 0 0);
   --foreground: oklch(0.145 0 0);
-  --glass: oklch(90% 0.005 250);
+  --glass: oklch(80.4% 0.046 257.417);
   --glass-border: oklch(60.4% 0.046 257.417);
 }
 
@@ -92,7 +94,8 @@
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.27 0.05 268);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.27 0.05 268);
+  /* --popover: oklch(0.27 0.05 268); */
+  --popover: oklch(0.985 0 0, 0.8);
   --popover-foreground: oklch(0.985 0 0);
   --primary-foreground: oklch(0.2 0 0);
   --secondary: oklch(0.269 0 0);
@@ -123,9 +126,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   body {
     @apply bg-background text-foreground;
   }
@@ -152,8 +152,7 @@
   .sidebar-scroll::-webkit-scrollbar-thumb {
     border-style: solid;
     border-width: 1.8px 1px 1px 1.6px;
-    @apply bg-foreground/10 rounded-lg border-t-glass-border/12 border-r-glass-border/5 border-b-glass-border/7 border-l-glass-border/9;
-   
+    @apply bg-foreground/10 border-t-glass-border/12 border-r-glass-border/5 border-b-glass-border/7 border-l-glass-border/9 rounded-lg;
   }
 
   .sidebar-scroll::-webkit-scrollbar-thumb:hover {
@@ -178,17 +177,19 @@
   }
 }
 @layer components {
-  .glass-border {
-    border-style: solid;
-    border-width: 1.8px 1.2px 1.2px 2px;
-    @apply border-t-glass-border/12 border-r-glass-border/5 border-b-glass-border/7 border-l-glass-border/9;
-   
-  }
-
   .animate-collapsible-down {
     animation: collapsible-down 50ms ease-out;
   }
   .animate-collapsible-up {
     animation: collapsible-up 50ms ease-out;
+  }
+
+  .glass-border {
+    border-style: solid;
+    border-width: 1.7px 1.4px 1.2px 2px;
+    border-top-color: oklch(from var(--glass-border) l c h / 0.15);
+    border-right-color: oklch(from var(--glass-border) l c h / 0.1);
+    border-bottom-color: oklch(from var(--glass-border) l c h / 0.1);
+    border-left-color: oklch(from var(--glass-border) l c h / 0.15);
   }
 }
