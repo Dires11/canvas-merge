@@ -1,16 +1,18 @@
 import { Prisma } from "@db/client";
 
 import { prisma } from "@/lib/prisma";
-import type { AccountInfo } from "@/lib/types";
+import type { CanvasAccountInfo } from "@/lib/types/account";
 
 export async function createCanvasAccount(
   userId: string,
   accessToken: string,
-  accountInfo: AccountInfo,
+  accountInfo: CanvasAccountInfo,
+  domainName: string,
+  domainSlug: string,
 ) {
   try {
     await prisma.canvasAccount.create({
-      data: { userId, accessToken, ...accountInfo },
+      data: { userId, accessToken, ...accountInfo, domainName, domainSlug },
     });
     return { ok: true };
   } catch (error: unknown) {
@@ -99,6 +101,8 @@ export async function getUserCanvasAccounts(
       id: true,
       name: true,
       domain: true,
+      domainName: true,
+      domainSlug: true,
       expiredAt: true,
       avatarUrl: true,
       accessToken: includeTokens,
@@ -128,7 +132,7 @@ export async function getUserCanvasAccount(accountID: string, userId: string) {
       id: true,
       name: true,
       domain: true,
-      accountCanvasId: true,
+      canvasId: true,
     },
   });
 }

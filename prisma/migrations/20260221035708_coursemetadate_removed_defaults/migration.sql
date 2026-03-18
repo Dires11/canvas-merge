@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "CourseMetadata" ALTER COLUMN "l" DROP DEFAULT,
-ALTER COLUMN "c" DROP DEFAULT;

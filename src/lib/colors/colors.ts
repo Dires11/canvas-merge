@@ -7,7 +7,7 @@ type Oklch = {
 };
 export function resolveCourseColor(
   courseId: number,
-  domain: string,
+  domainSlug: string,
   meta?: any,
 ): Oklch {
   if (meta) {
@@ -15,7 +15,7 @@ export function resolveCourseColor(
   }
 
   // Now passes both to the palette logic
-  return getPaletteDefault(courseId, domain);
+  return getPaletteDefault(courseId, domainSlug);
 }
 
 export function convertToDark(color: Oklch): Oklch {

@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CanvasMerge",
   description:
-    "Easily view and keep track of all your assignments accross different campuses.",
+    "Easily view and keep track of all your assignments across different campuses.",
 };
 
 export default function RootLayout({

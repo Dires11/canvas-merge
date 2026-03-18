@@ -51,9 +51,10 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  CanvasAccount: 'CanvasAccount',
   UserSettings: 'UserSettings',
-  CourseMetadata: 'CourseMetadata'
+  CourseMetadata: 'CourseMetadata',
+  CanvasDomain: 'CanvasDomain',
+  CanvasAccount: 'CanvasAccount'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -72,21 +73,6 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const CanvasAccountScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  domain: 'domain',
-  name: 'name',
-  accessToken: 'accessToken',
-  expiredAt: 'expiredAt',
-  createdAt: 'createdAt',
-  avatarUrl: 'avatarUrl',
-  accountCanvasId: 'accountCanvasId'
-} as const
-
-export type CanvasAccountScalarFieldEnum = (typeof CanvasAccountScalarFieldEnum)[keyof typeof CanvasAccountScalarFieldEnum]
-
-
 export const UserSettingsScalarFieldEnum = {
   userId: 'userId',
   preferredTimezone: 'preferredTimezone',
@@ -99,16 +85,46 @@ export type UserSettingsScalarFieldEnum = (typeof UserSettingsScalarFieldEnum)[k
 
 
 export const CourseMetadataScalarFieldEnum = {
-  courseId: 'courseId',
   domain: 'domain',
   userId: 'userId',
   l: 'l',
   c: 'c',
   h: 'h',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  courseId: 'courseId'
 } as const
 
 export type CourseMetadataScalarFieldEnum = (typeof CourseMetadataScalarFieldEnum)[keyof typeof CourseMetadataScalarFieldEnum]
+
+
+export const CanvasDomainScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  domain: 'domain',
+  domainName: 'domainName',
+  domainSlug: 'domainSlug',
+  createdAt: 'createdAt'
+} as const
+
+export type CanvasDomainScalarFieldEnum = (typeof CanvasDomainScalarFieldEnum)[keyof typeof CanvasDomainScalarFieldEnum]
+
+
+export const CanvasAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  domain: 'domain',
+  domainName: 'domainName',
+  domainSlug: 'domainSlug',
+  name: 'name',
+  accessToken: 'accessToken',
+  expiredAt: 'expiredAt',
+  createdAt: 'createdAt',
+  avatarUrl: 'avatarUrl',
+  canvasId: 'canvasId',
+  domainId: 'domainId'
+} as const
+
+export type CanvasAccountScalarFieldEnum = (typeof CanvasAccountScalarFieldEnum)[keyof typeof CanvasAccountScalarFieldEnum]
 
 
 export const SortOrder = {

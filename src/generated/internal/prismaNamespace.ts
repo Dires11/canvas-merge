@@ -384,9 +384,10 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  CanvasAccount: 'CanvasAccount',
   UserSettings: 'UserSettings',
-  CourseMetadata: 'CourseMetadata'
+  CourseMetadata: 'CourseMetadata',
+  CanvasDomain: 'CanvasDomain',
+  CanvasAccount: 'CanvasAccount'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -402,84 +403,10 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "canvasAccount" | "userSettings" | "courseMetadata"
+    modelProps: "userSettings" | "courseMetadata" | "canvasDomain" | "canvasAccount"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
-    CanvasAccount: {
-      payload: Prisma.$CanvasAccountPayload<ExtArgs>
-      fields: Prisma.CanvasAccountFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.CanvasAccountFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.CanvasAccountFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
-        }
-        findFirst: {
-          args: Prisma.CanvasAccountFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.CanvasAccountFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
-        }
-        findMany: {
-          args: Prisma.CanvasAccountFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>[]
-        }
-        create: {
-          args: Prisma.CanvasAccountCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
-        }
-        createMany: {
-          args: Prisma.CanvasAccountCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.CanvasAccountCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>[]
-        }
-        delete: {
-          args: Prisma.CanvasAccountDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
-        }
-        update: {
-          args: Prisma.CanvasAccountUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
-        }
-        deleteMany: {
-          args: Prisma.CanvasAccountDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.CanvasAccountUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.CanvasAccountUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>[]
-        }
-        upsert: {
-          args: Prisma.CanvasAccountUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
-        }
-        aggregate: {
-          args: Prisma.CanvasAccountAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateCanvasAccount>
-        }
-        groupBy: {
-          args: Prisma.CanvasAccountGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CanvasAccountGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.CanvasAccountCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CanvasAccountCountAggregateOutputType> | number
-        }
-      }
-    }
     UserSettings: {
       payload: Prisma.$UserSettingsPayload<ExtArgs>
       fields: Prisma.UserSettingsFieldRefs
@@ -628,6 +555,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CanvasDomain: {
+      payload: Prisma.$CanvasDomainPayload<ExtArgs>
+      fields: Prisma.CanvasDomainFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CanvasDomainFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CanvasDomainFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>
+        }
+        findFirst: {
+          args: Prisma.CanvasDomainFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CanvasDomainFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>
+        }
+        findMany: {
+          args: Prisma.CanvasDomainFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>[]
+        }
+        create: {
+          args: Prisma.CanvasDomainCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>
+        }
+        createMany: {
+          args: Prisma.CanvasDomainCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CanvasDomainCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>[]
+        }
+        delete: {
+          args: Prisma.CanvasDomainDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>
+        }
+        update: {
+          args: Prisma.CanvasDomainUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>
+        }
+        deleteMany: {
+          args: Prisma.CanvasDomainDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CanvasDomainUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CanvasDomainUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>[]
+        }
+        upsert: {
+          args: Prisma.CanvasDomainUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasDomainPayload>
+        }
+        aggregate: {
+          args: Prisma.CanvasDomainAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCanvasDomain>
+        }
+        groupBy: {
+          args: Prisma.CanvasDomainGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CanvasDomainGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CanvasDomainCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CanvasDomainCountAggregateOutputType> | number
+        }
+      }
+    }
+    CanvasAccount: {
+      payload: Prisma.$CanvasAccountPayload<ExtArgs>
+      fields: Prisma.CanvasAccountFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CanvasAccountFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CanvasAccountFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
+        }
+        findFirst: {
+          args: Prisma.CanvasAccountFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CanvasAccountFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
+        }
+        findMany: {
+          args: Prisma.CanvasAccountFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>[]
+        }
+        create: {
+          args: Prisma.CanvasAccountCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
+        }
+        createMany: {
+          args: Prisma.CanvasAccountCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CanvasAccountCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>[]
+        }
+        delete: {
+          args: Prisma.CanvasAccountDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
+        }
+        update: {
+          args: Prisma.CanvasAccountUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
+        }
+        deleteMany: {
+          args: Prisma.CanvasAccountDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CanvasAccountUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CanvasAccountUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>[]
+        }
+        upsert: {
+          args: Prisma.CanvasAccountUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CanvasAccountPayload>
+        }
+        aggregate: {
+          args: Prisma.CanvasAccountAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCanvasAccount>
+        }
+        groupBy: {
+          args: Prisma.CanvasAccountGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CanvasAccountGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CanvasAccountCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CanvasAccountCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -667,21 +742,6 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const CanvasAccountScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  domain: 'domain',
-  name: 'name',
-  accessToken: 'accessToken',
-  expiredAt: 'expiredAt',
-  createdAt: 'createdAt',
-  avatarUrl: 'avatarUrl',
-  accountCanvasId: 'accountCanvasId'
-} as const
-
-export type CanvasAccountScalarFieldEnum = (typeof CanvasAccountScalarFieldEnum)[keyof typeof CanvasAccountScalarFieldEnum]
-
-
 export const UserSettingsScalarFieldEnum = {
   userId: 'userId',
   preferredTimezone: 'preferredTimezone',
@@ -694,16 +754,46 @@ export type UserSettingsScalarFieldEnum = (typeof UserSettingsScalarFieldEnum)[k
 
 
 export const CourseMetadataScalarFieldEnum = {
-  courseId: 'courseId',
   domain: 'domain',
   userId: 'userId',
   l: 'l',
   c: 'c',
   h: 'h',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  courseId: 'courseId'
 } as const
 
 export type CourseMetadataScalarFieldEnum = (typeof CourseMetadataScalarFieldEnum)[keyof typeof CourseMetadataScalarFieldEnum]
+
+
+export const CanvasDomainScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  domain: 'domain',
+  domainName: 'domainName',
+  domainSlug: 'domainSlug',
+  createdAt: 'createdAt'
+} as const
+
+export type CanvasDomainScalarFieldEnum = (typeof CanvasDomainScalarFieldEnum)[keyof typeof CanvasDomainScalarFieldEnum]
+
+
+export const CanvasAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  domain: 'domain',
+  domainName: 'domainName',
+  domainSlug: 'domainSlug',
+  name: 'name',
+  accessToken: 'accessToken',
+  expiredAt: 'expiredAt',
+  createdAt: 'createdAt',
+  avatarUrl: 'avatarUrl',
+  canvasId: 'canvasId',
+  domainId: 'domainId'
+} as const
+
+export type CanvasAccountScalarFieldEnum = (typeof CanvasAccountScalarFieldEnum)[keyof typeof CanvasAccountScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -765,20 +855,6 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -789,6 +865,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 /**
@@ -886,9 +976,10 @@ export type PrismaClientOptions = ({
   comments?: runtime.SqlCommenterPlugin[]
 }
 export type GlobalOmitConfig = {
-  canvasAccount?: Prisma.CanvasAccountOmit
   userSettings?: Prisma.UserSettingsOmit
   courseMetadata?: Prisma.CourseMetadataOmit
+  canvasDomain?: Prisma.CanvasDomainOmit
+  canvasAccount?: Prisma.CanvasAccountOmit
 }
 
 /* Types for Logging */

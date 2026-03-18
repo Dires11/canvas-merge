@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
 import type {
   AccountSafeInfo,
+  DomainMap,
   MergedAssignment,
   UserCourse,
 } from "@/lib/types";
@@ -130,7 +131,7 @@ function normalizeFilters(
     selectedDomains.length === 0
       ? accounts.map((a) => a.id)
       : accounts
-          .filter((a) => selectedDomains.includes(a.domain))
+          .filter((a) => selectedDomains.includes(a.domainSlug))
           .map((a) => a.id);
 
   return {
@@ -223,17 +224,33 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
     }
   }
 
-  const accountMap = useMemo(() => {
-    return new Map<string, AccountSafeInfo>(
-      accounts.map((acc) => [acc.id, acc]),
-    );
+  const accountMap = useMemo<Record<string, AccountSafeInfo>>(() => {
+    const map: Record<string, AccountSafeInfo> = {};
+
+    for (const acc of accounts) {
+      map[acc.id] = acc;
+    }
+
+    return map;
+  }, [accounts]);
+
+  const domainMap = useMemo<DomainMap>(() => {
+    const map: DomainMap = {};
+
+    for (const acc of accounts) {
+      map[acc.domainSlug] = {
+        domainName: acc.domainName,
+        domain: acc.domain,
+      };
+    }
+    return map;
   }, [accounts]);
 
   const coursesMap = useMemo(() => {
     const map = new Map<string, UserCourse>();
 
     for (const course of courses) {
-      map.set(`${course.domain}|${course.id}`, course);
+      map.set(`${course.domainSlug}|${course.id}`, course);
     }
 
     return map;
@@ -242,8 +259,10 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
   const groupedByDomain = useMemo(() => {
     const result: Record<string, Record<string, MergedAssignment[]>> = {};
 
-    for (const [domain, mergedItems] of Object.entries(data?.merged ?? {})) {
-      if (filters.domain.length > 0 && !filters.domain.includes(domain)) {
+    for (const [domainSlug, mergedItems] of Object.entries(
+      data?.merged ?? {},
+    )) {
+      if (filters.domain.length > 0 && !filters.domain.includes(domainSlug)) {
         continue;
       }
       let assignments = mergedItems.assignments;
@@ -254,7 +273,7 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
         for (const assignment of mergedItems.assignments) {
           if (
             filters.course.length > 0 &&
-            !filters.course.includes(`${domain}-${assignment.course_id}`)
+            !filters.course.includes(`${domainSlug}-${assignment.course_id}`)
           ) {
             continue;
           }
@@ -288,7 +307,7 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
         assignments = filteredAssignments;
       }
       if (assignments.length > 0) {
-        result[domain] = groupAssignmentsByDueDateLocal(assignments);
+        result[domainSlug] = groupAssignmentsByDueDateLocal(assignments);
       }
     }
     return result;
@@ -327,7 +346,7 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
       </div>
       <AssignmentDashboardControls
         accounts={accounts}
-        domains={Object.keys(data.merged ?? {})}
+        domains={domainMap}
         courses={courses}
         filters={filters}
         onFilterChange={onFilterChange}
@@ -343,7 +362,7 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
             </div>
 
             {accountsWithErrors.map((accountId) => {
-              const account = accountMap.get(accountId);
+              const account = accountMap[accountId];
 
               const expiredLabel = account?.expiredAt
                 ? new Date(account.expiredAt).toLocaleString("en-US", {
@@ -370,14 +389,14 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
           </Link>
         </div>
       )}
-      {Object.entries(groupedByDomain).map(([domain, groups]) => (
-        <GlassContainer key={domain} className="w-full">
+      {Object.entries(groupedByDomain).map(([domainSlug, groups]) => (
+        <GlassContainer key={domainSlug} className="w-full">
           <Collapsible
             defaultOpen
             className="flex w-full flex-col gap-2 rounded-2xl"
           >
             <CollapsibleTrigger className="group flex items-center justify-between text-lg tracking-tight hover:cursor-pointer">
-              {domain}
+              {domainMap[domainSlug]?.domainName ?? domainSlug}
               <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
             </CollapsibleTrigger>
 
@@ -392,8 +411,9 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
                           key={`${assignment.course_id}:${assignment.id}`}
                           item={assignment}
                           color={
-                            coursesMap.get(`${domain}|${assignment.course_id}`)
-                              ?.color ?? { l: 0.7, c: 0.1, h: 250 }
+                            coursesMap.get(
+                              `${domainSlug}|${assignment.course_id}`,
+                            )?.color ?? { l: 0.7, c: 0.1, h: 250 }
                           }
                           accountMap={accountMap}
                           merged={true}

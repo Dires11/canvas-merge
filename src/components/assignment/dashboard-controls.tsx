@@ -1,4 +1,4 @@
-import type { AccountSafeInfo, UserCourse } from "@/lib/types";
+import type { AccountSafeInfo, DomainInfo, UserCourse } from "@/lib/types";
 import { GlassContainer } from "../glass-container";
 import { Filters } from "./dashboard-client";
 import {
@@ -31,7 +31,7 @@ export function AssignmentDashboardControls({
   clearAll,
 }: {
   accounts: AccountSafeInfo[];
-  domains: string[];
+  domains: Record<string, DomainInfo>;
   courses: UserCourse[];
   filters: Filters;
   onFilterChange: (
@@ -58,17 +58,17 @@ export function AssignmentDashboardControls({
               <p>Select domains to filter by.</p>
             </MenubarLabel>
 
-            {domains.map((domain) => (
+            {Object.entries(domains).map(([domainSlug, { domainName }]) => (
               <MenubarCheckboxItem
-                key={domain}
-                checked={filters.domain.includes(domain)}
+                key={domainSlug}
+                checked={filters.domain.includes(domainSlug)}
                 onCheckedChange={(pressed) =>
-                  onFilterChange("domain", domain, pressed)
+                  onFilterChange("domain", domainSlug, pressed)
                 }
                 onSelect={(e) => e.preventDefault()}
               >
                 <School className="text-foreground" strokeWidth={1.5} />
-                {domain}
+                {domainName}
               </MenubarCheckboxItem>
             ))}
           </MenubarContent>
@@ -144,12 +144,12 @@ export function AssignmentDashboardControls({
                 <MenubarCheckboxItem
                   key={course.id}
                   checked={filters.course.includes(
-                    `${course.domain}-${course.id}`,
+                    `${course.domainSlug}-${course.id}`,
                   )}
                   onCheckedChange={(pressed) =>
                     onFilterChange(
                       "course",
-                      `${course.domain}-${course.id}`,
+                      `${course.domainSlug}-${course.id}`,
                       pressed,
                     )
                   }

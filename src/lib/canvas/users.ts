@@ -1,4 +1,5 @@
-import type { Account, AccountInfo, Course } from "@/lib/types";
+import type { Course } from "@/lib/types";
+import type { CanvasAccountInfo } from "@/lib/types/index";
 import { canvasFetchJson, CanvasResult } from "./fetch";
 
 type CanvasUserSelf = {
@@ -7,22 +8,28 @@ type CanvasUserSelf = {
   avatar_url: string;
 };
 
+type CanvasCredentials = {
+  domain: string;
+  token: string;
+};
+
 /**
  * Fetches basic account info from Canvas API using the provided account details
  * @param account The Canvas account with domain and token
  * @returns An object with either the account info or an error details
  *
- * e.g. { ok: true, status: 200, data: { accountCanvasId, name, domain, avatarUrl } }
+ * e.g. { ok: true, status: 200, data: { canvasId, name, domain, avatarUrl } }
  *
  * or { ok: false, status: 401, error: { message, expiredAt, raw } }
  */
-export async function getAccountInfo(
-  account: Account,
-): Promise<CanvasResult<AccountInfo>> {
+export async function getAccountInfo({
+  domain,
+  token,
+}: CanvasCredentials): Promise<CanvasResult<CanvasAccountInfo>> {
   const res = await canvasFetchJson<CanvasUserSelf>(
-    account.domain,
+    domain,
     "/api/v1/users/self",
-    { token: account.token },
+    { token: token },
   );
 
   if (!res.ok) {
@@ -45,22 +52,23 @@ export async function getAccountInfo(
     ok: true,
     status: res.status,
     data: {
-      accountCanvasId: raw.id,
+      canvasId: raw.id,
       name: raw.name,
-      domain: account.domain,
+      domain,
       avatarUrl: raw.avatar_url,
     },
   };
 }
 
-export async function getAccountCourses(
-  account: Account,
-): Promise<CanvasResult<Course[]>> {
+export async function getAccountCourses({
+  domain,
+  token,
+}: CanvasCredentials): Promise<CanvasResult<Course[]>> {
   const res = await canvasFetchJson<Course[]>(
-    account.domain,
+    domain,
     "/api/v1/users/self/courses",
     {
-      token: account.token,
+      token,
       searchParams: {
         include: "term",
         enrollment_state: "active",

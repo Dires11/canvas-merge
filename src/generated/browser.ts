@@ -18,11 +18,6 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
- * Model CanvasAccount
- * 
- */
-export type CanvasAccount = Prisma.CanvasAccountModel
-/**
  * Model UserSettings
  * 
  */
@@ -32,3 +27,13 @@ export type UserSettings = Prisma.UserSettingsModel
  * 
  */
 export type CourseMetadata = Prisma.CourseMetadataModel
+/**
+ * Model CanvasDomain
+ * 
+ */
+export type CanvasDomain = Prisma.CanvasDomainModel
+/**
+ * Model CanvasAccount
+ * 
+ */
+export type CanvasAccount = Prisma.CanvasAccountModel

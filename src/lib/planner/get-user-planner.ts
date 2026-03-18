@@ -50,7 +50,13 @@ function getUTCWeekRange(timezone: string, baseDate: Date = new Date()) {
 
 const ASSIGNMENT_TYPE = new Set(["assignment", "discussion_topic", "quiz"]);
 
-function normalize(accountId: string, domain: string, items: any): ItemsByType {
+function normalize(
+  accountId: string,
+  domain: string,
+  domainSlug: string,
+  domainName: string,
+  items: any,
+): ItemsByType {
   const itemsByType: ItemsByType = {
     account: accountId,
     assignments: [],
@@ -71,6 +77,9 @@ function normalize(accountId: string, domain: string, items: any): ItemsByType {
       title,
       course_name: item.context_name,
       url: safeUrl,
+      domain,
+      domainSlug,
+      domainName,
     };
 
     if (item.plannable_type === "announcement") {
@@ -238,6 +247,8 @@ export async function getUserPlanner(
     id: acc.id,
     name: acc.name,
     domain: acc.domain,
+    domainName: acc.domainName,
+    domainSlug: acc.domainSlug,
     avatarUrl: acc.avatarUrl,
     expiredAt: acc.expiredAt,
   }));
@@ -275,7 +286,13 @@ export async function getUserPlanner(
       };
     }
 
-    const normalized = normalize(account.id, account.domain, raw.data);
+    const normalized = normalize(
+      account.id,
+      account.domain,
+      account.domainSlug,
+      account.domainName,
+      raw.data,
+    );
 
     return {
       account,
@@ -295,7 +312,7 @@ export async function getUserPlanner(
       if (accountItems) {
         // Keep successful accounts even if they have zero items.
         // This makes account-based filtering/UI state easier.
-        (itemsByDomain[account.domain] ??= {})[account.id] = accountItems;
+        (itemsByDomain[account.domainSlug] ??= {})[account.id] = accountItems;
       }
 
       if (error) {

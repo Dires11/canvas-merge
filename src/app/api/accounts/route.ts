@@ -10,11 +10,6 @@ import {
 import { encryptToken } from "@/lib/crypto";
 import { AddSchema, DomainSchema } from "@/lib/schemas/manage-accounts";
 
-// const BodySchema = z.object({
-//   domain: z.string().min(1, "Institution URL is required"),
-//   token: z.string().min(10, "Personal access token is too short"),
-// });
-
 type ValidateResult<T> =
   | { ok: true; data: T }
   | { ok: false; response: NextResponse };

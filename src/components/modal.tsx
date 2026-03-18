@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { GlassContainer } from "./glass-container";
 
 type ModalProps = {
   children: React.ReactNode;
@@ -28,7 +29,7 @@ export function Modal({ children, onClose }: ModalProps) {
 
   return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center p-4  bg-black/20 backdrop-blur-xs z-9999"
+      className="fixed inset-0 z-9999 flex items-center justify-center"
       onPointerDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -37,32 +38,18 @@ export function Modal({ children, onClose }: ModalProps) {
       }}
       tabIndex={-1}
     >
-      <div
-        className="
-            relative w-full max-w-md rounded-2xl p-6
-            bg-card/60
-            border border-card/45
-            shadow-2xl
-          "
-        onClick={(e) => e.stopPropagation()}
-      >
+      <GlassContainer className="relative w-full max-w-md rounded-2xl backdrop-blur-2xl">
         <button
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="
-              absolute right-3 top-3
-              rounded-lg p-1
-              text-card-foreground
-              hover:bg-card/40
-              focus:outline-none focus:ring-2 focus:ring-primary
-            "
+          className="text-card-foreground hover:bg-card/40 focus:ring-primary absolute top-3 right-3 rounded-lg p-1 focus:ring-2 focus:outline-none"
         >
           ✕
         </button>
 
         {children}
-      </div>
+      </GlassContainer>
     </div>,
     document.body,
   );

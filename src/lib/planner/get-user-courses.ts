@@ -73,12 +73,14 @@ export async function getUserCourses(userId: string, accountIds?: string[]) {
       if (!existing) {
         const resolvedColor = resolveCourseColor(
           course.id,
-          a.domain,
-          metadataMap.get(`${a.domain}|${course.id}`),
+          a.domainSlug,
+          metadataMap.get(`${a.domainSlug}|${course.id}`),
         );
         seen.set(key, {
           ...course,
           domain: a.domain,
+          domainName: a.domainName,
+          domainSlug: a.domainSlug,
           accountIds: [a.id],
           color: resolvedColor,
         });

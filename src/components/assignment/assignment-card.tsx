@@ -55,7 +55,7 @@ export function AssignmentCard({
 }: {
   item: MergedAssignment;
   merged: boolean;
-  accountMap: Map<string, AccountSafeInfo>;
+  accountMap: Record<string, AccountSafeInfo>;
   color: { l: number; c: number; h: number };
 }) {
   const IconMap: Record<string, LucideIcon> = {
@@ -126,7 +126,7 @@ export function AssignmentCard({
         />
         <div className="scrollbar-hide mt-2 flex min-w-0 gap-1.5 overflow-x-auto">
           {unsubmittedAccounts.map((acc) => {
-            const account = accountMap.get(acc.accountId);
+            const account = accountMap[acc.accountId];
             if (!account) return;
             return (
               <HoverOrTap

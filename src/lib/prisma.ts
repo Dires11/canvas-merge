@@ -1,6 +1,5 @@
 import { PrismaClient } from "@db/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
-import "server-only";
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;

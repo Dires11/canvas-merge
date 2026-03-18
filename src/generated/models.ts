@@ -8,7 +8,8 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/CanvasAccount'
 export type * from './models/UserSettings'
 export type * from './models/CourseMetadata'
+export type * from './models/CanvasDomain'
+export type * from './models/CanvasAccount'
 export type * from './commonInputTypes'

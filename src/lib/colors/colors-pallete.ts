@@ -55,9 +55,9 @@ export const COURSE_PALETTE_40 = [
   { l: 0.83, c: 0.15, h: 340 },
 ];
 
-export function getPaletteDefault(courseId: number, domain: string) {
+export function getPaletteDefault(courseId: number, domainSlug: string) {
   // Simple numeric hash of the string ID
-  const key = `${domain}|${courseId}`;
+  const key = `${domainSlug}|${courseId}`;
   const hash = key
     .split("")
     .reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0);

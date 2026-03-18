@@ -8,7 +8,7 @@ export function CourseSidebar({
   onColorChange,
 }: {
   courses: UserCourse[];
-  onColorChange: (courseId: number, domain: string, newColor: any) => void;
+  onColorChange: (courseId: number, domainSlug: string, newColor: any) => void;
 }) {
   return (
     <aside className="sticky top-6 h-fit w-[320px] shrink-0">

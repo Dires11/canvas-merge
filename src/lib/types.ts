@@ -1,19 +1,9 @@
-export type Account = { domain: string; token: string };
-
-export type AccountInfo = {
-  accountCanvasId: number;
-  name: string;
-  avatarUrl: string;
+export type DomainInfo = {
   domain: string;
+  domainName: string;
 };
 
-export type AccountSafeInfo = {
-  id: string;
-  name: string;
-  domain: string;
-  avatarUrl: string;
-  expiredAt: Date | null;
-};
+export type DomainMap = Record<string, DomainInfo>;
 
 export type ItemBase = {
   id: number;
@@ -22,6 +12,9 @@ export type ItemBase = {
   title: string;
   type: string;
   url: string;
+  domain: string;
+  domainName: string;
+  domainSlug: string;
 };
 
 export type SubmissionDetails = {
@@ -95,6 +88,8 @@ export type Course = {
 
 export type UserCourse = Course & {
   domain: string;
+  domainName: string;
+  domainSlug: string;
   accountIds: string[];
   color: { l: number; c: number; h: number };
 };

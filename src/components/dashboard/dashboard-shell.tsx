@@ -23,7 +23,7 @@ export function DashboardShell({
 
   const handleColorChange = async (
     courseId: number,
-    domain: string,
+    domainSlug: string,
     newColor: any,
   ) => {
     const prevCourses = courses;
@@ -31,7 +31,7 @@ export function DashboardShell({
     // optimistic UI
     setCourses((prev) =>
       prev.map((c) =>
-        c.id === courseId && c.domain === domain
+        c.id === courseId && c.domainSlug === domainSlug
           ? { ...c, color: newColor }
           : c,
       ),
@@ -39,7 +39,7 @@ export function DashboardShell({
 
     // persist
     try {
-      await updateCourseColor(courseId, domain, newColor);
+      await updateCourseColor(courseId, domainSlug, newColor);
     } catch (error: any) {
       if (error?.message?.includes("UNAUTHORIZED")) {
         router.push("/auth/sign-in");

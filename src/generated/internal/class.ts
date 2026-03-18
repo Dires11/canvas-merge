@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.3.0",
   "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  schemas  = [\"public\"]\n}\n\nmodel CanvasAccount {\n  id              String    @id @default(uuid())\n  userId          String    @db.Uuid\n  domain          String\n  name            String\n  accessToken     String\n  expiredAt       DateTime? @map(\"expired_at\")\n  createdAt       DateTime  @default(now()) @map(\"created_at\")\n  avatarUrl       String\n  accountCanvasId Int\n\n  @@unique([userId, domain, accountCanvasId])\n  @@schema(\"public\")\n}\n\nmodel UserSettings {\n  userId            String   @id @db.Uuid\n  preferredTimezone String?  @map(\"preferred_timezone\")\n  detectedTimezone  String   @default(\"UTC\") @map(\"detected_timezone\")\n  createdAt         DateTime @default(now()) @map(\"created_at\")\n  updatedAt         DateTime @updatedAt\n\n  @@schema(\"public\")\n}\n\nmodel CourseMetadata {\n  courseId Int\n  domain   String\n  userId   String\n\n  l Float\n  c Float\n  h Float\n\n  updatedAt DateTime @updatedAt\n\n  // The unique \"fingerprint\" for a course setting\n  @@id([courseId, domain, userId])\n  @@schema(\"public\")\n}\n",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  schemas  = [\"public\"]\n}\n\nmodel UserSettings {\n  userId            String   @id @map(\"user_id\") @db.Uuid\n  preferredTimezone String?  @map(\"preferred_timezone\")\n  detectedTimezone  String   @default(\"UTC\") @map(\"detected_timezone\")\n  createdAt         DateTime @default(now()) @map(\"created_at\")\n  updatedAt         DateTime @updatedAt @map(\"updated_at\")\n\n  @@schema(\"public\")\n}\n\nmodel CourseMetadata {\n  domain    String\n  userId    String   @map(\"user_id\")\n  l         Float\n  c         Float\n  h         Float\n  updatedAt DateTime @updatedAt @map(\"updated_at\")\n  courseId  Int      @map(\"course_id\")\n\n  @@id([courseId, domain, userId])\n  @@schema(\"public\")\n}\n\nmodel CanvasDomain {\n  id         String   @id @default(uuid()) @db.Uuid\n  userId     String   @map(\"user_id\") @db.Uuid\n  domain     String\n  domainName String   @map(\"domain_name\")\n  domainSlug String   @map(\"domain_slug\")\n  createdAt  DateTime @default(now()) @map(\"created_at\")\n\n  accounts CanvasAccount[]\n\n  @@unique([userId, domain])\n  @@schema(\"public\")\n}\n\nmodel CanvasAccount {\n  id          String    @id @default(uuid())\n  userId      String    @map(\"user_id\") @db.Uuid\n  domain      String\n  domainName  String    @map(\"domain_name\")\n  domainSlug  String    @map(\"domain_slug\")\n  name        String\n  accessToken String    @map(\"access_token\")\n  expiredAt   DateTime? @map(\"expired_at\")\n  createdAt   DateTime  @default(now()) @map(\"created_at\")\n  avatarUrl   String    @map(\"avatar_url\")\n  canvasId    Int       @map(\"canvas_id\")\n\n  domainId     String        @map(\"domain_id\") @db.Uuid\n  canvasDomain CanvasDomain? @relation(fields: [domainId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, domainSlug, canvasId])\n  @@schema(\"public\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"CanvasAccount\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiredAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"expired_at\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"avatarUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accountCanvasId\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"UserSettings\":{\"fields\":[{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"preferredTimezone\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"preferred_timezone\"},{\"name\":\"detectedTimezone\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"detected_timezone\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"CourseMetadata\":{\"fields\":[{\"name\":\"courseId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"l\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"c\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"h\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"UserSettings\":{\"fields\":[{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"preferredTimezone\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"preferred_timezone\"},{\"name\":\"detectedTimezone\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"detected_timezone\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"}],\"dbName\":null},\"CourseMetadata\":{\"fields\":[{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"l\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"c\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"h\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"updated_at\"},{\"name\":\"courseId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"course_id\"}],\"dbName\":null},\"CanvasDomain\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domainName\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"domain_name\"},{\"name\":\"domainSlug\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"domain_slug\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"accounts\",\"kind\":\"object\",\"type\":\"CanvasAccount\",\"relationName\":\"CanvasAccountToCanvasDomain\"}],\"dbName\":null},\"CanvasAccount\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"user_id\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domainName\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"domain_name\"},{\"name\":\"domainSlug\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"domain_slug\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessToken\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"access_token\"},{\"name\":\"expiredAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"expired_at\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\",\"dbName\":\"created_at\"},{\"name\":\"avatarUrl\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"avatar_url\"},{\"name\":\"canvasId\",\"kind\":\"scalar\",\"type\":\"Int\",\"dbName\":\"canvas_id\"},{\"name\":\"domainId\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"domain_id\"},{\"name\":\"canvasDomain\",\"kind\":\"object\",\"type\":\"CanvasDomain\",\"relationName\":\"CanvasAccountToCanvasDomain\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -60,8 +60,8 @@ export interface PrismaClientConstructor {
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more CanvasAccounts
-   * const canvasAccounts = await prisma.canvasAccount.findMany()
+   * // Fetch zero or more UserSettings
+   * const userSettings = await prisma.userSettings.findMany()
    * ```
    * 
    * Read more in our [docs](https://pris.ly/d/client).
@@ -82,8 +82,8 @@ export interface PrismaClientConstructor {
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more CanvasAccounts
- * const canvasAccounts = await prisma.canvasAccount.findMany()
+ * // Fetch zero or more UserSettings
+ * const userSettings = await prisma.userSettings.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -177,16 +177,6 @@ export interface PrismaClient<
   }>>
 
       /**
-   * `prisma.canvasAccount`: Exposes CRUD operations for the **CanvasAccount** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more CanvasAccounts
-    * const canvasAccounts = await prisma.canvasAccount.findMany()
-    * ```
-    */
-  get canvasAccount(): Prisma.CanvasAccountDelegate<ExtArgs, { omit: OmitOpts }>;
-
-  /**
    * `prisma.userSettings`: Exposes CRUD operations for the **UserSettings** model.
     * Example usage:
     * ```ts
@@ -205,6 +195,26 @@ export interface PrismaClient<
     * ```
     */
   get courseMetadata(): Prisma.CourseMetadataDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.canvasDomain`: Exposes CRUD operations for the **CanvasDomain** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CanvasDomains
+    * const canvasDomains = await prisma.canvasDomain.findMany()
+    * ```
+    */
+  get canvasDomain(): Prisma.CanvasDomainDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.canvasAccount`: Exposes CRUD operations for the **CanvasAccount** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CanvasAccounts
+    * const canvasAccounts = await prisma.canvasAccount.findMany()
+    * ```
+    */
+  get canvasAccount(): Prisma.CanvasAccountDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

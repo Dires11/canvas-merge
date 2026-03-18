@@ -27,93 +27,93 @@ export type AggregateCourseMetadata = {
 }
 
 export type CourseMetadataAvgAggregateOutputType = {
-  courseId: number | null
   l: number | null
   c: number | null
   h: number | null
+  courseId: number | null
 }
 
 export type CourseMetadataSumAggregateOutputType = {
-  courseId: number | null
   l: number | null
   c: number | null
   h: number | null
+  courseId: number | null
 }
 
 export type CourseMetadataMinAggregateOutputType = {
-  courseId: number | null
   domain: string | null
   userId: string | null
   l: number | null
   c: number | null
   h: number | null
   updatedAt: Date | null
+  courseId: number | null
 }
 
 export type CourseMetadataMaxAggregateOutputType = {
-  courseId: number | null
   domain: string | null
   userId: string | null
   l: number | null
   c: number | null
   h: number | null
   updatedAt: Date | null
+  courseId: number | null
 }
 
 export type CourseMetadataCountAggregateOutputType = {
-  courseId: number
   domain: number
   userId: number
   l: number
   c: number
   h: number
   updatedAt: number
+  courseId: number
   _all: number
 }
 
 
 export type CourseMetadataAvgAggregateInputType = {
-  courseId?: true
   l?: true
   c?: true
   h?: true
+  courseId?: true
 }
 
 export type CourseMetadataSumAggregateInputType = {
-  courseId?: true
   l?: true
   c?: true
   h?: true
+  courseId?: true
 }
 
 export type CourseMetadataMinAggregateInputType = {
-  courseId?: true
   domain?: true
   userId?: true
   l?: true
   c?: true
   h?: true
   updatedAt?: true
+  courseId?: true
 }
 
 export type CourseMetadataMaxAggregateInputType = {
-  courseId?: true
   domain?: true
   userId?: true
   l?: true
   c?: true
   h?: true
   updatedAt?: true
+  courseId?: true
 }
 
 export type CourseMetadataCountAggregateInputType = {
-  courseId?: true
   domain?: true
   userId?: true
   l?: true
   c?: true
   h?: true
   updatedAt?: true
+  courseId?: true
   _all?: true
 }
 
@@ -204,13 +204,13 @@ export type CourseMetadataGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 export type CourseMetadataGroupByOutputType = {
-  courseId: number
   domain: string
   userId: string
   l: number
   c: number
   h: number
   updatedAt: Date
+  courseId: number
   _count: CourseMetadataCountAggregateOutputType | null
   _avg: CourseMetadataAvgAggregateOutputType | null
   _sum: CourseMetadataSumAggregateOutputType | null
@@ -237,23 +237,23 @@ export type CourseMetadataWhereInput = {
   AND?: Prisma.CourseMetadataWhereInput | Prisma.CourseMetadataWhereInput[]
   OR?: Prisma.CourseMetadataWhereInput[]
   NOT?: Prisma.CourseMetadataWhereInput | Prisma.CourseMetadataWhereInput[]
-  courseId?: Prisma.IntFilter<"CourseMetadata"> | number
   domain?: Prisma.StringFilter<"CourseMetadata"> | string
   userId?: Prisma.StringFilter<"CourseMetadata"> | string
   l?: Prisma.FloatFilter<"CourseMetadata"> | number
   c?: Prisma.FloatFilter<"CourseMetadata"> | number
   h?: Prisma.FloatFilter<"CourseMetadata"> | number
   updatedAt?: Prisma.DateTimeFilter<"CourseMetadata"> | Date | string
+  courseId?: Prisma.IntFilter<"CourseMetadata"> | number
 }
 
 export type CourseMetadataOrderByWithRelationInput = {
-  courseId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   l?: Prisma.SortOrder
   c?: Prisma.SortOrder
   h?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
 }
 
 export type CourseMetadataWhereUniqueInput = Prisma.AtLeast<{
@@ -261,23 +261,23 @@ export type CourseMetadataWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.CourseMetadataWhereInput | Prisma.CourseMetadataWhereInput[]
   OR?: Prisma.CourseMetadataWhereInput[]
   NOT?: Prisma.CourseMetadataWhereInput | Prisma.CourseMetadataWhereInput[]
-  courseId?: Prisma.IntFilter<"CourseMetadata"> | number
   domain?: Prisma.StringFilter<"CourseMetadata"> | string
   userId?: Prisma.StringFilter<"CourseMetadata"> | string
   l?: Prisma.FloatFilter<"CourseMetadata"> | number
   c?: Prisma.FloatFilter<"CourseMetadata"> | number
   h?: Prisma.FloatFilter<"CourseMetadata"> | number
   updatedAt?: Prisma.DateTimeFilter<"CourseMetadata"> | Date | string
+  courseId?: Prisma.IntFilter<"CourseMetadata"> | number
 }, "courseId_domain_userId">
 
 export type CourseMetadataOrderByWithAggregationInput = {
-  courseId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   l?: Prisma.SortOrder
   c?: Prisma.SortOrder
   h?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
   _count?: Prisma.CourseMetadataCountOrderByAggregateInput
   _avg?: Prisma.CourseMetadataAvgOrderByAggregateInput
   _max?: Prisma.CourseMetadataMaxOrderByAggregateInput
@@ -289,83 +289,83 @@ export type CourseMetadataScalarWhereWithAggregatesInput = {
   AND?: Prisma.CourseMetadataScalarWhereWithAggregatesInput | Prisma.CourseMetadataScalarWhereWithAggregatesInput[]
   OR?: Prisma.CourseMetadataScalarWhereWithAggregatesInput[]
   NOT?: Prisma.CourseMetadataScalarWhereWithAggregatesInput | Prisma.CourseMetadataScalarWhereWithAggregatesInput[]
-  courseId?: Prisma.IntWithAggregatesFilter<"CourseMetadata"> | number
   domain?: Prisma.StringWithAggregatesFilter<"CourseMetadata"> | string
   userId?: Prisma.StringWithAggregatesFilter<"CourseMetadata"> | string
   l?: Prisma.FloatWithAggregatesFilter<"CourseMetadata"> | number
   c?: Prisma.FloatWithAggregatesFilter<"CourseMetadata"> | number
   h?: Prisma.FloatWithAggregatesFilter<"CourseMetadata"> | number
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CourseMetadata"> | Date | string
+  courseId?: Prisma.IntWithAggregatesFilter<"CourseMetadata"> | number
 }
 
 export type CourseMetadataCreateInput = {
-  courseId: number
   domain: string
   userId: string
   l: number
   c: number
   h: number
   updatedAt?: Date | string
+  courseId: number
 }
 
 export type CourseMetadataUncheckedCreateInput = {
-  courseId: number
   domain: string
   userId: string
   l: number
   c: number
   h: number
   updatedAt?: Date | string
+  courseId: number
 }
 
 export type CourseMetadataUpdateInput = {
-  courseId?: Prisma.IntFieldUpdateOperationsInput | number
   domain?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   l?: Prisma.FloatFieldUpdateOperationsInput | number
   c?: Prisma.FloatFieldUpdateOperationsInput | number
   h?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  courseId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type CourseMetadataUncheckedUpdateInput = {
-  courseId?: Prisma.IntFieldUpdateOperationsInput | number
   domain?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   l?: Prisma.FloatFieldUpdateOperationsInput | number
   c?: Prisma.FloatFieldUpdateOperationsInput | number
   h?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  courseId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type CourseMetadataCreateManyInput = {
-  courseId: number
   domain: string
   userId: string
   l: number
   c: number
   h: number
   updatedAt?: Date | string
+  courseId: number
 }
 
 export type CourseMetadataUpdateManyMutationInput = {
-  courseId?: Prisma.IntFieldUpdateOperationsInput | number
   domain?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   l?: Prisma.FloatFieldUpdateOperationsInput | number
   c?: Prisma.FloatFieldUpdateOperationsInput | number
   h?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  courseId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type CourseMetadataUncheckedUpdateManyInput = {
-  courseId?: Prisma.IntFieldUpdateOperationsInput | number
   domain?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   l?: Prisma.FloatFieldUpdateOperationsInput | number
   c?: Prisma.FloatFieldUpdateOperationsInput | number
   h?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  courseId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type CourseMetadataCourseIdDomainUserIdCompoundUniqueInput = {
@@ -375,47 +375,47 @@ export type CourseMetadataCourseIdDomainUserIdCompoundUniqueInput = {
 }
 
 export type CourseMetadataCountOrderByAggregateInput = {
-  courseId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   l?: Prisma.SortOrder
   c?: Prisma.SortOrder
   h?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
 }
 
 export type CourseMetadataAvgOrderByAggregateInput = {
-  courseId?: Prisma.SortOrder
   l?: Prisma.SortOrder
   c?: Prisma.SortOrder
   h?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
 }
 
 export type CourseMetadataMaxOrderByAggregateInput = {
-  courseId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   l?: Prisma.SortOrder
   c?: Prisma.SortOrder
   h?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
 }
 
 export type CourseMetadataMinOrderByAggregateInput = {
-  courseId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   l?: Prisma.SortOrder
   c?: Prisma.SortOrder
   h?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
 }
 
 export type CourseMetadataSumOrderByAggregateInput = {
-  courseId?: Prisma.SortOrder
   l?: Prisma.SortOrder
   c?: Prisma.SortOrder
   h?: Prisma.SortOrder
+  courseId?: Prisma.SortOrder
 }
 
 export type FloatFieldUpdateOperationsInput = {
@@ -426,61 +426,69 @@ export type FloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 
 
 export type CourseMetadataSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  courseId?: boolean
   domain?: boolean
   userId?: boolean
   l?: boolean
   c?: boolean
   h?: boolean
   updatedAt?: boolean
+  courseId?: boolean
 }, ExtArgs["result"]["courseMetadata"]>
 
 export type CourseMetadataSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  courseId?: boolean
   domain?: boolean
   userId?: boolean
   l?: boolean
   c?: boolean
   h?: boolean
   updatedAt?: boolean
+  courseId?: boolean
 }, ExtArgs["result"]["courseMetadata"]>
 
 export type CourseMetadataSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  courseId?: boolean
   domain?: boolean
   userId?: boolean
   l?: boolean
   c?: boolean
   h?: boolean
   updatedAt?: boolean
+  courseId?: boolean
 }, ExtArgs["result"]["courseMetadata"]>
 
 export type CourseMetadataSelectScalar = {
-  courseId?: boolean
   domain?: boolean
   userId?: boolean
   l?: boolean
   c?: boolean
   h?: boolean
   updatedAt?: boolean
+  courseId?: boolean
 }
 
-export type CourseMetadataOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"courseId" | "domain" | "userId" | "l" | "c" | "h" | "updatedAt", ExtArgs["result"]["courseMetadata"]>
+export type CourseMetadataOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"domain" | "userId" | "l" | "c" | "h" | "updatedAt" | "courseId", ExtArgs["result"]["courseMetadata"]>
 
 export type $CourseMetadataPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "CourseMetadata"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    courseId: number
     domain: string
     userId: string
     l: number
     c: number
     h: number
     updatedAt: Date
+    courseId: number
   }, ExtArgs["result"]["courseMetadata"]>
   composites: {}
 }
@@ -564,8 +572,8 @@ export interface CourseMetadataDelegate<ExtArgs extends runtime.Types.Extensions
    * // Get first 10 CourseMetadata
    * const courseMetadata = await prisma.courseMetadata.findMany({ take: 10 })
    * 
-   * // Only select the `courseId`
-   * const courseMetadataWithCourseIdOnly = await prisma.courseMetadata.findMany({ select: { courseId: true } })
+   * // Only select the `domain`
+   * const courseMetadataWithDomainOnly = await prisma.courseMetadata.findMany({ select: { domain: true } })
    * 
    */
   findMany<T extends CourseMetadataFindManyArgs>(args?: Prisma.SelectSubset<T, CourseMetadataFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CourseMetadataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -609,9 +617,9 @@ export interface CourseMetadataDelegate<ExtArgs extends runtime.Types.Extensions
    *   ]
    * })
    * 
-   * // Create many CourseMetadata and only return the `courseId`
-   * const courseMetadataWithCourseIdOnly = await prisma.courseMetadata.createManyAndReturn({
-   *   select: { courseId: true },
+   * // Create many CourseMetadata and only return the `domain`
+   * const courseMetadataWithDomainOnly = await prisma.courseMetadata.createManyAndReturn({
+   *   select: { domain: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -700,9 +708,9 @@ export interface CourseMetadataDelegate<ExtArgs extends runtime.Types.Extensions
    *   ]
    * })
    * 
-   * // Update zero or more CourseMetadata and only return the `courseId`
-   * const courseMetadataWithCourseIdOnly = await prisma.courseMetadata.updateManyAndReturn({
-   *   select: { courseId: true },
+   * // Update zero or more CourseMetadata and only return the `domain`
+   * const courseMetadataWithDomainOnly = await prisma.courseMetadata.updateManyAndReturn({
+   *   select: { domain: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -904,13 +912,13 @@ export interface Prisma__CourseMetadataClient<T, Null = never, ExtArgs extends r
  * Fields of the CourseMetadata model
  */
 export interface CourseMetadataFieldRefs {
-  readonly courseId: Prisma.FieldRef<"CourseMetadata", 'Int'>
   readonly domain: Prisma.FieldRef<"CourseMetadata", 'String'>
   readonly userId: Prisma.FieldRef<"CourseMetadata", 'String'>
   readonly l: Prisma.FieldRef<"CourseMetadata", 'Float'>
   readonly c: Prisma.FieldRef<"CourseMetadata", 'Float'>
   readonly h: Prisma.FieldRef<"CourseMetadata", 'Float'>
   readonly updatedAt: Prisma.FieldRef<"CourseMetadata", 'DateTime'>
+  readonly courseId: Prisma.FieldRef<"CourseMetadata", 'Int'>
 }
     
 

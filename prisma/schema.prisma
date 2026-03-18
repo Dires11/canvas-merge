@@ -8,43 +8,59 @@ datasource db {
   schemas  = ["public"]
 }
 
-model CanvasAccount {
-  id              String    @id @default(uuid())
-  userId          String    @db.Uuid
-  domain          String
-  name            String
-  accessToken     String
-  expiredAt       DateTime? @map("expired_at")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  avatarUrl       String
-  accountCanvasId Int
-
-  @@unique([userId, domain, accountCanvasId])
-  @@schema("public")
-}
-
 model UserSettings {
-  userId            String   @id @db.Uuid
+  userId            String   @id @map("user_id") @db.Uuid
   preferredTimezone String?  @map("preferred_timezone")
   detectedTimezone  String   @default("UTC") @map("detected_timezone")
   createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
   @@schema("public")
 }
 
 model CourseMetadata {
-  courseId Int
-  domain   String
-  userId   String
+  domain    String
+  userId    String   @map("user_id")
+  l         Float
+  c         Float
+  h         Float
+  updatedAt DateTime @updatedAt @map("updated_at")
+  courseId  Int      @map("course_id")
 
-  l Float
-  c Float
-  h Float
-
-  updatedAt DateTime @updatedAt
-
-  // The unique "fingerprint" for a course setting
   @@id([courseId, domain, userId])
+  @@schema("public")
+}
+
+model CanvasDomain {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  domain     String
+  domainName String   @map("domain_name")
+  domainSlug String   @map("domain_slug")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  accounts CanvasAccount[]
+
+  @@unique([userId, domain])
+  @@schema("public")
+}
+
+model CanvasAccount {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id") @db.Uuid
+  domain      String
+  domainName  String    @map("domain_name")
+  domainSlug  String    @map("domain_slug")
+  name        String
+  accessToken String    @map("access_token")
+  expiredAt   DateTime? @map("expired_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  avatarUrl   String    @map("avatar_url")
+  canvasId    Int       @map("canvas_id")
+
+  domainId     String        @map("domain_id") @db.Uuid
+  canvasDomain CanvasDomain? @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, domainSlug, canvasId])
   @@schema("public")
 }

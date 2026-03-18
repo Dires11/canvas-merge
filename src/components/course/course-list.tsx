@@ -16,7 +16,7 @@ export function CourseList({
   onColorChange,
 }: {
   courses: UserCourse[];
-  onColorChange: (courseId: number, domain: string, newColor: any) => void;
+  onColorChange: (courseId: number, domainSlug: string, newColor: any) => void;
 }) {
   return (
     <ul>
@@ -36,7 +36,7 @@ export function CourseList({
             <div className="w-3 shrink-0 self-stretch bg-[oklch(var(--c-light))] dark:bg-[oklch(var(--c-dark))]"></div>
             <div className="min-h-28 px-2 pt-1 pb-5 md:min-h-22">
               <p className="racking-tight text-sm opacity-60">
-                {course.domain.split("//")[1]}
+                {course.domainName}
               </p>
               <p className="text-base md:text-sm">{course.name}</p>
             </div>
@@ -71,7 +71,7 @@ export function CourseList({
                         } as React.CSSProperties
                       }
                       onClick={() =>
-                        onColorChange(course.id, course.domain, color)
+                        onColorChange(course.id, course.domainSlug, color)
                       }
                     />
                   );
