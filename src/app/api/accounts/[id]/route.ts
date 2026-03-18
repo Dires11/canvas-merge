@@ -48,7 +48,7 @@ export async function PATCH(
   }
 
   const profileInfo = testConnection.data;
-  if (profileInfo.accountCanvasId !== account.accountCanvasId) {
+  if (profileInfo.canvasId !== account.canvasId) {
     return NextResponse.json(
       { error: `Make sure the token belongs to ${account.name}.` },
       { status: 403 },
