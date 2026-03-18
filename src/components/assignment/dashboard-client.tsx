@@ -3,12 +3,8 @@
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
-import type {
-  AccountSafeInfo,
-  DomainMap,
-  MergedAssignment,
-  UserCourse,
-} from "@/lib/types";
+import type { DomainMap, MergedAssignment, UserCourse } from "@/lib/types";
+import { AccountSafeInfo } from "@/lib/types/index";
 import { TriangleAlert, ChevronDown } from "lucide-react";
 import {
   ReadonlyURLSearchParams,

@@ -14,14 +14,6 @@ export const DomainSchema = z
     return `https://${s}`;
   })
   .superRefine((s, ctx) => {
-    if (s === undefined) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Undefined Institution URL is required",
-      });
-      return;
-    }
-
     let u: URL;
     try {
       u = new URL(s);
@@ -75,6 +67,11 @@ export const DomainSchema = z
   });
 
 export const AddSchema = z.object({
+  domainName: z
+    .string()
+    .trim()
+    .min(1, "Institution name is required")
+    .max(40, "Institution name is too long"),
   domain: DomainSchema,
   token: z
     .string()

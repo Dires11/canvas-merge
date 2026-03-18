@@ -105,6 +105,7 @@ export async function getUserCanvasAccounts(
       domainSlug: true,
       expiredAt: true,
       avatarUrl: true,
+      canvasId: true,
       accessToken: includeTokens,
     },
   });

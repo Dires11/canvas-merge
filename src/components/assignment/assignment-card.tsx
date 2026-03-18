@@ -1,8 +1,5 @@
-import type {
-  MergedAssignment,
-  Assignment,
-  AccountSafeInfo,
-} from "@/lib/types";
+import type { MergedAssignment, Assignment } from "@/lib/types";
+import { AccountSafeInfo } from "@/lib/types/index";
 import Link from "next/link";
 import { HoverOrTap } from "../hover-or-tap";
 import { convertToDark } from "@/lib/colors/colors";

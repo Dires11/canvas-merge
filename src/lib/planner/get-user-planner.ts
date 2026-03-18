@@ -7,7 +7,6 @@ import { getDetectedTimeZoneForUser } from "@/data/user-settings";
 import { decryptToken } from "@/lib/crypto";
 import { getPlannerItems } from "@/lib/canvas";
 import type {
-  AccountSafeInfo,
   Announcement,
   Assignment,
   ItemBase,
@@ -18,6 +17,7 @@ import type {
   MergedItemsByDomain,
   SubmissionDetails,
 } from "@/lib/types";
+import { AccountSafeInfo } from "@/lib/types/index";
 import { DateTime } from "luxon";
 
 /**
@@ -243,15 +243,9 @@ export async function getUserPlanner(
     throw new Error("No accounts found.");
   }
 
-  const accountsSafeInfo: AccountSafeInfo[] = allAccounts.map((acc) => ({
-    id: acc.id,
-    name: acc.name,
-    domain: acc.domain,
-    domainName: acc.domainName,
-    domainSlug: acc.domainSlug,
-    avatarUrl: acc.avatarUrl,
-    expiredAt: acc.expiredAt,
-  }));
+  const accountsSafeInfo: AccountSafeInfo[] = allAccounts.map(
+    ({ accessToken, ...safe }) => safe,
+  );
 
   const accountsWithErrors: string[] = [];
 

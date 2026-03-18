@@ -1,4 +1,5 @@
-import type { AccountSafeInfo, DomainInfo, UserCourse } from "@/lib/types";
+import type { DomainInfo, UserCourse } from "@/lib/types";
+import { AccountSafeInfo } from "@/lib/types/index";
 import { GlassContainer } from "../glass-container";
 import { Filters } from "./dashboard-client";
 import {

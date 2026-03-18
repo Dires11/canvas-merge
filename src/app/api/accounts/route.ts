@@ -9,6 +9,7 @@ import {
 } from "@/data/canvas-account";
 import { encryptToken } from "@/lib/crypto";
 import { AddSchema, DomainSchema } from "@/lib/schemas/manage-accounts";
+import { generateUrlSlug } from "@/lib/generate-slug";
 
 type ValidateResult<T> =
   | { ok: true; data: T }
@@ -85,7 +86,7 @@ export async function POST(req: NextRequest) {
     return result.response;
   }
 
-  let { domain, token } = result.data;
+  let { domain, token, domainName } = result.data;
 
   // 4) Test the connection with CANVAS API
   const testConnection = await getAccountInfo({ domain, token });
@@ -104,8 +105,17 @@ export async function POST(req: NextRequest) {
   // 5) Ecrypt the token
   const encryptedToken = encryptToken(token);
 
+  // 4) Get the domain slug
+  const domainSlug = generateUrlSlug(domain);
+
   // 6) Add to the database
-  const saved = await createCanvasAccount(user.id, encryptedToken, profileInfo);
+  const saved = await createCanvasAccount(
+    user.id,
+    encryptedToken,
+    profileInfo,
+    domainName,
+    domainSlug,
+  );
 
   if (!saved.ok) {
     return NextResponse.json(
