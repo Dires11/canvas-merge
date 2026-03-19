@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { UserCourse } from "@/lib/types";
-import type { UserPlanner } from "@/lib/planner/get-user-planner";
+import type { UserPlanner } from "@/lib/services/planner/get-user-planner";
 import { CourseSidebar } from "@/components/course/course-sidebar";
 import { AssignmentDashboardClient } from "@/components/assignment/dashboard-client";
 import { updateCourseColor } from "@/app/actions/course-actions";

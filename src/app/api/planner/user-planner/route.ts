@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUserApi } from "@/lib/server/auth-server";
-import { getUserPlanner } from "@/lib/planner/get-user-planner";
+import { getUserPlanner } from "@/lib/services/planner/get-user-planner";
 import { dedupeWithTtl } from "@/lib/utils/dedupe";
 
 export async function GET(req: NextRequest) {

@@ -6,8 +6,11 @@ import { requireUser } from "@/lib/server/auth-server";
 import {
   type CourseFailure,
   getUserCourses,
-} from "@/lib/planner/get-user-courses";
-import { getUserPlanner, UserPlanner } from "@/lib/planner/get-user-planner";
+} from "@/lib/services/planner/get-user-courses";
+import {
+  getUserPlanner,
+  UserPlanner,
+} from "@/lib/services/planner/get-user-planner";
 import type { UserCourse } from "@/lib/types";
 import { getUserDomains } from "@/lib/data/canvas-domain";
 

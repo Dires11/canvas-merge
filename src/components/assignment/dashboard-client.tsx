@@ -19,7 +19,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-import type { UserPlanner } from "@/lib/planner/get-user-planner";
+import type { UserPlanner } from "@/lib/services/planner/get-user-planner";
 import Link from "next/link";
 import { GlassContainer } from "../glass-container";
 import { AssignmentDashboardControls } from "./dashboard-controls";
