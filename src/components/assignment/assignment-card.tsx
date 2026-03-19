@@ -2,7 +2,7 @@ import type { MergedAssignment, Assignment } from "@/lib/types";
 import { AccountSafeInfo } from "@/lib/types/index";
 import Link from "next/link";
 import { HoverOrTap } from "../hover-or-tap";
-import { convertToDark } from "@/lib/colors/colors";
+import { convertToDark } from "@/lib/utils/colors/colors";
 import {
   NotebookPen,
   CopyCheck,
@@ -10,7 +10,7 @@ import {
   ListTodo,
   type LucideIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { ClockAlert } from "lucide-react";
 
 function DueLabel({

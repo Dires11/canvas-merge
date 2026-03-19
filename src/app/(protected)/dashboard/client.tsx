@@ -7,16 +7,19 @@ import { CourseSidebar } from "@/components/course/course-sidebar";
 import { AssignmentDashboardClient } from "@/components/assignment/dashboard-client";
 import { updateCourseColor } from "@/app/actions/course-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseTab } from "../course/course-tab";
+import { CourseTab } from "../../../components/course/course-tab";
 import { useRouter } from "next/navigation";
-import { GlassContainer } from "../glass-container";
+import { GlassContainer } from "../../../components/glass-container";
+import { CanvasDomainInfo } from "@/lib/types/canvas-domain";
 
-export function DashboardShell({
+export function DashboardClient({
   initialCourses,
   plannerData,
+  domainsData,
 }: {
   initialCourses: UserCourse[];
   plannerData: UserPlanner | null;
+  domainsData: CanvasDomainInfo[];
 }) {
   const [courses, setCourses] = useState<UserCourse[]>(initialCourses);
   const router = useRouter();
@@ -76,6 +79,7 @@ export function DashboardShell({
             <AssignmentDashboardClient
               initialData={plannerData}
               courses={courses}
+              domains={domainsData}
             />
           </TabsContent>
         </Tabs>
@@ -89,6 +93,7 @@ export function DashboardShell({
             <AssignmentDashboardClient
               initialData={plannerData}
               courses={courses}
+              domains={domainsData}
             />
           </div>
         </main>

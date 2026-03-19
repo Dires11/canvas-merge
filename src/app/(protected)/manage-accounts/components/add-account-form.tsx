@@ -2,128 +2,109 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Input } from "@/components/input";
+import { Button } from "@/components/ui/button";
 import {
-  FieldGroup,
   Field,
-  FieldLabel,
-  FieldError,
   FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
 } from "@/components/ui/field";
 import { AddSchema } from "@/lib/schemas/manage-accounts";
-import { set, z } from "zod";
-import { addAccountAction } from "../actions";
-import { Button } from "@/components/ui/button";
+import type { AddAccountInput } from "@/lib/types/account";
 
-// type ManageAccountFormProps = {
-//   accountId?: string; // if present → update mode
-//   initialDomain?: string;
-//   onSubmit: (
-//     data: { domain?: string; token: string },
-//     signal: AbortSignal,
-//   ) => Promise<void>;
-//   onSuccess: () => void;
-// };
+type Props = {
+  onSubmit: (data: AddAccountInput) => Promise<void>;
+};
 
-export function AddAccountForm({
-  onSubmit,
-}: {
-  onSubmit: (data: z.infer<typeof AddSchema>) => Promise<void>;
-}) {
-  // schema depends on mode, but form type stays the same
-  const schema = AddSchema;
-
+export function AddAccountForm({ onSubmit }: Props) {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-    reset,
-  } = useForm({
-    resolver: zodResolver(schema),
+  } = useForm<AddAccountInput>({
+    resolver: zodResolver(AddSchema),
+    defaultValues: {
+      baseUrl: "",
+      domainName: "",
+      token: "",
+    },
   });
 
-  // async function onSubmit(values: z.infer<typeof schema>) {
-  //   try {
-  //     const result = await addAccountAction(values);
+  async function handleFormSubmit(values: AddAccountInput) {
+    try {
+      await onSubmit(values);
+    } catch (error) {
+      setError("root", {
+        message:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again.",
+      });
+    }
+  }
 
-  //     if (result.ok) {
-  //       onSuccess();
-  //     } else {
-  //       setError("root", { message: result.error });
-  //     }
-  //   } catch (error) {
-  //     setError("root", { message: "An unexpected error occurred" });
-  //   }
-  // }
   return (
     <form
       noValidate
-      onSubmit={handleSubmit(async (values) => {
-        try {
-          await onSubmit(values);
-          set;
-        } catch (error: any) {
-          setError("root", {
-            message:
-              error?.message ||
-              "An unexpected error occurred. Please try again.",
-          });
-        }
-      })}
+      onSubmit={handleSubmit(handleFormSubmit)}
       className="text-card-foreground space-y-4"
     >
       <FieldGroup className="gap-1">
-        {/* Canvas URL */}
         <Field className="gap-0.5">
-          <FieldLabel htmlFor="domain">College Canvas URL</FieldLabel>
+          <FieldLabel htmlFor="baseUrl">College Canvas URL</FieldLabel>
           <Input
-            id="domain"
-            autoComplete="true"
-            autoCapitalize="false"
-            spellCheck="false"
-            placeholder="e.g. canvas.instructure.edu"
-            error={!!errors.domain}
-            {...register("domain")}
+            id="baseUrl"
+            autoComplete="url"
+            autoCapitalize="none"
+            spellCheck={false}
+            placeholder="e.g. https://canvas.instructure.edu"
+            error={!!errors.baseUrl}
+            {...register("baseUrl")}
           />
           <FieldDescription>
-            The base URL of your institution's Canvas instance.
+            The base URL of your institution&apos;s Canvas instance.
           </FieldDescription>
-          <FieldError>{errors.domain?.message ?? ""}</FieldError>
+          <FieldError>{errors.baseUrl?.message ?? ""}</FieldError>
         </Field>
-        {/* Domain Name */}
+
         <Field className="gap-0.5">
           <FieldLabel htmlFor="domainName">College Name</FieldLabel>
           <Input
             id="domainName"
-            autoComplete="true"
-            placeholder="e.g CSUN"
+            autoComplete="organization"
+            placeholder="e.g. CSUN"
             error={!!errors.domainName}
             {...register("domainName")}
           />
           <FieldDescription>
-            This is going to be used for your reference.
+            This is used as the display name for this Canvas domain.
           </FieldDescription>
           <FieldError>{errors.domainName?.message ?? ""}</FieldError>
         </Field>
-        {/* API Token */}
+
         <Field className="gap-0.5">
           <FieldLabel htmlFor="token">Canvas API Token</FieldLabel>
           <Input
             id="token"
+            type="password"
             placeholder="e.g. abc123"
             error={!!errors.token}
             {...register("token")}
           />
           <FieldDescription>
-            The tokens are encrypted before being stored.
+            Your token is encrypted before it is stored.
           </FieldDescription>
           <FieldError>{errors.token?.message ?? ""}</FieldError>
         </Field>
 
         <Button type="submit" disabled={isSubmitting} className="mt-3">
-          Connect Account
+          {isSubmitting ? "Connecting..." : "Connect Account"}
         </Button>
+
         {errors.root && (
           <p
             className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"

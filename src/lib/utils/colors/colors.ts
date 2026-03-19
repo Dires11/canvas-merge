@@ -1,4 +1,4 @@
-import { getPaletteDefault } from "./colors-pallete";
+import { getPaletteDefault } from "./colors-palete";
 
 type Oklch = {
   l: number;

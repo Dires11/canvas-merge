@@ -1,5 +1,4 @@
-import { cn } from "@/lib/utils";
-
+import { cn } from "@/lib/utils/cn";
 export function GlassContainer({
   children,
   className,

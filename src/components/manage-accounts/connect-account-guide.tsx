@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { DomainSchema } from "@/lib/schemas/manage-accounts";
+import { BaseUrlSchema } from "@/lib/schemas/manage-accounts";
 import { ExternalLink, School, KeyRound } from "lucide-react";
 import { GlassContainer } from "../glass-container";
 import Image from "next/image";
@@ -25,7 +25,7 @@ export function ConnectAccountGuide({
   const [currentStep, setCurrentStep] = useState(1);
 
   const parsed = useMemo(() => {
-    return DomainSchema.safeParse(domainInput);
+    return BaseUrlSchema.safeParse(domainInput);
   }, [domainInput]);
 
   const baseUrl = parsed.success ? parsed.data : null;

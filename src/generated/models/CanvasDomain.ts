@@ -27,27 +27,27 @@ export type AggregateCanvasDomain = {
 export type CanvasDomainMinAggregateOutputType = {
   id: string | null
   userId: string | null
-  domain: string | null
-  domainName: string | null
-  domainSlug: string | null
+  baseUrl: string | null
+  name: string | null
+  slug: string | null
   createdAt: Date | null
 }
 
 export type CanvasDomainMaxAggregateOutputType = {
   id: string | null
   userId: string | null
-  domain: string | null
-  domainName: string | null
-  domainSlug: string | null
+  baseUrl: string | null
+  name: string | null
+  slug: string | null
   createdAt: Date | null
 }
 
 export type CanvasDomainCountAggregateOutputType = {
   id: number
   userId: number
-  domain: number
-  domainName: number
-  domainSlug: number
+  baseUrl: number
+  name: number
+  slug: number
   createdAt: number
   _all: number
 }
@@ -56,27 +56,27 @@ export type CanvasDomainCountAggregateOutputType = {
 export type CanvasDomainMinAggregateInputType = {
   id?: true
   userId?: true
-  domain?: true
-  domainName?: true
-  domainSlug?: true
+  baseUrl?: true
+  name?: true
+  slug?: true
   createdAt?: true
 }
 
 export type CanvasDomainMaxAggregateInputType = {
   id?: true
   userId?: true
-  domain?: true
-  domainName?: true
-  domainSlug?: true
+  baseUrl?: true
+  name?: true
+  slug?: true
   createdAt?: true
 }
 
 export type CanvasDomainCountAggregateInputType = {
   id?: true
   userId?: true
-  domain?: true
-  domainName?: true
-  domainSlug?: true
+  baseUrl?: true
+  name?: true
+  slug?: true
   createdAt?: true
   _all?: true
 }
@@ -156,9 +156,9 @@ export type CanvasDomainGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type CanvasDomainGroupByOutputType = {
   id: string
   userId: string
-  domain: string
-  domainName: string
-  domainSlug: string
+  baseUrl: string
+  name: string
+  slug: string
   createdAt: Date
   _count: CanvasDomainCountAggregateOutputType | null
   _min: CanvasDomainMinAggregateOutputType | null
@@ -186,9 +186,9 @@ export type CanvasDomainWhereInput = {
   NOT?: Prisma.CanvasDomainWhereInput | Prisma.CanvasDomainWhereInput[]
   id?: Prisma.UuidFilter<"CanvasDomain"> | string
   userId?: Prisma.UuidFilter<"CanvasDomain"> | string
-  domain?: Prisma.StringFilter<"CanvasDomain"> | string
-  domainName?: Prisma.StringFilter<"CanvasDomain"> | string
-  domainSlug?: Prisma.StringFilter<"CanvasDomain"> | string
+  baseUrl?: Prisma.StringFilter<"CanvasDomain"> | string
+  name?: Prisma.StringFilter<"CanvasDomain"> | string
+  slug?: Prisma.StringFilter<"CanvasDomain"> | string
   createdAt?: Prisma.DateTimeFilter<"CanvasDomain"> | Date | string
   accounts?: Prisma.CanvasAccountListRelationFilter
 }
@@ -196,33 +196,33 @@ export type CanvasDomainWhereInput = {
 export type CanvasDomainOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  domain?: Prisma.SortOrder
-  domainName?: Prisma.SortOrder
-  domainSlug?: Prisma.SortOrder
+  baseUrl?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   accounts?: Prisma.CanvasAccountOrderByRelationAggregateInput
 }
 
 export type CanvasDomainWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  userId_domain?: Prisma.CanvasDomainUserIdDomainCompoundUniqueInput
+  userId_baseUrl?: Prisma.CanvasDomainUserIdBaseUrlCompoundUniqueInput
   AND?: Prisma.CanvasDomainWhereInput | Prisma.CanvasDomainWhereInput[]
   OR?: Prisma.CanvasDomainWhereInput[]
   NOT?: Prisma.CanvasDomainWhereInput | Prisma.CanvasDomainWhereInput[]
   userId?: Prisma.UuidFilter<"CanvasDomain"> | string
-  domain?: Prisma.StringFilter<"CanvasDomain"> | string
-  domainName?: Prisma.StringFilter<"CanvasDomain"> | string
-  domainSlug?: Prisma.StringFilter<"CanvasDomain"> | string
+  baseUrl?: Prisma.StringFilter<"CanvasDomain"> | string
+  name?: Prisma.StringFilter<"CanvasDomain"> | string
+  slug?: Prisma.StringFilter<"CanvasDomain"> | string
   createdAt?: Prisma.DateTimeFilter<"CanvasDomain"> | Date | string
   accounts?: Prisma.CanvasAccountListRelationFilter
-}, "id" | "userId_domain">
+}, "id" | "userId_baseUrl">
 
 export type CanvasDomainOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  domain?: Prisma.SortOrder
-  domainName?: Prisma.SortOrder
-  domainSlug?: Prisma.SortOrder
+  baseUrl?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.CanvasDomainCountOrderByAggregateInput
   _max?: Prisma.CanvasDomainMaxOrderByAggregateInput
@@ -235,18 +235,18 @@ export type CanvasDomainScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CanvasDomainScalarWhereWithAggregatesInput | Prisma.CanvasDomainScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"CanvasDomain"> | string
   userId?: Prisma.UuidWithAggregatesFilter<"CanvasDomain"> | string
-  domain?: Prisma.StringWithAggregatesFilter<"CanvasDomain"> | string
-  domainName?: Prisma.StringWithAggregatesFilter<"CanvasDomain"> | string
-  domainSlug?: Prisma.StringWithAggregatesFilter<"CanvasDomain"> | string
+  baseUrl?: Prisma.StringWithAggregatesFilter<"CanvasDomain"> | string
+  name?: Prisma.StringWithAggregatesFilter<"CanvasDomain"> | string
+  slug?: Prisma.StringWithAggregatesFilter<"CanvasDomain"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CanvasDomain"> | Date | string
 }
 
 export type CanvasDomainCreateInput = {
   id?: string
   userId: string
-  domain: string
-  domainName: string
-  domainSlug: string
+  baseUrl: string
+  name: string
+  slug: string
   createdAt?: Date | string
   accounts?: Prisma.CanvasAccountCreateNestedManyWithoutCanvasDomainInput
 }
@@ -254,9 +254,9 @@ export type CanvasDomainCreateInput = {
 export type CanvasDomainUncheckedCreateInput = {
   id?: string
   userId: string
-  domain: string
-  domainName: string
-  domainSlug: string
+  baseUrl: string
+  name: string
+  slug: string
   createdAt?: Date | string
   accounts?: Prisma.CanvasAccountUncheckedCreateNestedManyWithoutCanvasDomainInput
 }
@@ -264,9 +264,9 @@ export type CanvasDomainUncheckedCreateInput = {
 export type CanvasDomainUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  domain?: Prisma.StringFieldUpdateOperationsInput | string
-  domainName?: Prisma.StringFieldUpdateOperationsInput | string
-  domainSlug?: Prisma.StringFieldUpdateOperationsInput | string
+  baseUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.CanvasAccountUpdateManyWithoutCanvasDomainNestedInput
 }
@@ -274,9 +274,9 @@ export type CanvasDomainUpdateInput = {
 export type CanvasDomainUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  domain?: Prisma.StringFieldUpdateOperationsInput | string
-  domainName?: Prisma.StringFieldUpdateOperationsInput | string
-  domainSlug?: Prisma.StringFieldUpdateOperationsInput | string
+  baseUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.CanvasAccountUncheckedUpdateManyWithoutCanvasDomainNestedInput
 }
@@ -284,65 +284,65 @@ export type CanvasDomainUncheckedUpdateInput = {
 export type CanvasDomainCreateManyInput = {
   id?: string
   userId: string
-  domain: string
-  domainName: string
-  domainSlug: string
+  baseUrl: string
+  name: string
+  slug: string
   createdAt?: Date | string
 }
 
 export type CanvasDomainUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  domain?: Prisma.StringFieldUpdateOperationsInput | string
-  domainName?: Prisma.StringFieldUpdateOperationsInput | string
-  domainSlug?: Prisma.StringFieldUpdateOperationsInput | string
+  baseUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CanvasDomainUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  domain?: Prisma.StringFieldUpdateOperationsInput | string
-  domainName?: Prisma.StringFieldUpdateOperationsInput | string
-  domainSlug?: Prisma.StringFieldUpdateOperationsInput | string
+  baseUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type CanvasDomainUserIdDomainCompoundUniqueInput = {
+export type CanvasDomainUserIdBaseUrlCompoundUniqueInput = {
   userId: string
-  domain: string
+  baseUrl: string
 }
 
 export type CanvasDomainCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  domain?: Prisma.SortOrder
-  domainName?: Prisma.SortOrder
-  domainSlug?: Prisma.SortOrder
+  baseUrl?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type CanvasDomainMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  domain?: Prisma.SortOrder
-  domainName?: Prisma.SortOrder
-  domainSlug?: Prisma.SortOrder
+  baseUrl?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type CanvasDomainMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  domain?: Prisma.SortOrder
-  domainName?: Prisma.SortOrder
-  domainSlug?: Prisma.SortOrder
+  baseUrl?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
-export type CanvasDomainNullableScalarRelationFilter = {
-  is?: Prisma.CanvasDomainWhereInput | null
-  isNot?: Prisma.CanvasDomainWhereInput | null
+export type CanvasDomainScalarRelationFilter = {
+  is?: Prisma.CanvasDomainWhereInput
+  isNot?: Prisma.CanvasDomainWhereInput
 }
 
 export type CanvasDomainCreateNestedOneWithoutAccountsInput = {
@@ -351,12 +351,10 @@ export type CanvasDomainCreateNestedOneWithoutAccountsInput = {
   connect?: Prisma.CanvasDomainWhereUniqueInput
 }
 
-export type CanvasDomainUpdateOneWithoutAccountsNestedInput = {
+export type CanvasDomainUpdateOneRequiredWithoutAccountsNestedInput = {
   create?: Prisma.XOR<Prisma.CanvasDomainCreateWithoutAccountsInput, Prisma.CanvasDomainUncheckedCreateWithoutAccountsInput>
   connectOrCreate?: Prisma.CanvasDomainCreateOrConnectWithoutAccountsInput
   upsert?: Prisma.CanvasDomainUpsertWithoutAccountsInput
-  disconnect?: Prisma.CanvasDomainWhereInput | boolean
-  delete?: Prisma.CanvasDomainWhereInput | boolean
   connect?: Prisma.CanvasDomainWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.CanvasDomainUpdateToOneWithWhereWithoutAccountsInput, Prisma.CanvasDomainUpdateWithoutAccountsInput>, Prisma.CanvasDomainUncheckedUpdateWithoutAccountsInput>
 }
@@ -364,18 +362,18 @@ export type CanvasDomainUpdateOneWithoutAccountsNestedInput = {
 export type CanvasDomainCreateWithoutAccountsInput = {
   id?: string
   userId: string
-  domain: string
-  domainName: string
-  domainSlug: string
+  baseUrl: string
+  name: string
+  slug: string
   createdAt?: Date | string
 }
 
 export type CanvasDomainUncheckedCreateWithoutAccountsInput = {
   id?: string
   userId: string
-  domain: string
-  domainName: string
-  domainSlug: string
+  baseUrl: string
+  name: string
+  slug: string
   createdAt?: Date | string
 }
 
@@ -398,18 +396,18 @@ export type CanvasDomainUpdateToOneWithWhereWithoutAccountsInput = {
 export type CanvasDomainUpdateWithoutAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  domain?: Prisma.StringFieldUpdateOperationsInput | string
-  domainName?: Prisma.StringFieldUpdateOperationsInput | string
-  domainSlug?: Prisma.StringFieldUpdateOperationsInput | string
+  baseUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CanvasDomainUncheckedUpdateWithoutAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  domain?: Prisma.StringFieldUpdateOperationsInput | string
-  domainName?: Prisma.StringFieldUpdateOperationsInput | string
-  domainSlug?: Prisma.StringFieldUpdateOperationsInput | string
+  baseUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -447,9 +445,9 @@ export type CanvasDomainCountOutputTypeCountAccountsArgs<ExtArgs extends runtime
 export type CanvasDomainSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  domain?: boolean
-  domainName?: boolean
-  domainSlug?: boolean
+  baseUrl?: boolean
+  name?: boolean
+  slug?: boolean
   createdAt?: boolean
   accounts?: boolean | Prisma.CanvasDomain$accountsArgs<ExtArgs>
   _count?: boolean | Prisma.CanvasDomainCountOutputTypeDefaultArgs<ExtArgs>
@@ -458,31 +456,31 @@ export type CanvasDomainSelect<ExtArgs extends runtime.Types.Extensions.Internal
 export type CanvasDomainSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  domain?: boolean
-  domainName?: boolean
-  domainSlug?: boolean
+  baseUrl?: boolean
+  name?: boolean
+  slug?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["canvasDomain"]>
 
 export type CanvasDomainSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  domain?: boolean
-  domainName?: boolean
-  domainSlug?: boolean
+  baseUrl?: boolean
+  name?: boolean
+  slug?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["canvasDomain"]>
 
 export type CanvasDomainSelectScalar = {
   id?: boolean
   userId?: boolean
-  domain?: boolean
-  domainName?: boolean
-  domainSlug?: boolean
+  baseUrl?: boolean
+  name?: boolean
+  slug?: boolean
   createdAt?: boolean
 }
 
-export type CanvasDomainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "domain" | "domainName" | "domainSlug" | "createdAt", ExtArgs["result"]["canvasDomain"]>
+export type CanvasDomainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "baseUrl" | "name" | "slug" | "createdAt", ExtArgs["result"]["canvasDomain"]>
 export type CanvasDomainInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.CanvasDomain$accountsArgs<ExtArgs>
   _count?: boolean | Prisma.CanvasDomainCountOutputTypeDefaultArgs<ExtArgs>
@@ -498,9 +496,9 @@ export type $CanvasDomainPayload<ExtArgs extends runtime.Types.Extensions.Intern
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
-    domain: string
-    domainName: string
-    domainSlug: string
+    baseUrl: string
+    name: string
+    slug: string
     createdAt: Date
   }, ExtArgs["result"]["canvasDomain"]>
   composites: {}
@@ -928,9 +926,9 @@ export interface Prisma__CanvasDomainClient<T, Null = never, ExtArgs extends run
 export interface CanvasDomainFieldRefs {
   readonly id: Prisma.FieldRef<"CanvasDomain", 'String'>
   readonly userId: Prisma.FieldRef<"CanvasDomain", 'String'>
-  readonly domain: Prisma.FieldRef<"CanvasDomain", 'String'>
-  readonly domainName: Prisma.FieldRef<"CanvasDomain", 'String'>
-  readonly domainSlug: Prisma.FieldRef<"CanvasDomain", 'String'>
+  readonly baseUrl: Prisma.FieldRef<"CanvasDomain", 'String'>
+  readonly name: Prisma.FieldRef<"CanvasDomain", 'String'>
+  readonly slug: Prisma.FieldRef<"CanvasDomain", 'String'>
   readonly createdAt: Prisma.FieldRef<"CanvasDomain", 'DateTime'>
 }
     

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const HAS_ANY_PROTOCOL = /^[a-z][a-z0-9+.-]*:\/\//i;
 
-export const DomainSchema = z
+export const BaseUrlSchema = z
   .string()
   .trim()
   .min(1, "Institution URL is required")
@@ -72,7 +72,7 @@ export const AddSchema = z.object({
     .trim()
     .min(1, "Institution name is required")
     .max(40, "Institution name is too long"),
-  domain: DomainSchema,
+  baseUrl: BaseUrlSchema,
   token: z
     .string()
     .min(10, "Personal token too short. Make sure it's correct."),

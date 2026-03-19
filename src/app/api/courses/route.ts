@@ -1,9 +1,9 @@
 // app/api/courses/route.ts
-import { getUserCanvasAccounts } from "@/data/canvas-account";
-import { requireUserApi } from "@/lib/auth-server";
+import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
+import { requireUserApi } from "@/lib/server/auth-server";
 import { NextRequest, NextResponse } from "next/server";
 import { getAccountCourses } from "@/lib/canvas";
-import { decryptToken } from "@/lib/crypto";
+import { decryptToken } from "@/lib/server/crypto";
 
 // You can replace `any` with your real CanvasCourse type.
 type CanvasCourse = any;

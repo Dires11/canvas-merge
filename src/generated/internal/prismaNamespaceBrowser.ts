@@ -100,9 +100,9 @@ export type CourseMetadataScalarFieldEnum = (typeof CourseMetadataScalarFieldEnu
 export const CanvasDomainScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  domain: 'domain',
-  domainName: 'domainName',
-  domainSlug: 'domainSlug',
+  baseUrl: 'baseUrl',
+  name: 'name',
+  slug: 'slug',
   createdAt: 'createdAt'
 } as const
 
@@ -112,10 +112,10 @@ export type CanvasDomainScalarFieldEnum = (typeof CanvasDomainScalarFieldEnum)[k
 export const CanvasAccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  name: 'name',
   domain: 'domain',
   domainName: 'domainName',
   domainSlug: 'domainSlug',
-  name: 'name',
   accessToken: 'accessToken',
   expiredAt: 'expiredAt',
   createdAt: 'createdAt',

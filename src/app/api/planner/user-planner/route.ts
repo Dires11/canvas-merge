@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUserApi } from "@/lib/auth-server";
+import { requireUserApi } from "@/lib/server/auth-server";
 import { getUserPlanner } from "@/lib/planner/get-user-planner";
-import { dedupeWithTtl } from "@/lib/dedupe";
+import { dedupeWithTtl } from "@/lib/utils/dedupe";
 
 export async function GET(req: NextRequest) {
   const user = await requireUserApi();

@@ -9,8 +9,8 @@ import type { AccountSafeInfo } from "@/lib/types/index";
 
 import {
   addAccountAction,
-  deleteAccountAction,
-  updateAccountTokenAction,
+  // deleteAccountAction,
+  // updateAccountTokenAction,
 } from "./actions";
 import { AddSchema } from "@/lib/schemas/manage-accounts";
 import { z } from "zod";
@@ -61,63 +61,53 @@ export default function ManageAccountsClient({
 
   const accounts = data?.accounts ?? [];
 
-  function openAdd() {
-    setServerMsg(null);
-    setModal({ open: true });
-  }
+  // async function handleDelete(id: string) {
+  //   if (deletingIds.has(id)) return;
 
-  function openUpdate(accountId: string, domain: string) {
-    setServerMsg(null);
-    setModal({ open: true, accountId, domain });
-  }
+  //   setServerMsg(null);
+  //   setDeletingIds((prev) => {
+  //     const next = new Set(prev);
+  //     next.add(id);
+  //     return next;
+  //   });
 
-  async function handleDelete(id: string) {
-    if (deletingIds.has(id)) return;
+  //   const previous = data;
 
-    setServerMsg(null);
-    setDeletingIds((prev) => {
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
+  //   await mutate(
+  //     async (current) => {
+  //       const result = await deleteAccountAction(id);
 
-    const previous = data;
+  //       if (!result.ok) {
+  //         throw new Error(result.error);
+  //       }
 
-    await mutate(
-      async (current) => {
-        const result = await deleteAccountAction(id);
+  //       setServerMsg(result.message ?? "Account deleted successfully.");
 
-        if (!result.ok) {
-          throw new Error(result.error);
-        }
+  //       return {
+  //         accounts: (current?.accounts ?? []).filter((a) => a.id !== id),
+  //       };
+  //     },
+  //     {
+  //       optimisticData: (current) => ({
+  //         accounts: (current?.accounts ?? []).filter((a) => a.id !== id),
+  //       }),
+  //       rollbackOnError: true,
+  //       populateCache: true,
+  //       revalidate: true,
+  //     },
+  //   ).catch((e: unknown) => {
+  //     const message =
+  //       e instanceof Error ? e.message : "Failed to delete account.";
+  //     setServerMsg(message);
+  //     void mutate(previous, { revalidate: false });
+  //   });
 
-        setServerMsg(result.message ?? "Account deleted successfully.");
-
-        return {
-          accounts: (current?.accounts ?? []).filter((a) => a.id !== id),
-        };
-      },
-      {
-        optimisticData: (current) => ({
-          accounts: (current?.accounts ?? []).filter((a) => a.id !== id),
-        }),
-        rollbackOnError: true,
-        populateCache: true,
-        revalidate: true,
-      },
-    ).catch((e: unknown) => {
-      const message =
-        e instanceof Error ? e.message : "Failed to delete account.";
-      setServerMsg(message);
-      void mutate(previous, { revalidate: false });
-    });
-
-    setDeletingIds((prev) => {
-      const next = new Set(prev);
-      next.delete(id);
-      return next;
-    });
-  }
+  //   setDeletingIds((prev) => {
+  //     const next = new Set(prev);
+  //     next.delete(id);
+  //     return next;
+  //   });
+  // }
 
   async function submitAdd(data: z.infer<typeof AddSchema>) {
     const result = await addAccountAction(data);
@@ -129,21 +119,21 @@ export default function ManageAccountsClient({
     setServerMsg(result.message ?? "Account added successfully.");
   }
 
-  async function submitUpdate(
-    accountId: string,
-    data: { token: string },
-    _signal: AbortSignal,
-  ) {
-    setServerMsg(null);
+  // async function submitUpdate(
+  //   accountId: string,
+  //   data: { token: string },
+  //   _signal: AbortSignal,
+  // ) {
+  //   setServerMsg(null);
 
-    const result = await updateAccountTokenAction(accountId, data);
+  //   const result = await updateAccountTokenAction(accountId, data);
 
-    if (!result.ok) {
-      throw new Error(result.error);
-    }
+  //   if (!result.ok) {
+  //     throw new Error(result.error);
+  //   }
 
-    setServerMsg(result.message ?? "Account updated successfully.");
-  }
+  //   setServerMsg(result.message ?? "Account updated successfully.");
+  // }
 
   return (
     <div className="min-h-screen text-black dark:text-white">
@@ -233,7 +223,7 @@ export default function ManageAccountsClient({
                         {account.name}
                       </h3>
                       <p className="text-foreground/60 text-sm">
-                        {account.domain}
+                        {account.canvasDomain.baseUrl}
                       </p>
 
                       {account.expiredAt !== null && (
@@ -246,14 +236,14 @@ export default function ManageAccountsClient({
                     <div className="flex items-end gap-2">
                       <button
                         className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/40 px-3 py-1.5 text-xs font-medium text-blue-700 backdrop-blur transition-all hover:border-blue-300/70 hover:bg-blue-100/70 hover:shadow-md dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:border-blue-400/30 dark:hover:bg-blue-500/20"
-                        onClick={() => openUpdate(account.id, account.domain)}
+                        // onClick={() => openUpdate(account.id, account.canvasDomain.baseUrl)}
                       >
                         Update
                       </button>
 
                       <button
                         className="inline-flex transform items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/40 px-3 py-1.5 text-xs font-medium text-red-700 backdrop-blur transition-all hover:border-red-300/70 hover:bg-red-100/70 hover:shadow-md disabled:pointer-events-none disabled:opacity-60 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300 dark:hover:border-red-400/30 dark:hover:bg-red-500/20"
-                        onClick={() => handleDelete(account.id)}
+                        // onClick={() => handleDelete(account.id)}
                         disabled={deletingIds.has(account.id)}
                       >
                         {deletingIds.has(account.id) ? "Deleting…" : "Delete"}

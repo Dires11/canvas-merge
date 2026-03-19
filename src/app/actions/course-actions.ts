@@ -1,8 +1,8 @@
 // lib/actions/course-actions.ts
 "use server";
 
-import { requireUserAction } from "@/lib/auth-server";
-import { upsertCourseColor } from "@/data/course-metadata";
+import { requireUserAction } from "@/lib/server/auth-server";
+import { upsertCourseColor } from "@/lib/data/course-metadata";
 import { revalidatePath } from "next/cache";
 
 export async function updateCourseColor(

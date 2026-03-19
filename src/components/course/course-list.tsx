@@ -7,9 +7,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { COURSE_PALETTE_40 } from "@/lib/colors/colors-pallete";
+import { COURSE_PALETTE_40 } from "@/lib/utils/colors/colors-palete";
 import clsx from "clsx";
-import { convertToDark } from "@/lib/colors/colors";
+import { convertToDark } from "@/lib/utils/colors/colors";
 
 export function CourseList({
   courses,

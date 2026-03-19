@@ -1,15 +1,15 @@
 // app/api/accounts/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireUserApi } from "@/lib/auth-server";
+import { requireUserApi } from "@/lib/server/auth-server";
 import { getAccountInfo } from "@/lib/canvas";
 import {
   deleteCanvasAccount,
   getUserCanvasAccount,
   updateCanvasAccountToken,
-} from "@/data/canvas-account";
-import { encryptToken } from "@/lib/crypto";
-import { validateJson } from "../route"; // reuse helper from parent route.ts
+} from "@/lib/data/canvas-account";
+import { encryptToken } from "@/lib/server/crypto";
+import { validateJson } from "@/lib/server/validate-json";
 
 const UpdateBodySchema = z.object({
   token: z.string().min(10, "Personal access token is too short"),
@@ -23,7 +23,7 @@ export async function PATCH(
   const { id } = await context.params;
 
   const result = await validateJson(req, UpdateBodySchema);
-  if (!result.ok) return result.response;
+  if (!result.ok) return result;
 
   const token = result.data.token;
 
@@ -34,7 +34,7 @@ export async function PATCH(
 
   // verify token belongs to same Canvas account
   const testConnection = await getAccountInfo({
-    domain: account.domain,
+    baseUrl: account.canvasDomain.baseUrl,
     token,
   });
   if (!testConnection.ok) {
@@ -57,16 +57,29 @@ export async function PATCH(
 
   const tokenEncrypted = encryptToken(token);
 
-  const updated = await updateCanvasAccountToken(id, user.id, tokenEncrypted);
+  const updated = await updateCanvasAccountToken({
+    accountId: id,
+    userId: user.id,
+    token: tokenEncrypted,
+  });
 
-  if (updated.count === 0) {
-    return NextResponse.json({ error: "Account not found" }, { status: 404 });
+  if (!updated.ok) {
+    return NextResponse.json(
+      {
+        error: updated.error,
+      },
+      { status: updated.status },
+    );
   }
 
   const res = NextResponse.json(
     {
       ok: true,
-      account: { id: account.id, name: account.name, domain: account.domain },
+      account: {
+        id: account.id,
+        name: account.name,
+        domain: account.canvasDomain.baseUrl,
+      },
     },
     { status: 200 },
   );

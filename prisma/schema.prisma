@@ -32,34 +32,35 @@ model CourseMetadata {
 }
 
 model CanvasDomain {
-  id         String   @id @default(uuid()) @db.Uuid
-  userId     String   @map("user_id") @db.Uuid
-  domain     String
-  domainName String   @map("domain_name")
-  domainSlug String   @map("domain_slug")
-  createdAt  DateTime @default(now()) @map("created_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  baseUrl   String   @map("domain")
+  name      String   @map("domain_name")
+  slug      String   @map("domain_slug")
+  createdAt DateTime @default(now()) @map("created_at")
 
   accounts CanvasAccount[]
 
-  @@unique([userId, domain])
+  @@unique([userId, baseUrl])
+  @@index([userId, slug])
   @@schema("public")
 }
 
 model CanvasAccount {
   id          String    @id @default(uuid())
   userId      String    @map("user_id") @db.Uuid
-  domain      String
-  domainName  String    @map("domain_name")
-  domainSlug  String    @map("domain_slug")
   name        String
+  domain      String?
+  domainName  String?   @map("domain_name")
+  domainSlug  String?   @map("domain_slug")
   accessToken String    @map("access_token")
   expiredAt   DateTime? @map("expired_at")
   createdAt   DateTime  @default(now()) @map("created_at")
   avatarUrl   String    @map("avatar_url")
   canvasId    Int       @map("canvas_id")
 
-  domainId     String        @map("domain_id") @db.Uuid
-  canvasDomain CanvasDomain? @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  domainId     String       @map("domain_id") @db.Uuid
+  canvasDomain CanvasDomain @relation(fields: [domainId], references: [id], onDelete: Cascade)
 
   @@unique([userId, domainSlug, canvasId])
   @@schema("public")

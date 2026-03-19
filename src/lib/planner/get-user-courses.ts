@@ -1,22 +1,22 @@
-import { getUserCanvasAccounts } from "@/data/canvas-account";
+import { getUserCanvasAccountsWithTokens } from "@/lib/data/canvas-account";
 import { getAccountCourses } from "../canvas";
-import { decryptToken } from "../crypto";
+import { decryptToken } from "../server/crypto";
 import { UserCourse } from "../types";
 import { prisma } from "@/lib/prisma";
-import { resolveCourseColor } from "../colors/colors";
-import { deleteCourseMetadataMany } from "@/data/course-metadata";
+import { resolveCourseColor } from "../utils/colors/colors";
+import { deleteCourseMetadataMany } from "@/lib/data/course-metadata";
 import { after } from "next/server";
 
 export type CourseFailure = {
   accountId: string;
-  domain: string;
+  baseUrl: string;
   status: number;
   error: unknown;
 };
 
 export async function getUserCourses(userId: string, accountIds?: string[]) {
   const [accounts, dbMetadata] = await Promise.all([
-    getUserCanvasAccounts(userId, true, accountIds),
+    getUserCanvasAccountsWithTokens(userId, accountIds),
     prisma.courseMetadata.findMany({ where: { userId } }),
   ]);
 
@@ -35,7 +35,7 @@ export async function getUserCourses(userId: string, accountIds?: string[]) {
   const results = await Promise.all(
     accounts.map((a) =>
       getAccountCourses({
-        domain: a.domain,
+        baseUrl: a.canvasDomain.baseUrl,
         token: decryptToken(a.accessToken),
       }),
     ),
@@ -53,7 +53,7 @@ export async function getUserCourses(userId: string, accountIds?: string[]) {
     if (!r.ok) {
       failures.push({
         accountId: a.id,
-        domain: a.domain,
+        baseUrl: a.canvasDomain.baseUrl,
         status: r.status,
         error: r.error,
       });
@@ -61,7 +61,7 @@ export async function getUserCourses(userId: string, accountIds?: string[]) {
     }
 
     for (const course of r.data) {
-      const key = `${a.domain}|${course.id}`;
+      const key = `${a.canvasDomain.baseUrl}|${course.id}`;
       // console.log(
       //   `Processing course for account ${a.name}: ${JSON.stringify(course)}`,
       // );
@@ -73,14 +73,14 @@ export async function getUserCourses(userId: string, accountIds?: string[]) {
       if (!existing) {
         const resolvedColor = resolveCourseColor(
           course.id,
-          a.domainSlug,
-          metadataMap.get(`${a.domainSlug}|${course.id}`),
+          a.canvasDomain.slug,
+          metadataMap.get(`${a.canvasDomain.slug}|${course.id}`),
         );
         seen.set(key, {
           ...course,
-          domain: a.domain,
-          domainName: a.domainName,
-          domainSlug: a.domainSlug,
+          baseUrl: a.canvasDomain.baseUrl,
+          domainName: a.canvasDomain.name,
+          domainSlug: a.canvasDomain.slug,
           accountIds: [a.id],
           color: resolvedColor,
         });

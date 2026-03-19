@@ -3,11 +3,11 @@
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
-import type { DomainMap, MergedAssignment, UserCourse } from "@/lib/types";
-import { AccountSafeInfo } from "@/lib/types/index";
+import type { MergedAssignment, UserCourse } from "@/lib/types";
+import type { AccountSafeInfo } from "@/lib/types/index";
 import { TriangleAlert, ChevronDown } from "lucide-react";
 import {
-  ReadonlyURLSearchParams,
+  type ReadonlyURLSearchParams,
   usePathname,
   useRouter,
   useSearchParams,
@@ -23,6 +23,7 @@ import type { UserPlanner } from "@/lib/planner/get-user-planner";
 import Link from "next/link";
 import { GlassContainer } from "../glass-container";
 import { AssignmentDashboardControls } from "./dashboard-controls";
+import type { CanvasDomainInfo } from "@/lib/data/canvas-domain";
 
 const KEY = "/api/planner/user-planner?merge=true";
 
@@ -92,6 +93,7 @@ function groupAssignmentsByDueDateLocal(assignments: MergedAssignment[]) {
     ) {
       continue;
     }
+
     const label = getDueLabelLocal(assignment.due_at);
     (groups[label] ??= []).push(assignment);
   }
@@ -102,10 +104,13 @@ function groupAssignmentsByDueDateLocal(assignments: MergedAssignment[]) {
 type Props = {
   initialData?: UserPlanner | null;
   courses: UserCourse[];
+  domains: CanvasDomainInfo[];
 };
 
 type FilterType = "domain" | "account" | "course";
 export type Filters = Record<FilterType, string[]>;
+
+type DomainMap = Record<string, CanvasDomainInfo>;
 
 function filtersFromSearchParams(
   searchParams: ReadonlyURLSearchParams,
@@ -121,17 +126,17 @@ function normalizeFilters(
   nextFilters: Filters,
   accounts: AccountSafeInfo[],
 ): Filters {
-  const selectedDomains = nextFilters.domain;
+  const selectedDomains = [...new Set(nextFilters.domain)];
 
   const validAccountIds =
     selectedDomains.length === 0
       ? accounts.map((a) => a.id)
       : accounts
-          .filter((a) => selectedDomains.includes(a.domainSlug))
+          .filter((a) => selectedDomains.includes(a.canvasDomain.slug))
           .map((a) => a.id);
 
   return {
-    domain: [...new Set(nextFilters.domain)],
+    domain: selectedDomains,
     account: [...new Set(nextFilters.account)].filter((id) =>
       validAccountIds.includes(id),
     ),
@@ -139,7 +144,11 @@ function normalizeFilters(
   };
 }
 
-export function AssignmentDashboardClient({ initialData, courses }: Props) {
+export function AssignmentDashboardClient({
+  initialData,
+  courses,
+  domains,
+}: Props) {
   const { data, error, isValidating, mutate } = useSWR(KEY, fetcher, {
     fallbackData: initialData ?? undefined,
     revalidateOnFocus: true,
@@ -233,14 +242,12 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
   const domainMap = useMemo<DomainMap>(() => {
     const map: DomainMap = {};
 
-    for (const acc of accounts) {
-      map[acc.domainSlug] = {
-        domainName: acc.domainName,
-        domain: acc.domain,
-      };
+    for (const domain of domains) {
+      map[domain.slug] = domain;
     }
+
     return map;
-  }, [accounts]);
+  }, [domains]);
 
   const coursesMap = useMemo(() => {
     const map = new Map<string, UserCourse>();
@@ -261,11 +268,12 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
       if (filters.domain.length > 0 && !filters.domain.includes(domainSlug)) {
         continue;
       }
+
       let assignments = mergedItems.assignments;
 
-      // If there are account filters, we need to filter the accounts in each assignment
       if (filters.account.length > 0 || filters.course.length > 0) {
         const filteredAssignments: MergedAssignment[] = [];
+
         for (const assignment of mergedItems.assignments) {
           if (
             filters.course.length > 0 &&
@@ -273,6 +281,7 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
           ) {
             continue;
           }
+
           if (filters.account.length > 0) {
             const accountsSubmitted = assignment.accountsSubmitted.filter((a) =>
               filters.account.includes(a.accountId),
@@ -284,6 +293,7 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
             const accountsNotSubmitted = assignment.accountsNotSubmitted.filter(
               (a) => filters.account.includes(a.accountId),
             );
+
             if (
               accountsSubmitted.length !== 0 ||
               accountsMissingSubmission.length !== 0 ||
@@ -300,12 +310,15 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
             filteredAssignments.push(assignment);
           }
         }
+
         assignments = filteredAssignments;
       }
+
       if (assignments.length > 0) {
         result[domainSlug] = groupAssignmentsByDueDateLocal(assignments);
       }
     }
+
     return result;
   }, [data?.merged, dayKey, filters.account, filters.domain, filters.course]);
 
@@ -340,6 +353,7 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
         </button>
         {isValidating && <span className="text-sm opacity-70">Updating…</span>}
       </div>
+
       <AssignmentDashboardControls
         accounts={accounts}
         domains={domainMap}
@@ -385,44 +399,49 @@ export function AssignmentDashboardClient({ initialData, courses }: Props) {
           </Link>
         </div>
       )}
-      {Object.entries(groupedByDomain).map(([domainSlug, groups]) => (
-        <GlassContainer key={domainSlug} className="w-full">
-          <Collapsible
-            defaultOpen
-            className="flex w-full flex-col gap-2 rounded-2xl"
-          >
-            <CollapsibleTrigger className="group flex items-center justify-between text-lg tracking-tight hover:cursor-pointer">
-              {domainMap[domainSlug]?.domainName ?? domainSlug}
-              <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
-            </CollapsibleTrigger>
 
-            <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
-              {Object.entries(groups).map(([label, assignments]) => {
-                return (
-                  <div key={label} className="mt-1">
-                    <h2 className="text-lg tracking-tight">{label}</h2>
-                    <div className="flex flex-col gap-1.5">
-                      {assignments.map((assignment) => (
-                        <AssignmentCard
-                          key={`${assignment.course_id}:${assignment.id}`}
-                          item={assignment}
-                          color={
-                            coursesMap.get(
-                              `${domainSlug}|${assignment.course_id}`,
-                            )?.color ?? { l: 0.7, c: 0.1, h: 250 }
-                          }
-                          accountMap={accountMap}
-                          merged={true}
-                        />
-                      ))}
+      {Object.entries(groupedByDomain).map(([domainSlug, groups]) => {
+        const domainInfo = domainMap[domainSlug];
+
+        return (
+          <GlassContainer key={domainSlug} className="w-full">
+            <Collapsible
+              defaultOpen
+              className="flex w-full flex-col gap-2 rounded-2xl"
+            >
+              <CollapsibleTrigger className="group flex items-center justify-between text-lg tracking-tight hover:cursor-pointer">
+                {domainInfo?.name ?? domainSlug}
+                <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
+              </CollapsibleTrigger>
+
+              <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
+                {Object.entries(groups).map(([label, assignments]) => {
+                  return (
+                    <div key={label} className="mt-1">
+                      <h2 className="text-lg tracking-tight">{label}</h2>
+                      <div className="flex flex-col gap-1.5">
+                        {assignments.map((assignment) => (
+                          <AssignmentCard
+                            key={`${assignment.course_id}:${assignment.id}`}
+                            item={assignment}
+                            color={
+                              coursesMap.get(
+                                `${domainSlug}|${assignment.course_id}`,
+                              )?.color ?? { l: 0.7, c: 0.1, h: 250 }
+                            }
+                            accountMap={accountMap}
+                            merged={true}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </CollapsibleContent>
-          </Collapsible>
-        </GlassContainer>
-      ))}
+                  );
+                })}
+              </CollapsibleContent>
+            </Collapsible>
+          </GlassContainer>
+        );
+      })}
     </div>
   );
 }

@@ -1,10 +1,11 @@
 // lib/planner/weekly-assignments.ts
 import {
   getUserCanvasAccounts,
+  getUserCanvasAccountsWithTokens,
   markAccountAsExpired,
-} from "@/data/canvas-account";
-import { getDetectedTimeZoneForUser } from "@/data/user-settings";
-import { decryptToken } from "@/lib/crypto";
+} from "@/lib/data/canvas-account";
+import { getDetectedTimeZoneForUser } from "@/lib/data/user-settings";
+import { decryptToken } from "@/lib/server/crypto";
 import { getPlannerItems } from "@/lib/canvas";
 import type {
   Announcement,
@@ -17,7 +18,7 @@ import type {
   MergedItemsByDomain,
   SubmissionDetails,
 } from "@/lib/types";
-import { AccountSafeInfo } from "@/lib/types/index";
+import type { AccountSafeInfo } from "@/lib/types/index";
 import { DateTime } from "luxon";
 
 /**
@@ -52,10 +53,10 @@ const ASSIGNMENT_TYPE = new Set(["assignment", "discussion_topic", "quiz"]);
 
 function normalize(
   accountId: string,
-  domain: string,
+  baseUrl: string,
   domainSlug: string,
   domainName: string,
-  items: any,
+  items: unknown,
 ): ItemsByType {
   const itemsByType: ItemsByType = {
     account: accountId,
@@ -68,7 +69,7 @@ function normalize(
 
   for (const item of items) {
     const title = item.plannable?.title?.trim() || "Untitled";
-    const safeUrl = new URL(item.html_url, domain).toString();
+    const safeUrl = new URL(item.html_url, baseUrl).toString();
 
     const baseItem: ItemBase = {
       id: item.plannable_id,
@@ -77,7 +78,7 @@ function normalize(
       title,
       course_name: item.context_name,
       url: safeUrl,
-      domain,
+      baseUrl,
       domainSlug,
       domainName,
     };
@@ -237,7 +238,7 @@ export async function getUserPlanner(
   userId: string,
   merge: boolean = true,
 ): Promise<UserPlanner> {
-  const allAccounts = await getUserCanvasAccounts(userId, true);
+  const allAccounts = await getUserCanvasAccountsWithTokens(userId);
 
   if (allAccounts.length === 0) {
     throw new Error("No accounts found.");
@@ -262,7 +263,7 @@ export async function getUserPlanner(
     }
 
     const raw = await getPlannerItems(
-      account.domain,
+      account.canvasDomain.baseUrl,
       decryptToken(account.accessToken),
       startISO,
       endISO,
@@ -270,7 +271,10 @@ export async function getUserPlanner(
 
     if (!raw.ok) {
       if (raw.error?.expiredAt) {
-        await markAccountAsExpired(account.id, raw.error.expiredAt);
+        await markAccountAsExpired({
+          accountId: account.id,
+          expiredAt: raw.error.expiredAt,
+        });
       }
 
       return {
@@ -282,9 +286,9 @@ export async function getUserPlanner(
 
     const normalized = normalize(
       account.id,
-      account.domain,
-      account.domainSlug,
-      account.domainName,
+      account.canvasDomain.baseUrl,
+      account.canvasDomain.slug,
+      account.canvasDomain.name,
       raw.data,
     );
 
@@ -306,7 +310,8 @@ export async function getUserPlanner(
       if (accountItems) {
         // Keep successful accounts even if they have zero items.
         // This makes account-based filtering/UI state easier.
-        (itemsByDomain[account.domainSlug] ??= {})[account.id] = accountItems;
+        (itemsByDomain[account.canvasDomain.slug] ??= {})[account.id] =
+          accountItems;
       }
 
       if (error) {

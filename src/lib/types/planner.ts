@@ -1,10 +1,3 @@
-export type DomainInfo = {
-  domain: string;
-  domainName: string;
-};
-
-export type DomainMap = Record<string, DomainInfo>;
-
 export type ItemBase = {
   id: number;
   course_id: number;
@@ -12,7 +5,7 @@ export type ItemBase = {
   title: string;
   type: string;
   url: string;
-  domain: string;
+  baseUrl: string;
   domainName: string;
   domainSlug: string;
 };
@@ -73,23 +66,3 @@ export type MergedItems = {
 };
 
 export type MergedItemsByDomain = Record<string, MergedItems>;
-
-export type Course = {
-  id: number;
-  name: string;
-  course_code: string;
-  term: {
-    id: number;
-    name: string;
-    start_at: string | null;
-    end_at: string | null;
-  };
-};
-
-export type UserCourse = Course & {
-  domain: string;
-  domainName: string;
-  domainSlug: string;
-  accountIds: string[];
-  color: { l: number; c: number; h: number };
-};

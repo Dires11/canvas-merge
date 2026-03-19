@@ -1,16 +1,16 @@
-import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { DashboardClient } from "./client";
 import { GlassContainer } from "@/components/glass-container";
 import { ConnectAccountGuide } from "@/components/manage-accounts/connect-account-guide";
-import { Button } from "@/components/ui/button";
-import { getUserCanvasAccounts } from "@/data/canvas-account";
-import { requireUser } from "@/lib/auth-server";
+import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
+import { requireUser } from "@/lib/server/auth-server";
 import {
   type CourseFailure,
   getUserCourses,
 } from "@/lib/planner/get-user-courses";
 import { getUserPlanner, UserPlanner } from "@/lib/planner/get-user-planner";
 import type { UserCourse } from "@/lib/types";
-import Link from "next/link";
+import { getUserDomains } from "@/lib/data/canvas-domain";
+
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
@@ -29,16 +29,30 @@ export default async function Dashboard() {
     );
   }
 
-  const [coursesResult, plannerResult] = await Promise.allSettled([
-    getUserCourses(user.id),
-    getUserPlanner(user.id, true),
-  ]);
+  const [coursesResult, plannerResult, domainsResult] =
+    await Promise.allSettled([
+      getUserCourses(user.id),
+      getUserPlanner(user.id, true),
+      getUserDomains(user.id), // prefetch domains for better performance in manage accounts page
+    ]);
 
   let courses: UserCourse[] = [];
   let courseFailures: CourseFailure[] = [];
   let courseError: string | null = null;
   let plannerData: UserPlanner | null = null;
   let plannerError: string | null = null;
+  let domainsData: any[] = []; // Adjust type as needed
+  let domainsError: string | null = null;
+
+  if (domainsResult.status === "fulfilled") {
+    domainsData = domainsResult.value;
+  } else {
+    console.error("Failed to load domains:", domainsResult.reason);
+    domainsError =
+      domainsResult.reason instanceof Error
+        ? domainsResult.reason.message
+        : "Unknown error loading domains";
+  }
 
   if (coursesResult.status === "fulfilled") {
     courses = coursesResult.value.courses ?? [];
@@ -61,5 +75,11 @@ export default async function Dashboard() {
         : "Unknown error loading planner data";
   }
 
-  return <DashboardShell initialCourses={courses} plannerData={plannerData} />;
+  return (
+    <DashboardClient
+      initialCourses={courses}
+      plannerData={plannerData}
+      domainsData={domainsData}
+    />
+  );
 }

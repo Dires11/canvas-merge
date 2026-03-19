@@ -1,6 +1,5 @@
-import type { DomainInfo, UserCourse } from "@/lib/types";
-import { AccountSafeInfo } from "@/lib/types/index";
-import { GlassContainer } from "../glass-container";
+import type { CanvasDomainInfo, AccountSafeInfo } from "@/lib/types/index";
+import type { UserCourse } from "@/lib/types";
 import { Filters } from "./dashboard-client";
 import {
   Menubar,
@@ -10,29 +9,15 @@ import {
   MenubarLabel,
   MenubarMenu,
   MenubarSeparator,
-  MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import {
-  BookMarked,
-  BrushCleaning,
-  CircleUser,
-  School,
-  SlidersHorizontal,
-} from "lucide-react";
+import { BookMarked, BrushCleaning, CircleUser, School } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { convertToDark } from "@/lib/colors/colors";
+import { convertToDark } from "@/lib/utils/colors/colors";
 
-export function AssignmentDashboardControls({
-  accounts,
-  domains,
-  courses,
-  filters,
-  onFilterChange,
-  clearAll,
-}: {
+type Props = {
   accounts: AccountSafeInfo[];
-  domains: Record<string, DomainInfo>;
+  domains: Record<string, CanvasDomainInfo>;
   courses: UserCourse[];
   filters: Filters;
   onFilterChange: (
@@ -41,25 +26,37 @@ export function AssignmentDashboardControls({
     pressed: boolean,
   ) => void;
   clearAll: (type?: keyof Filters) => void;
-}) {
+};
+
+export function AssignmentDashboardControls({
+  accounts,
+  domains,
+  courses,
+  filters,
+  onFilterChange,
+  clearAll,
+}: Props) {
   return (
-    <div className="">
+    <div>
       <Menubar className="bg-glass/5 rounded-lg border px-2 py-5">
         <MenubarMenu>
           <MenubarTrigger>
-            <School className="mr-2 size-4" strokeWidth={1.8} /> Domains
+            <School className="mr-2 size-4" strokeWidth={1.8} />
+            Domains
           </MenubarTrigger>
           <MenubarContent className="w-64 backdrop-blur-lg">
             <MenubarItem onClick={() => clearAll("domain")}>
               <BrushCleaning strokeWidth={1.5} className="text-foreground" />
               Clear All
             </MenubarItem>
+
             <MenubarSeparator />
+
             <MenubarLabel className="text-muted-foreground text-sm">
               <p>Select domains to filter by.</p>
             </MenubarLabel>
 
-            {Object.entries(domains).map(([domainSlug, { domainName }]) => (
+            {Object.entries(domains).map(([domainSlug, domain]) => (
               <MenubarCheckboxItem
                 key={domainSlug}
                 checked={filters.domain.includes(domainSlug)}
@@ -69,14 +66,14 @@ export function AssignmentDashboardControls({
                 onSelect={(e) => e.preventDefault()}
               >
                 <School className="text-foreground" strokeWidth={1.5} />
-                {domainName}
+                {domain.name}
               </MenubarCheckboxItem>
             ))}
           </MenubarContent>
         </MenubarMenu>
+
         <MenubarMenu>
           <MenubarTrigger>
-            {" "}
             <CircleUser className="mr-2 size-4" strokeWidth={1.8} />
             Accounts
           </MenubarTrigger>
@@ -85,25 +82,26 @@ export function AssignmentDashboardControls({
               <BrushCleaning strokeWidth={1.5} className="text-foreground" />
               Clear All
             </MenubarItem>
+
             <MenubarSeparator />
+
             <MenubarLabel className="text-muted-foreground text-sm">
               <p>Select accounts to filter by.</p>
 
               {filters.domain.length > 0 && (
-                <>
-                  <p className="mt-1 text-xs">
-                    Note: Accounts that do not belong to the selected domains
-                    are disabled.
-                  </p>
-                </>
+                <p className="mt-1 text-xs">
+                  Note: Accounts that do not belong to the selected domains are
+                  disabled.
+                </p>
               )}
             </MenubarLabel>
+
             {accounts.map((account) => (
               <MenubarCheckboxItem
                 key={account.id}
                 disabled={
                   filters.domain.length > 0 &&
-                  !filters.domain.includes(account.domain)
+                  !filters.domain.includes(account.canvasDomain.slug)
                 }
                 checked={filters.account.includes(account.id)}
                 onCheckedChange={(pressed) =>
@@ -112,10 +110,7 @@ export function AssignmentDashboardControls({
                 onSelect={(e) => e.preventDefault()}
               >
                 <Avatar className="size-4">
-                  <AvatarImage
-                    src={account.avatarUrl}
-                    alt={`${account.name}`}
-                  />
+                  <AvatarImage src={account.avatarUrl} alt={account.name} />
                   <AvatarFallback>
                     <CircleUser className="text-foreground" strokeWidth={1.5} />
                   </AvatarFallback>
@@ -125,34 +120,34 @@ export function AssignmentDashboardControls({
             ))}
           </MenubarContent>
         </MenubarMenu>
+
         <MenubarMenu>
           <MenubarTrigger>
-            <BookMarked className="mr-2 size-4" strokeWidth={1.8} /> Courses
+            <BookMarked className="mr-2 size-4" strokeWidth={1.8} />
+            Courses
           </MenubarTrigger>
           <MenubarContent className="max-h-137 w-70 overflow-y-auto backdrop-blur-lg">
             <MenubarItem onClick={() => clearAll("course")}>
               <BrushCleaning strokeWidth={1.5} className="text-foreground" />
               Clear All
             </MenubarItem>
+
             <MenubarSeparator />
+
             <MenubarLabel className="text-muted-foreground text-sm">
               <p>Select courses to filter by.</p>
             </MenubarLabel>
 
             {courses.map((course) => {
               const dark = convertToDark(course.color);
+              const courseValue = `${course.domainSlug}-${course.id}`;
+
               return (
                 <MenubarCheckboxItem
-                  key={course.id}
-                  checked={filters.course.includes(
-                    `${course.domainSlug}-${course.id}`,
-                  )}
+                  key={courseValue}
+                  checked={filters.course.includes(courseValue)}
                   onCheckedChange={(pressed) =>
-                    onFilterChange(
-                      "course",
-                      `${course.domainSlug}-${course.id}`,
-                      pressed,
-                    )
+                    onFilterChange("course", courseValue, pressed)
                   }
                   onSelect={(e) => e.preventDefault()}
                   style={

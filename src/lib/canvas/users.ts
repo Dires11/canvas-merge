@@ -9,7 +9,7 @@ type CanvasUserSelf = {
 };
 
 type CanvasCredentials = {
-  domain: string;
+  baseUrl: string;
   token: string;
 };
 
@@ -23,11 +23,11 @@ type CanvasCredentials = {
  * or { ok: false, status: 401, error: { message, expiredAt, raw } }
  */
 export async function getAccountInfo({
-  domain,
+  baseUrl,
   token,
 }: CanvasCredentials): Promise<CanvasResult<CanvasAccountInfo>> {
   const res = await canvasFetchJson<CanvasUserSelf>(
-    domain,
+    baseUrl,
     "/api/v1/users/self",
     { token: token },
   );
@@ -54,18 +54,17 @@ export async function getAccountInfo({
     data: {
       canvasId: raw.id,
       name: raw.name,
-      domain,
       avatarUrl: raw.avatar_url,
     },
   };
 }
 
 export async function getAccountCourses({
-  domain,
+  baseUrl,
   token,
 }: CanvasCredentials): Promise<CanvasResult<Course[]>> {
   const res = await canvasFetchJson<Course[]>(
-    domain,
+    baseUrl,
     "/api/v1/users/self/courses",
     {
       token,
