@@ -78,7 +78,7 @@ export const AddSchema = z.object({
     .min(10, "Personal token too short. Make sure it's correct."),
 });
 
-export const UpdateSchema = z.object({
+export const UpdateTokenSchema = z.object({
   token: z
     .string()
     .min(10, "Personal token too short. Make sure it's correct."),

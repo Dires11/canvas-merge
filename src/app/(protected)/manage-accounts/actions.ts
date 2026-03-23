@@ -4,16 +4,13 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireUser } from "@/lib/server/auth-server";
-import { getAccountInfo } from "@/lib/canvas";
-import { encryptToken } from "@/lib/server/crypto";
+import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
+import { AddSchema, UpdateTokenSchema } from "@/lib/schemas/manage-accounts";
 import {
-  createCanvasAccount,
-  deleteCanvasAccount,
-  getUserCanvasAccounts,
-  updateCanvasAccountToken,
-} from "@/lib/data/canvas-account";
-import { AddSchema, UpdateSchema } from "@/lib/schemas/manage-accounts";
-import { addCanvasAccountForUser } from "@/lib/services/manage-accounts";
+  addCanvasAccountForUser,
+  deleteCanvasAccountForUser,
+  updateCanvasTokenForUser,
+} from "@/lib/services/manage-accounts";
 import type { ActionResult } from "@/lib/types/action-result";
 
 function validationError(error: z.ZodError): ActionResult<never> {
@@ -70,173 +67,49 @@ export async function addAccountAction(
   revalidatePath("/manage-accounts");
 
   return {
-    ok: true,
-    data: result.data,
+    ...result,
     message: "Account added successfully.",
   };
 }
 
-/**
- * ----------------------------
- * Update token
- * ----------------------------
- * Re-tests connection before saving new token.
- */
+export async function updateAccountTokenAction(
+  accountId: string,
+  input: z.infer<typeof UpdateTokenSchema>,
+): Promise<ActionResult> {
+  const user = await requireUser();
 
-// export async function updateAccountTokenAction(
-//   accountId: string,
-//   input: unknown,
-// ): Promise<ActionResult<{ name: string; domain: string }>> {
-//   const user = await requireUser();
+  const parsed = UpdateTokenSchema.safeParse(input);
+  if (!parsed.success) {
+    return validationError(parsed.error);
+  }
 
-//   const parsed = UpdateSchema.safeParse(input);
+  const result = await updateCanvasTokenForUser(
+    user.id,
+    accountId,
+    parsed.data.token,
+  );
 
-//   if (!parsed.success) {
-//     return validationError(parsed.error);
-//   }
+  if (!result.ok) {
+    return result;
+  }
 
-//   const { token } = parsed.data;
+  revalidatePath("/manage-accounts");
 
-//   const accounts = await getUserCanvasAccounts(user.id);
-//   const existing = accounts.find((acc) => acc.id === accountId);
+  return { ok: true, message: "Token updated successfully." };
+}
 
-//   if (!existing) {
-//     return {
-//       ok: false,
-//       error: "Account not found.",
-//       status: 404,
-//     };
-//   }
+export async function deleteAccountAction(
+  accountId: string,
+): Promise<ActionResult> {
+  const user = await requireUser();
 
-//   let testConnection;
-//   try {
-//     testConnection = await getAccountInfo({
-//       domain: existing.domain,
-//       token,
-//     });
-//   } catch (error) {
-//     console.error("Unexpected Canvas connection test failure:", error);
-//     throw error;
-//   }
+  const result = await deleteCanvasAccountForUser(user.id, accountId);
 
-//   if (!testConnection.ok) {
-//     return {
-//       ok: false,
-//       error: testConnection.error.message ?? "Failed to connect to Canvas",
-//       expiredAt: testConnection.error.expiredAt ?? null,
-//       status: testConnection.status,
-//     };
-//   }
+  if (!result.ok) {
+    return result;
+  }
 
-//   const encryptedToken = encryptToken(token);
+  revalidatePath("/manage-accounts");
 
-//   try {
-//     await updateCanvasAccountToken(accountId, user.id, encryptedToken);
-//   } catch (error) {
-//     console.error("Unexpected database failure while updating token:", error);
-//     throw error;
-//   }
-
-//   revalidatePath("/manage-accounts");
-
-//   return {
-//     ok: true,
-//     data: {
-//       name: testConnection.data.name,
-//       domain: existing.domain,
-//     },
-//     message: "Account updated successfully.",
-//   };
-// }
-
-/**
- * ----------------------------
- * Rename account/domain label
- * ----------------------------
- * This only changes the user-editable name.
- * Slug should stay stable.
- */
-
-// export async function renameAccountAction(
-//   input: unknown,
-// ): Promise<ActionResult> {
-//   const user = await requireUser();
-
-//   const parsed = RenameSchema.safeParse(input);
-//   if (!parsed.success) {
-//     return validationError(parsed.error);
-//   }
-
-//   const { accountId, domainName } = parsed.data;
-
-//   const accounts = await getUserCanvasAccounts(user.id);
-//   const existing = accounts.find((acc) => acc.id === accountId);
-
-//   if (!existing) {
-//     return {
-//       ok: false,
-//       error: "Account not found.",
-//       status: 404,
-//     };
-//   }
-
-//   try {
-//     await updateCanvasAccountName({
-//       userId: user.id,
-//       accountId,
-//       domainName,
-//     });
-//   } catch (error) {
-//     console.error("Unexpected database failure while renaming account:", error);
-//     throw error;
-//   }
-
-//   revalidatePath("/manage-accounts");
-
-//   return {
-//     ok: true,
-//     message: "Account name updated successfully.",
-//   };
-// }
-
-/**
- * ----------------------------
- * Delete account
- * ----------------------------
- */
-
-// export async function deleteAccountAction(
-//   accountId: string,
-// ): Promise<ActionResult> {
-//   const user = await requireUser();
-
-//   const parsed = z
-//     .string()
-//     .min(1, "Account id is required")
-//     .safeParse(accountId);
-//   if (!parsed.success) {
-//     return validationError(parsed.error);
-//   }
-
-//   try {
-//     const deleted = await deleteCanvasAccount(parsed.data, user.id);
-
-//     if (!deleted.ok) {
-//       return {
-//         ok: false,
-//         error: deleted.error ?? "Failed to delete account.",
-//         status: 400,
-//       };
-//     }
-//   } catch (error) {
-//     console.error("Unexpected database failure while deleting account:", error);
-//     throw error;
-//   }
-
-//   revalidatePath("/manage-accounts");
-
-//   return {
-//     ok: true,
-//     message: "Account deleted successfully.",
-//   };
-// }
+  return { ok: true, message: "Account deleted successfully." };
+}

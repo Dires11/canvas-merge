@@ -1,8 +1,5 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
-import { Input } from "../input";
-import { Label } from "radix-ui";
 import { Button } from "../ui/button";
 import { Check } from "lucide-react";
 

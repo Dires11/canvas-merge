@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { AddSchema, UpdateSchema } from "@/lib/schemas/manage-accounts";
+import { AddSchema } from "@/lib/schemas/manage-accounts";
 import { CanvasDomainInfo } from "./canvas-domain";
 
 export type AddAccountInput = z.infer<typeof AddSchema>;
-export type UpdateAccountInput = z.infer<typeof UpdateSchema>;
 
 export type CanvasAccountInfo = {
   canvasId: number;

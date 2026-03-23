@@ -113,41 +113,44 @@ export async function createCanvasAccount(
 export async function deleteCanvasAccount(
   accountId: string,
   userId: string,
-  db: DbClient = prisma,
 ): Promise<Result> {
   try {
-    const account = await db.canvasAccount.findFirst({
-      where: { id: accountId, userId },
-      select: { domainId: true },
-    });
-
-    if (!account) {
-      return { ok: false, error: "Account not found.", status: 404 };
-    }
-
-    await db.canvasAccount.delete({
-      where: { id: accountId },
-    });
-
-    const remaining = await db.canvasAccount.count({
-      where: { domainId: account.domainId },
-    });
-
-    if (remaining === 0) {
-      await db.canvasDomain.delete({
-        where: { id: account.domainId },
+    await prisma.$transaction(async (tx) => {
+      const account = await tx.canvasAccount.findFirst({
+        where: { id: accountId, userId },
+        select: { domainId: true },
       });
-    }
+
+      if (!account) {
+        throw Object.assign(new Error("Account not found."), { status: 404 });
+      }
+
+      await tx.canvasAccount.delete({
+        where: { id: accountId },
+      });
+
+      const remaining = await tx.canvasAccount.count({
+        where: { domainId: account.domainId },
+      });
+
+      if (remaining === 0) {
+        await tx.canvasDomain.delete({
+          where: { id: account.domainId },
+        });
+      }
+    });
 
     return { ok: true };
   } catch (error) {
-    console.error("deleteCanvasAccount failed:", error);
+    if (error instanceof Error && error.message === "Account not found.") {
+      return { ok: false, error: "Account not found.", status: 404 };
+    }
 
+    console.error("deleteCanvasAccount failed:", error);
     const mapped = getPrismaErrorMessage(
       error,
       "Failed to delete Canvas account.",
     );
-
     return { ok: false, ...mapped };
   }
 }
@@ -244,8 +247,8 @@ export async function getUserCanvasAccountsWithTokens(
 }
 
 export async function getUserCanvasAccount(
-  accountId: string,
   userId: string,
+  accountId: string,
   db: DbClient = prisma,
 ): Promise<CanvasAccountSummary | null> {
   return db.canvasAccount.findFirst({

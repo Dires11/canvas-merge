@@ -24,6 +24,7 @@ import Link from "next/link";
 import { GlassContainer } from "../glass-container";
 import { AssignmentDashboardControls } from "./dashboard-controls";
 import type { CanvasDomainInfo } from "@/lib/data/canvas-domain";
+import { cn } from "@/lib/utils";
 
 const KEY = "/api/planner/user-planner?merge=true";
 
@@ -418,7 +419,7 @@ export function AssignmentDashboardClient({
                 {Object.entries(groups).map(([label, assignments]) => {
                   return (
                     <div key={label} className="mt-1">
-                      <h2 className="text-lg tracking-tight">{label}</h2>
+                      <h2 className={cn("text-lg tracking-tight")}>{label}</h2>
                       <div className="flex flex-col gap-1.5">
                         {assignments.map((assignment) => (
                           <AssignmentCard

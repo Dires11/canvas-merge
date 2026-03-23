@@ -1,6 +1,11 @@
 import { encryptToken } from "@/lib/server/crypto";
 import { getAccountInfo } from "@/lib/canvas";
-import { createCanvasAccount } from "@/lib/data/canvas-account";
+import {
+  createCanvasAccount,
+  deleteCanvasAccount,
+  getUserCanvasAccount,
+  updateCanvasAccountToken,
+} from "@/lib/data/canvas-account";
 import {
   createCanvasDomain,
   getUserDomainByBaseUrl,
@@ -9,34 +14,36 @@ import { getPrismaErrorMessage } from "@/lib/data/utils";
 import { prisma } from "@/lib/prisma";
 import { generateUrlSlug } from "@/lib/utils/generate-slug";
 import type { AddAccountInput, CanvasAccountInfo } from "@/lib/types/account";
-import type { DataResult } from "@/lib/types/result";
+import type { DataResult, Result } from "@/lib/types/result";
+
+async function testConnection(
+  baseUrl: string,
+  token: string,
+): Promise<DataResult<CanvasAccountInfo>> {
+  const result = await getAccountInfo({ baseUrl, token });
+  if (!result.ok) {
+    return {
+      ok: false,
+      error:
+        result.error.message ??
+        "Failed to connect to Canvas. Make sure your token is valid.",
+      status: result.status,
+    };
+  }
+
+  return { ok: true, data: result.data };
+}
 
 export async function addCanvasAccountForUser(
   params: { userId: string } & AddAccountInput,
 ): Promise<DataResult<{ name: string; baseUrl: string }>> {
   const { userId, baseUrl, token, domainName } = params;
 
-  let testConnection;
-  try {
-    testConnection = await getAccountInfo({ baseUrl, token });
-  } catch (error) {
-    console.error("Unexpected Canvas connection test failure:", error);
-    return {
-      ok: false,
-      error: "Failed to connect to Canvas.",
-      status: 500,
-    };
+  const testConnectionResult = await testConnection(baseUrl, token);
+  if (!testConnectionResult.ok) {
+    return testConnectionResult;
   }
-
-  if (!testConnection.ok) {
-    return {
-      ok: false,
-      error: testConnection.error.message ?? "Failed to connect to Canvas.",
-      status: testConnection.status,
-    };
-  }
-
-  const accountInfo: CanvasAccountInfo = testConnection.data;
+  const accountInfo: CanvasAccountInfo = testConnectionResult.data;
   const domainSlug = generateUrlSlug(baseUrl);
   const encryptedToken = encryptToken(token);
 
@@ -108,4 +115,36 @@ export async function addCanvasAccountForUser(
 
     return { ok: false as const, ...mapped };
   }
+}
+
+export async function updateCanvasTokenForUser(
+  userId: string,
+  accountId: string,
+  newToken: string,
+): Promise<Result> {
+  const account = await getUserCanvasAccount(userId, accountId);
+  if (!account) {
+    return {
+      ok: false,
+      error: "Account not found.",
+      status: 404,
+    };
+  }
+  const testConnectionResult = await testConnection(
+    account.canvasDomain.baseUrl,
+    newToken,
+  );
+  if (!testConnectionResult.ok) {
+    return testConnectionResult;
+  }
+
+  const encryptedToken = encryptToken(newToken);
+  return updateCanvasAccountToken({ accountId, userId, token: encryptedToken });
+}
+
+export async function deleteCanvasAccountForUser(
+  userId: string,
+  accountId: string,
+): Promise<Result> {
+  return deleteCanvasAccount(accountId, userId);
 }

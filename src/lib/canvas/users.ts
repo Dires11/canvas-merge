@@ -35,7 +35,7 @@ export async function getAccountInfo({
   if (!res.ok) {
     if (res.status === 0) {
       return {
-        ok: false,
+        ok: false as const,
         status: 400,
         error: {
           message:
@@ -44,12 +44,12 @@ export async function getAccountInfo({
         },
       };
     }
-    return { ok: false, status: res.status, error: res.error };
+    return { ok: false as const, status: res.status, error: res.error };
   }
 
   const raw = res.data;
   return {
-    ok: true,
+    ok: true as const,
     status: res.status,
     data: {
       canvasId: raw.id,
