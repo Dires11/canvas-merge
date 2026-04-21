@@ -2,6 +2,18 @@
 
 Canvas Merge is a Next.js app that helps users connect one or more Canvas accounts and view merged course and planner data from a single dashboard.
 
+Live site: [canvas-merge.vercel.app](https://canvas-merge.vercel.app/auth/sign-in)
+
+## Screenshots
+
+### Dashboard
+
+![Canvas Merge dashboard](public/readme/dashboard.png)
+
+### Filters
+
+![Canvas Merge filter menu](public/readme/filter.png)
+
 ## Features
 
 - Neon Auth sign-in flow for protected pages
