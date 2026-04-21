@@ -8,11 +8,15 @@ Live site: [canvas-merge.vercel.app](https://canvas-merge.vercel.app/auth/sign-i
 
 ### Dashboard
 
-![Canvas Merge dashboard](public/readme/dashboard.png)
+| ☀️ Light Mode                      | 🌙 Dark Mode                            |
+| ---------------------------------- | --------------------------------------- |
+| ![](./public/readme/dashboard.png) | ![](./public/readme/dashboard-dark.png) |
 
 ### Filters
 
-![Canvas Merge filter menu](public/readme/filter.png)
+| ☀️ Light Mode                   | 🌙 Dark Mode                         |
+| ------------------------------- | ------------------------------------ |
+| ![](./public/readme/filter.png) | ![](./public/readme/filter-dark.png) |
 
 ## Features
 
