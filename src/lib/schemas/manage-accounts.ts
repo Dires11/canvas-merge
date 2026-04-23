@@ -25,7 +25,7 @@ export const BaseUrlSchema = z
       return;
     }
 
-    // UX: require https (matches your backend)
+    // UX: require https
     if (u.protocol !== "https:") {
       ctx.addIssue({
         code: "custom",

@@ -53,7 +53,6 @@ export function AddAccountForm({ onSubmit, domains }: Props) {
     const parsed = BaseUrlSchema.safeParse(baseUrl);
     if (!parsed.success) return;
     const domainName = domainMap.get(parsed.data);
-    console.log("Derived domainName:", { domainName });
     if (domainName) {
       setMatch(true);
       setValue("domainName", domainName, {

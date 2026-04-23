@@ -1,6 +1,6 @@
 import { DashboardClient } from "./client";
 import { GlassContainer } from "@/components/glass-container";
-import { ConnectAccountGuide } from "@/components/manage-accounts/connect-account-guide";
+import { ConnectAccountGuideWrapper } from "./connect-account-guide-wrapper";
 import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
 import { requireUser } from "@/lib/server/auth-server";
 import {
@@ -27,7 +27,7 @@ export default async function Dashboard() {
           Welcome to Canvas Merge dashboard!
         </h2>
         <p className="mb-4">You don't have any accounts connected yet.</p>
-        <ConnectAccountGuide />
+        <ConnectAccountGuideWrapper />
       </GlassContainer>
     );
   }

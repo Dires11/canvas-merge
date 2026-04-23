@@ -9,14 +9,18 @@ export function Step({
   title,
   children,
   disableNext = false,
+  finalStep = false,
   onClick,
+  onNext,
 }: {
   currentStep: number;
   step: number;
   title: string;
   children: React.ReactNode;
   disableNext?: boolean;
+  finalStep?: boolean;
   onClick: (number: number) => void;
+  onNext: () => void;
 }) {
   const completed = currentStep > step;
   const active = currentStep === step;
@@ -70,10 +74,10 @@ export function Step({
               className="bg-primary text-primary-foreground"
               onClick={(e) => {
                 e.stopPropagation();
-                onClick(step + 1);
+                onNext();
               }}
             >
-              Next
+              {finalStep ? "Submit" : "Next"}
             </Button>
           </div>
         )}

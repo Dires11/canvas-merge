@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useOptimistic, startTransition } from "react";
+import { useState, useOptimistic, startTransition, useEffect } from "react";
 
 import { GlassContainer } from "@/components/glass-container";
 import { ConnectAccountGuide } from "@/components/manage-accounts/connect-account-guide";
@@ -11,8 +11,7 @@ import {
   deleteAccountAction,
   updateAccountTokenAction,
 } from "./actions";
-import { AddSchema } from "@/lib/schemas/manage-accounts";
-import { UpdateTokenSchema } from "@/lib/schemas/manage-accounts";
+import { AddSchema, UpdateTokenSchema } from "@/lib/schemas/manage-accounts";
 import { z } from "zod";
 import { FormModal } from "./components/form-modal";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,14 @@ export default function ManageAccountsClient({
   domains: CanvasDomainInfo[];
 }) {
   const [serverMsg, setServerMsg] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [optimisticAccounts, setOptimisticAccounts] = useOptimistic(accounts);
+
+  useEffect(() => {
+    if (!serverMsg) return;
+    const id = setTimeout(() => setServerMsg(null), 4000);
+    return () => clearTimeout(id);
+  }, [serverMsg]);
 
   async function submitAdd(data: z.infer<typeof AddSchema>) {
     const result = await addAccountAction(data);
@@ -49,16 +55,15 @@ export default function ManageAccountsClient({
   }
 
   async function handleDelete(accountId: string) {
+    setDeletingId(accountId);
     startTransition(async () => {
       setOptimisticAccounts((prev) => prev.filter((a) => a.id !== accountId));
-
       const result = await deleteAccountAction(accountId);
-
+      setDeletingId(null);
       if (!result.ok) {
         setServerMsg(result.error);
         return;
       }
-
       setServerMsg("Account deleted successfully.");
     });
   }
@@ -72,20 +77,22 @@ export default function ManageAccountsClient({
               Linked Accounts
             </h2>
 
-            <FormModal
-              trigger={<Button>Link New Account</Button>}
-              title="Link Canvas Account"
-            >
-              {({ close }) => (
-                <AddAccountForm
-                  onSubmit={async (values) => {
-                    await submitAdd(values);
-                    close();
-                  }}
-                  domains={domains}
-                />
-              )}
-            </FormModal>
+            {optimisticAccounts.length > 0 && (
+              <FormModal
+                trigger={<Button>Link New Account</Button>}
+                title="Link Canvas Account"
+              >
+                {({ close }) => (
+                  <AddAccountForm
+                    onSubmit={async (values) => {
+                      await submitAdd(values);
+                      close();
+                    }}
+                    domains={domains}
+                  />
+                )}
+              </FormModal>
+            )}
           </div>
 
           {serverMsg && (
@@ -94,7 +101,9 @@ export default function ManageAccountsClient({
             </div>
           )}
 
-          {optimisticAccounts.length === 0 && <ConnectAccountGuide />}
+          {optimisticAccounts.length === 0 && (
+            <ConnectAccountGuide onSubmit={submitAdd} />
+          )}
 
           {optimisticAccounts.length > 0 && (
             <GlassContainer>
@@ -140,6 +149,7 @@ export default function ManageAccountsClient({
 
                       <button
                         className="inline-flex transform items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/40 px-3 py-1.5 text-xs font-medium text-red-700 backdrop-blur transition-all hover:border-red-300/70 hover:bg-red-100/70 hover:shadow-md disabled:pointer-events-none disabled:opacity-60 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300 dark:hover:border-red-400/30 dark:hover:bg-red-500/20"
+                        disabled={deletingId === account.id}
                         onClick={() => handleDelete(account.id)}
                       >
                         Delete
