@@ -50,9 +50,6 @@ model CanvasAccount {
   id          String    @id @default(uuid())
   userId      String    @map("user_id") @db.Uuid
   name        String
-  domain      String?
-  domainName  String?   @map("domain_name")
-  domainSlug  String?   @map("domain_slug")
   accessToken String    @map("access_token")
   expiredAt   DateTime? @map("expired_at")
   createdAt   DateTime  @default(now()) @map("created_at")
@@ -62,6 +59,6 @@ model CanvasAccount {
   domainId     String       @map("domain_id") @db.Uuid
   canvasDomain CanvasDomain @relation(fields: [domainId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, domainSlug, canvasId])
+  @@unique([userId, domainId, canvasId])
   @@schema("public")
 }
