@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "prisma generate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -33,6 +34,7 @@
     "swr": "^2.4.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
+    "vercel": "^52.0.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
