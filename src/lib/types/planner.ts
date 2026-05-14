@@ -1,9 +1,42 @@
+import type { AccountSafeInfo } from "./account";
+
+export type Plannable =
+  | "announcement"
+  | "discussion_topic"
+  | "quiz"
+  | "wiki_page"
+  | "planner_note"
+  | "calendar_event"
+  | "assessment_request"
+  | "sub_assignment"
+  | "peer_review_sub_assignment";
+
+export type RawPlannerItem = {
+  plannable_id: number;
+  plannable_type: Plannable;
+  plannable_date: string;
+  course_id: number;
+  context_name: string;
+  html_url: string;
+  plannable?: {
+    title?: string;
+    due_at?: string | null;
+    points_possible?: number | null;
+  };
+  submissions?: {
+    submitted?: boolean;
+    graded?: boolean;
+    late?: boolean;
+    missing?: boolean;
+  };
+};
+
 export type ItemBase = {
   id: number;
   course_id: number;
   course_name: string;
   title: string;
-  type: string;
+  type: Plannable;
   url: string;
   baseUrl: string;
   domainName: string;
@@ -19,7 +52,7 @@ export type SubmissionDetails = {
 
 export type Assignment = ItemBase & {
   due_at: string | null;
-  points_possible: number;
+  points_possible: number | null;
   submission: SubmissionDetails;
 };
 export type Announcement = ItemBase & {
@@ -38,7 +71,7 @@ export type ItemsByDomain = Record<string, ItemsByAccount>;
 
 export type MergedAssignment = ItemBase & {
   due_at: string | null;
-  points_possible: number;
+  points_possible: number | null;
   accountsSubmitted: Array<{
     accountId: string;
     submission: SubmissionDetails;
@@ -66,3 +99,13 @@ export type MergedItems = {
 };
 
 export type MergedItemsByDomain = Record<string, MergedItems>;
+
+export type UserPlanner = {
+  merged?: MergedItemsByDomain;
+  itemsByDomain: ItemsByDomain;
+  accountsSafeInfo: AccountSafeInfo[];
+  accountsWithErrors: string[];
+};
+
+export type FilterType = "domain" | "account" | "course";
+export type Filters = Record<FilterType, string[]>;
