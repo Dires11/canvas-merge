@@ -3,8 +3,7 @@
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
-import type { MergedAssignment, UserCourse } from "@/lib/types";
-import type { AccountSafeInfo } from "@/lib/types/index";
+import type { MergedAssignment, UserCourse, AccountSafeInfo, Filters, FilterType } from "@/lib/types";
 import { TriangleAlert, ChevronDown } from "lucide-react";
 import {
   type ReadonlyURLSearchParams,
@@ -19,11 +18,11 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-import type { UserPlanner } from "@/lib/services/planner/get-user-planner";
+import type { UserPlanner } from "@/lib/types";
 import Link from "next/link";
 import { GlassContainer } from "../glass-container";
 import { AssignmentDashboardControls } from "./dashboard-controls";
-import type { CanvasDomainInfo } from "@/lib/data/canvas-domain";
+import type { CanvasDomainInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const KEY = "/api/planner/user-planner?merge=true";
@@ -107,9 +106,6 @@ type Props = {
   courses: UserCourse[];
   domains: CanvasDomainInfo[];
 };
-
-type FilterType = "domain" | "account" | "course";
-export type Filters = Record<FilterType, string[]>;
 
 type DomainMap = Record<string, CanvasDomainInfo>;
 

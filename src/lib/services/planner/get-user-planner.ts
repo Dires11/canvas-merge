@@ -1,4 +1,3 @@
-// lib/planner/weekly-assignments.ts
 import {
   getUserCanvasAccounts,
   getUserCanvasAccountsWithTokens,
@@ -10,15 +9,17 @@ import { getPlannerItems } from "@/lib/canvas";
 import type {
   Announcement,
   Assignment,
+  AccountSafeInfo,
   ItemBase,
   ItemsByAccount,
   ItemsByDomain,
   ItemsByType,
   MergedItems,
   MergedItemsByDomain,
+  RawPlannerItem,
   SubmissionDetails,
+  UserPlanner,
 } from "@/lib/types";
-import type { AccountSafeInfo } from "@/lib/types/index";
 import { DateTime } from "luxon";
 
 /**
@@ -56,7 +57,7 @@ function normalize(
   baseUrl: string,
   domainSlug: string,
   domainName: string,
-  items: unknown,
+  items: RawPlannerItem[],
 ): ItemsByType {
   const itemsByType: ItemsByType = {
     account: accountId,
@@ -64,8 +65,6 @@ function normalize(
     announcements: [],
     other: [],
   };
-
-  if (!items || !Array.isArray(items)) return itemsByType;
 
   for (const item of items) {
     const title = item.plannable?.title?.trim() || "Untitled";
@@ -217,19 +216,6 @@ function mergeItemsByDomain(itemsByAccount: ItemsByAccount): MergedItems {
 
 /**
  * ----------------------------
- * Public return type
- * ----------------------------
- */
-
-export type UserPlanner = {
-  merged?: MergedItemsByDomain;
-  itemsByDomain: ItemsByDomain;
-  accountsSafeInfo: AccountSafeInfo[];
-  accountsWithErrors: string[];
-};
-
-/**
- * ----------------------------
  * Main loader
  * ----------------------------
  */
@@ -241,7 +227,7 @@ export async function getUserPlanner(
   const allAccounts = await getUserCanvasAccountsWithTokens(userId);
 
   if (allAccounts.length === 0) {
-    throw new Error("No accounts found.");
+    throw new Error("No accounts found");
   }
 
   const accountsSafeInfo: AccountSafeInfo[] = allAccounts.map(
@@ -257,7 +243,7 @@ export async function getUserPlanner(
     if (account.expiredAt !== null) {
       return {
         account,
-        accountItems: null as ItemsByType | null,
+        accountItems: null,
         error: { message: "Account expired" },
       };
     }
@@ -279,7 +265,7 @@ export async function getUserPlanner(
 
       return {
         account,
-        accountItems: null as ItemsByType | null,
+        accountItems: null,
         error: raw.error,
       };
     }
@@ -310,8 +296,10 @@ export async function getUserPlanner(
       if (accountItems) {
         // Keep successful accounts even if they have zero items.
         // This makes account-based filtering/UI state easier.
-        (itemsByDomain[account.canvasDomain.slug] ??= {})[account.id] =
-          accountItems;
+        if (!itemsByDomain[account.canvasDomain.slug]) {
+          itemsByDomain[account.canvasDomain.slug] = {};
+        }
+        itemsByDomain[account.canvasDomain.slug][account.id] = accountItems;
       }
 
       if (error) {
@@ -337,8 +325,8 @@ export async function getUserPlanner(
   if (merge) {
     const merged: MergedItemsByDomain = {};
 
-    for (const domain in itemsByDomain) {
-      merged[domain] = mergeItemsByDomain(itemsByDomain[domain]);
+    for (const [domain, accounts] of Object.entries(itemsByDomain)) {
+      merged[domain] = mergeItemsByDomain(accounts);
     }
 
     return {

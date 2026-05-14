@@ -1,18 +1,11 @@
 import { getUserCanvasAccountsWithTokens } from "@/lib/data/canvas-account";
 import { getAccountCourses } from "../../canvas";
 import { decryptToken } from "../../server/crypto";
-import { UserCourse } from "../../types";
+import { CourseFailure, UserCourse } from "../../types";
 import { prisma } from "@/lib/prisma";
 import { resolveCourseColor } from "../../utils/colors/colors";
 import { deleteCourseMetadataMany } from "@/lib/data/course-metadata";
 import { after } from "next/server";
-
-export type CourseFailure = {
-  accountId: string;
-  baseUrl: string;
-  status: number;
-  error: unknown;
-};
 
 export async function getUserCourses(userId: string, accountIds?: string[]) {
   const [accounts, dbMetadata] = await Promise.all([

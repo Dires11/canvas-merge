@@ -3,15 +3,9 @@ import { GlassContainer } from "@/components/glass-container";
 import { ConnectAccountGuideWrapper } from "./connect-account-guide-wrapper";
 import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
 import { requireUser } from "@/lib/server/auth-server";
-import {
-  type CourseFailure,
-  getUserCourses,
-} from "@/lib/services/planner/get-user-courses";
-import {
-  getUserPlanner,
-  UserPlanner,
-} from "@/lib/services/planner/get-user-planner";
-import type { UserCourse } from "@/lib/types";
+import { getUserCourses } from "@/lib/services/planner/get-user-courses";
+import { getUserPlanner } from "@/lib/services/planner/get-user-planner";
+import type { UserCourse, CourseFailure, UserPlanner, CanvasDomainInfo } from "@/lib/types";
 import { getUserDomains } from "@/lib/data/canvas-domain";
 
 export const dynamic = "force-dynamic";
@@ -44,7 +38,7 @@ export default async function Dashboard() {
   let courseError: string | null = null;
   let plannerData: UserPlanner | null = null;
   let plannerError: string | null = null;
-  let domainsData: any[] = []; // Adjust type as needed
+  let domainsData: CanvasDomainInfo[] = [];
   let domainsError: string | null = null;
 
   if (domainsResult.status === "fulfilled") {

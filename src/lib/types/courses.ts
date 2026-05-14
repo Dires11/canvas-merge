@@ -1,3 +1,10 @@
+export type CourseFailure = {
+  accountId: string;
+  baseUrl: string;
+  status: number;
+  error: unknown;
+};
+
 export type Course = {
   id: number;
   name: string;

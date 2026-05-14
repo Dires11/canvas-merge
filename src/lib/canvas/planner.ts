@@ -1,3 +1,4 @@
+import { Plannable, RawPlannerItem } from "../types";
 import { canvasFetchJson, CanvasResult } from "./fetch";
 
 /**
@@ -22,11 +23,9 @@ export async function getPlannerItems(
   token: string,
   startISO: string,
   endISO: string,
-  opts?: { ifNoneMatch?: string },
-): Promise<CanvasResult<any[]>> {
-  const r = await canvasFetchJson<any[]>(domain, "/api/v1/planner/items", {
+): Promise<CanvasResult<RawPlannerItem[]>> {
+  return canvasFetchJson<RawPlannerItem[]>(domain, "/api/v1/planner/items", {
     token,
-    ifNoneMatch: opts?.ifNoneMatch,
     searchParams: {
       start_date: startISO,
       end_date: endISO,
@@ -34,11 +33,22 @@ export async function getPlannerItems(
       filter: "incomplete_items",
     },
   });
+}
 
-  if (!r.ok) {
-    return { ok: false, status: r.status, error: r.error };
-  }
-
-  // Preserve etag + status exactly (200 or 304)
-  return { ok: true, status: r.status, data: r.data, etag: r.etag };
+export async function markPlannerItem(
+  domain: string,
+  token: string,
+  plannable_type: Plannable,
+  plannable_id: number,
+  marked_complete: boolean,
+) {
+  return canvasFetchJson(domain, `/api/v1/planner/overrides/`, {
+    method: "POST",
+    token,
+    body: {
+      plannable_type,
+      plannable_id,
+      marked_complete,
+    },
+  });
 }

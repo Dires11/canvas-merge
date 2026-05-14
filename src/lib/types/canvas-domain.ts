@@ -1,6 +1,1 @@
-export type CanvasDomainInfo = {
-  id: string;
-  baseUrl: string;
-  name: string;
-  slug: string;
-};
+export type { CanvasDomainInfo } from "@/lib/data/canvas-domain";

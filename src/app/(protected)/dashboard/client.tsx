@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { UserCourse } from "@/lib/types";
-import type { UserPlanner } from "@/lib/services/planner/get-user-planner";
+import type { UserCourse, UserPlanner } from "@/lib/types";
 import { CourseSidebar } from "@/components/course/course-sidebar";
 import { AssignmentDashboardClient } from "@/components/assignment/dashboard-client";
 import { updateCourseColor } from "@/app/actions/course-actions";
@@ -10,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseTab } from "../../../components/course/course-tab";
 import { useRouter } from "next/navigation";
 import { GlassContainer } from "../../../components/glass-container";
-import { CanvasDomainInfo } from "@/lib/types/canvas-domain";
+import type { CanvasDomainInfo } from "@/lib/types";
 
 export function DashboardClient({
   initialCourses,
@@ -56,7 +55,7 @@ export function DashboardClient({
 
   return (
     <>
-      {/* ✅ Mobile: Tabs */}
+      {/* Mobile: Tabs */}
       <div className="p-4 md:hidden">
         <Tabs defaultValue="assignments" className="w-full">
           <GlassContainer className="mb-4 w-full p-0">
@@ -85,7 +84,7 @@ export function DashboardClient({
         </Tabs>
       </div>
 
-      {/* ✅ Desktop: Sidebar + Assignments */}
+      {/* Desktop: Sidebar + Assignments */}
       <div className="hidden min-h-screen grid-cols-[320px_minmax(0,1fr)] gap-4 p-4 md:grid">
         <CourseSidebar courses={courses} onColorChange={handleColorChange} />
         <main className="min-w-0">

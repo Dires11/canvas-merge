@@ -1,6 +1,4 @@
-import type { CanvasDomainInfo, AccountSafeInfo } from "@/lib/types/index";
-import type { UserCourse } from "@/lib/types";
-import { Filters } from "./dashboard-client";
+import type { CanvasDomainInfo, AccountSafeInfo, UserCourse, Filters } from "@/lib/types";
 import {
   Menubar,
   MenubarCheckboxItem,
