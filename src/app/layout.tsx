@@ -5,7 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { SyncTimezone } from "@/components/sync-timezone";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, Show } from "@clerk/nextjs";
 import { ThemeProvider } from "next-themes";
 import { shadcn, neobrutalism } from "@clerk/ui/themes";
 
@@ -49,6 +49,9 @@ export default function RootLayout({
               <div className="absolute top-[40%] -right-40 h-[500px] w-[500px] rounded-full bg-sky-400/30 blur-[120px]" />
               <div className="absolute bottom-[-200px] left-[30%] h-[500px] w-[500px] rounded-full bg-indigo-400/40 blur-[120px]" />
             </div>
+            <Show when="signed-in">
+              <Navbar />
+            </Show>
             {children}
             <SyncTimezone />
           </ClerkProvider>

@@ -1,7 +1,7 @@
 "use client";
 
 import { ConnectAccountGuide } from "@/components/manage-accounts/connect-account-guide";
-import { addAccountAction } from "@/app/(protected)/manage-accounts/actions";
+import { addAccountAction } from "@/app/manage-accounts/actions";
 import type { AddSchema } from "@/lib/schemas/manage-accounts";
 import type { z } from "zod";
 
