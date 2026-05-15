@@ -1,12 +1,16 @@
+import { Navbar } from "@/components/navbar";
+
 export const dynamic = "force-dynamic";
 
-import { requireUser } from "@/lib/server/auth-server";
-
-export default async function ProtectedLayout({
+export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireUser();
-  return <>{children}</>;
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 }

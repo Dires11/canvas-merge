@@ -1,19 +1,24 @@
+import { auth } from "@clerk/nextjs/server";
 import { DashboardClient } from "./components/client";
 import { GlassContainer } from "@/components/glass-container";
 import { ConnectAccountGuideWrapper } from "./components/connect-account-guide-wrapper";
 import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
-import { requireUser } from "@/lib/server/auth-server";
 import { getUserCourses } from "@/lib/services/planner/get-user-courses";
 import { getUserPlanner } from "@/lib/services/planner/get-user-planner";
-import type { UserCourse, CourseFailure, UserPlanner, CanvasDomainInfo } from "@/lib/types";
+import type {
+  UserCourse,
+  CourseFailure,
+  UserPlanner,
+  CanvasDomainInfo,
+} from "@/lib/types";
 import { getUserDomains } from "@/lib/data/canvas-domain";
 
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
-  const user = await requireUser();
+  const { userId } = await auth();
 
-  const accounts = await getUserCanvasAccounts(user.id);
+  const accounts = await getUserCanvasAccounts(userId!);
   if (accounts.length === 0) {
     return (
       <GlassContainer className="mx-auto max-w-4xl">
@@ -28,9 +33,9 @@ export default async function Dashboard() {
 
   const [coursesResult, plannerResult, domainsResult] =
     await Promise.allSettled([
-      getUserCourses(user.id),
-      getUserPlanner(user.id, true),
-      getUserDomains(user.id), // prefetch domains for better performance in manage accounts page
+      getUserCourses(userId!),
+      getUserPlanner(userId!, true),
+      getUserDomains(userId!),
     ]);
 
   let courses: UserCourse[] = [];

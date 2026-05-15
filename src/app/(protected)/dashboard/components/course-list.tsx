@@ -50,7 +50,7 @@ export function CourseList({
                 </button>
               </PopoverTrigger>
               <PopoverContent
-                className="bg-background grid w-fit grid-cols-8 gap-3"
+                className="bg-glass/10 glass-border grid w-fit grid-cols-8 gap-3 border-0 p-4 backdrop-blur-lg"
                 align="start"
               >
                 {COURSE_PALETTE_40.map((color) => {
@@ -61,7 +61,7 @@ export function CourseList({
                     <button
                       key={color.h}
                       className={clsx(
-                        "ring-foreground/90 size-5 rounded-md bg-[oklch(var(--c-light))] hover:cursor-pointer hover:ring-2 dark:bg-[oklch(var(--c-dark))]",
+                        "ring-foreground/80 size-5 rounded-md bg-[oklch(var(--c-light))] hover:cursor-pointer hover:ring-2 dark:bg-[oklch(var(--c-dark))]",
                         isCurrent && "ring-2",
                       )}
                       style={

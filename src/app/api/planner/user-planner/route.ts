@@ -1,29 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUserApi } from "@/lib/server/auth-server";
+import { auth } from "@clerk/nextjs/server";
 import { getUserPlanner } from "@/lib/services/planner/get-user-planner";
 import { dedupeWithTtl } from "@/lib/utils/dedupe";
 
 export async function GET(req: NextRequest) {
-  const user = await requireUserApi();
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+  }
+
   const merge = req.nextUrl.searchParams.get("merge") === "true";
 
-  // Dedupe per user + merge (10s)
-  const key = `weekly-assignments|user=${user.id}|merge=${merge}`;
+  const key = `weekly-assignments|user=${userId}|merge=${merge}`;
   console.log("---- API: received request for /api/planner/weekly-assignments");
   try {
     const { hit, data } = await dedupeWithTtl(key, 10_000, async () => {
-      // Only logs when we truly run the full pipeline (not cache/inflight)
       console.log("----API: computing /api/planner/weekly-assignments", {
-        userId: user.id,
+        userId,
         merge,
       });
-      return await getUserPlanner(user.id, merge);
+      return await getUserPlanner(userId, merge);
     });
 
     return NextResponse.json(data, {
       status: 200,
       headers: {
-        "x-cache": hit, // helpful in Network tab
+        "x-cache": hit,
       },
     });
   } catch (error: any) {

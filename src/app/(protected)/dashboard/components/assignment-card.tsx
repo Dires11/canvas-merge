@@ -108,14 +108,14 @@ export function AssignmentCard({
         <p className="text-card-foreground/40 block truncate text-xs font-semibold">
           {item.course_name}
         </p>
-        <Link
+        <a
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
           className="text-card-foreground md:text-md text-sm font-bold hover:underline lg:text-lg"
         >
           {item.title}
-        </Link>
+        </a>
         <DueLabel
           dueDate={dueDate}
           isDueAtMidnight={isDueAtMidnight}
@@ -134,7 +134,7 @@ export function AssignmentCard({
                     alt={`${account.name}'s avatar`}
                     width={35}
                     height={35}
-                    className="ring-card-foreground/20 size-8 rounded-full ring"
+                    className="ring-card-foreground/20 my-0.5 ml-0.5 size-8 rounded-full ring"
                   />
                 }
               >

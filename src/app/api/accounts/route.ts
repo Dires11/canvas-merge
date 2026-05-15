@@ -1,15 +1,19 @@
 // app/api/accounts/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { requireUserApi } from "@/lib/server/auth-server";
+import { auth } from "@clerk/nextjs/server";
 import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
 import { AddSchema } from "@/lib/schemas/manage-accounts";
 import { validateJson } from "@/lib/server/validate-json";
 import { addCanvasAccountForUser } from "@/lib/services/manage-accounts";
 
 export async function GET() {
-  const user = await requireUserApi();
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+  }
+
   try {
-    const accounts = await getUserCanvasAccounts(user.id);
+    const accounts = await getUserCanvasAccounts(userId);
     return NextResponse.json({ accounts }, { status: 200 });
   } catch (e: any) {
     console.error("Failed to load Canvas accounts:", e);
@@ -21,7 +25,10 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const user = await requireUserApi();
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+  }
 
   const parsed = await validateJson(req, AddSchema);
   if (!parsed.ok) {
@@ -38,7 +45,7 @@ export async function POST(req: NextRequest) {
   }
 
   const result = await addCanvasAccountForUser({
-    userId: user.id,
+    userId,
     ...parsed.data,
   });
 

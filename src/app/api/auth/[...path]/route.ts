@@ -1,4 +1,9 @@
-// app/api/auth/[...path]/route.ts
-import { auth } from "@/lib/auth/server";
+import { NextResponse } from "next/server";
 
-export const { GET, POST } = auth.handler();
+export function GET() {
+  return NextResponse.json({ error: "Not found" }, { status: 404 });
+}
+
+export function POST() {
+  return NextResponse.json({ error: "Not found" }, { status: 404 });
+}

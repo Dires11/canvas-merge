@@ -1,9 +1,9 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { requireUser } from "@/lib/server/auth-server";
 import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
 import { AddSchema, UpdateTokenSchema } from "@/lib/schemas/manage-accounts";
 import {
@@ -25,30 +25,15 @@ function validationError(error: z.ZodError): ActionResult<never> {
   };
 }
 
-/**
- * ----------------------------
- * Loader
- * ----------------------------
- * Throw on failure.
- */
-
 export async function loadAccountsServer() {
-  const user = await requireUser();
-  return await getUserCanvasAccounts(user.id);
+  const { userId } = await auth();
+  return await getUserCanvasAccounts(userId!);
 }
-
-/**
- * ----------------------------
- * Add account
- * ----------------------------
- * Return ok:false for expected failures.
- * Throw only for unexpected/system failures.
- */
 
 export async function addAccountAction(
   input: z.infer<typeof AddSchema>,
 ): Promise<ActionResult<{ name: string; baseUrl: string }>> {
-  const user = await requireUser();
+  const { userId } = await auth();
 
   const parsed = AddSchema.safeParse(input);
   if (!parsed.success) {
@@ -56,7 +41,7 @@ export async function addAccountAction(
   }
 
   const result = await addCanvasAccountForUser({
-    userId: user.id,
+    userId: userId!,
     ...parsed.data,
   });
 
@@ -76,7 +61,7 @@ export async function updateAccountTokenAction(
   accountId: string,
   input: z.infer<typeof UpdateTokenSchema>,
 ): Promise<ActionResult> {
-  const user = await requireUser();
+  const { userId } = await auth();
 
   const parsed = UpdateTokenSchema.safeParse(input);
   if (!parsed.success) {
@@ -84,7 +69,7 @@ export async function updateAccountTokenAction(
   }
 
   const result = await updateCanvasTokenForUser(
-    user.id,
+    userId!,
     accountId,
     parsed.data.token,
   );
@@ -101,9 +86,9 @@ export async function updateAccountTokenAction(
 export async function deleteAccountAction(
   accountId: string,
 ): Promise<ActionResult> {
-  const user = await requireUser();
+  const { userId } = await auth();
 
-  const result = await deleteCanvasAccountForUser(user.id, accountId);
+  const result = await deleteCanvasAccountForUser(userId!, accountId);
 
   if (!result.ok) {
     return result;

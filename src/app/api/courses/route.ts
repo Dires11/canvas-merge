@@ -1,7 +1,7 @@
 // app/api/courses/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
-import { requireUserApi } from "@/lib/server/auth-server";
 import { apiError, apiOk } from "@/lib/server/api-response";
 import { getUserCourses } from "@/lib/services/planner/get-user-courses";
 import type { ApiResponse } from "@/lib/types/api-response";
@@ -17,14 +17,17 @@ type CoursesResponseData = {
 };
 
 export async function GET(req: NextRequest) {
-  const user = await requireUserApi();
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+  }
 
   const url = new URL(req.url);
   const accountIds = url.searchParams.getAll("accountIds");
   const filteredIds = accountIds.length > 0 ? accountIds : undefined;
 
   try {
-    const { courses, failures } = await getUserCourses(user.id, filteredIds);
+    const { courses, failures } = await getUserCourses(userId, filteredIds);
 
     const allFailed = courses.length === 0 && failures.length > 0;
 

@@ -3,8 +3,14 @@
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
-import type { MergedAssignment, UserCourse, AccountSafeInfo, Filters, FilterType } from "@/lib/types";
-import { TriangleAlert, ChevronDown } from "lucide-react";
+import type {
+  MergedAssignment,
+  UserCourse,
+  AccountSafeInfo,
+  Filters,
+  FilterType,
+} from "@/lib/types";
+import { TriangleAlert, ChevronDown, RotateCw } from "lucide-react";
 import {
   type ReadonlyURLSearchParams,
   usePathname,
@@ -343,9 +349,10 @@ export function AssignmentDashboardClient({
       <div className="flex items-center gap-3">
         <button
           disabled={isValidating}
-          className="rounded-md border px-3 py-1 disabled:opacity-50"
+          className="glass-border group bg-glass/10 flex items-center gap-2 rounded-md border px-3 py-1 hover:cursor-pointer disabled:opacity-50"
           onClick={() => mutate(undefined, { revalidate: true })}
         >
+          <RotateCw className="h-4 w-4 transition-transform duration-200 group-hover:rotate-30" />
           Refresh
         </button>
         {isValidating && <span className="text-sm opacity-70">Updating…</span>}

@@ -1,4 +1,9 @@
-import type { CanvasDomainInfo, AccountSafeInfo, UserCourse, Filters } from "@/lib/types";
+import type {
+  CanvasDomainInfo,
+  AccountSafeInfo,
+  UserCourse,
+  Filters,
+} from "@/lib/types";
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -36,13 +41,13 @@ export function AssignmentDashboardControls({
 }: Props) {
   return (
     <div>
-      <Menubar className="bg-glass/5 rounded-lg border px-2 py-5">
+      <Menubar className="bg-glass/10 glass-border rounded-lg px-2 py-5 backdrop-blur-lg">
         <MenubarMenu>
           <MenubarTrigger>
             <School className="mr-2 size-4" strokeWidth={1.8} />
             Domains
           </MenubarTrigger>
-          <MenubarContent className="w-64 backdrop-blur-lg">
+          <MenubarContent className="bg-glass/10 glass-border w-64 backdrop-blur-lg">
             <MenubarItem onClick={() => clearAll("domain")}>
               <BrushCleaning strokeWidth={1.5} className="text-foreground" />
               Clear All
@@ -75,7 +80,7 @@ export function AssignmentDashboardControls({
             <CircleUser className="mr-2 size-4" strokeWidth={1.8} />
             Accounts
           </MenubarTrigger>
-          <MenubarContent className="max-h-137 w-64 overflow-y-auto">
+          <MenubarContent className="bg-glass/10 glass-border max-h-137 w-64 overflow-y-auto backdrop-blur-lg">
             <MenubarItem onClick={() => clearAll("account")}>
               <BrushCleaning strokeWidth={1.5} className="text-foreground" />
               Clear All
@@ -124,7 +129,7 @@ export function AssignmentDashboardControls({
             <BookMarked className="mr-2 size-4" strokeWidth={1.8} />
             Courses
           </MenubarTrigger>
-          <MenubarContent className="max-h-137 w-70 overflow-y-auto backdrop-blur-lg">
+          <MenubarContent className="glass-border bg-glass/10 max-h-137 w-70 overflow-y-auto backdrop-blur-lg">
             <MenubarItem onClick={() => clearAll("course")}>
               <BrushCleaning strokeWidth={1.5} className="text-foreground" />
               Clear All
