@@ -57,7 +57,7 @@
   --radius: 0.625rem;
   --card: oklch(0.97 0 0 );
   --card-foreground: oklch(0.145 0 0);
-  --popover:  oklch(97.015% 0.00011 271.152 / 0.506);
+  --popover:  oklch(97.015% 0.00011 271.152);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(54.6% 0.245 262.881);
   --primary-hover: oklch(from var(--primary) calc(l - 0.06) c h);
@@ -95,7 +95,7 @@
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.27 0.05 268 / 0.8);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.985 0 0, 0.8);
+  --popover: oklch(0.15 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary-foreground: oklch(0.2 0 0);
   --secondary: oklch(0.269 0 0);
