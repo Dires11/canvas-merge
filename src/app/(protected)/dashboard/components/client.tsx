@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import type { UserCourse, UserPlanner } from "@/lib/types";
-import { CourseSidebar } from "@/components/course/course-sidebar";
-import { AssignmentDashboardClient } from "@/components/assignment/dashboard-client";
+import { CourseSidebar } from "./course-sidebar";
+import { AssignmentDashboardClient } from "./assignment-dashboard-client";
 import { updateCourseColor } from "@/app/actions/course-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseTab } from "../../../components/course/course-tab";
+import { CourseTab } from "./course-tab";
 import { useRouter } from "next/navigation";
-import { GlassContainer } from "../../../components/glass-container";
+import { GlassContainer } from "@/components/glass-container";
 import type { CanvasDomainInfo } from "@/lib/types";
 
 export function DashboardClient({

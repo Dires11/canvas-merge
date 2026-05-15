@@ -1,6 +1,6 @@
-import { DashboardClient } from "./client";
+import { DashboardClient } from "./components/client";
 import { GlassContainer } from "@/components/glass-container";
-import { ConnectAccountGuideWrapper } from "./connect-account-guide-wrapper";
+import { ConnectAccountGuideWrapper } from "./components/connect-account-guide-wrapper";
 import { getUserCanvasAccounts } from "@/lib/data/canvas-account";
 import { requireUser } from "@/lib/server/auth-server";
 import { getUserCourses } from "@/lib/services/planner/get-user-courses";

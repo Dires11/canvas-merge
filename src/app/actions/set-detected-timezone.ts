@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/db";
 import { auth } from "@/lib/auth/server";
 
 export async function setDetectedTimeZone(detectedTimezone: string) {

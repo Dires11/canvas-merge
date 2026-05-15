@@ -10,13 +10,13 @@ import {
   addAccountAction,
   deleteAccountAction,
   updateAccountTokenAction,
-} from "./actions";
+} from "../actions";
 import { AddSchema, UpdateTokenSchema } from "@/lib/schemas/manage-accounts";
 import { z } from "zod";
-import { FormModal } from "./components/form-modal";
+import { FormModal } from "./form-modal";
 import { Button } from "@/components/ui/button";
-import { AddAccountForm } from "./components/add-account-form";
-import { UpdateAccountForm } from "./components/update-account-form";
+import { AddAccountForm } from "./add-account-form";
+import { UpdateAccountForm } from "./update-account-form";
 
 export default function ManageAccountsClient({
   accounts,

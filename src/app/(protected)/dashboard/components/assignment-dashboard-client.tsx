@@ -20,7 +20,7 @@ import {
 
 import type { UserPlanner } from "@/lib/types";
 import Link from "next/link";
-import { GlassContainer } from "../glass-container";
+import { GlassContainer } from "@/components/glass-container";
 import { AssignmentDashboardControls } from "./dashboard-controls";
 import type { CanvasDomainInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";

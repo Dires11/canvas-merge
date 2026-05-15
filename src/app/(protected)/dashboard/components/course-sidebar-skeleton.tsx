@@ -1,5 +1,6 @@
-import { GlassContainer } from "../glass-container";
-import { Skeleton } from "../ui/skeleton";
+import { GlassContainer } from "@/components/glass-container";
+import { Skeleton } from "@/components/ui/skeleton";
+
 export function CourseSidebarSkeleton() {
   return (
     <aside className="sticky top-6 h-fit w-[320px] shrink-0">

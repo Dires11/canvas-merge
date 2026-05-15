@@ -1,5 +1,5 @@
 import { loadAccountsServer } from "./actions";
-import ManageAccountsClient from "./client";
+import ManageAccountsClient from "./components/client";
 import { getUserDomains } from "@/lib/data/canvas-domain";
 import { requireUser } from "@/lib/server/auth-server";
 

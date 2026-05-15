@@ -1,5 +1,5 @@
-import { GlassContainer } from "../glass-container";
-import { Skeleton } from "../ui/skeleton";
+import { GlassContainer } from "@/components/glass-container";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function AssignmentSkeleton() {
   return (
