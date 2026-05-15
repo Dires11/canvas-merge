@@ -39,7 +39,7 @@ export function ConnectAccountGuide({
     formState: { errors, isSubmitting },
   } = useForm<AddValues>({
     resolver: zodResolver(AddSchema),
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
       domainName: "",
       baseUrl: "",
@@ -95,11 +95,8 @@ export function ConnectAccountGuide({
             onNext={handleNext}
           >
             <FieldGroup className="max-w-100 gap-2 p-2">
-              <Field className="gap-0">
-                <FieldLabel
-                  htmlFor="canvas-url"
-                  className="tracking-tight: mb-1 shrink-0"
-                >
+              <Field className="gap-1">
+                <FieldLabel htmlFor="canvas-url">
                   Please enter your college Canvas URL:
                 </FieldLabel>
                 <Input
@@ -114,12 +111,10 @@ export function ConnectAccountGuide({
                   </p>
                 )}
                 <FieldDescription className="text-sm">
-                  This should be the URL you use to access Canvas. Make sure
-                  it's correct so we can guide you to the right settings page in
-                  the next step!
+                  This should be the URL you use to access Canvas.
                 </FieldDescription>
               </Field>
-              <Field className="gap-0">
+              <Field className="gap-1">
                 <FieldLabel htmlFor="college-name">
                   Please enter your college name:{" "}
                 </FieldLabel>
