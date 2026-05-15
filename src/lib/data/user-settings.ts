@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/db";
 
 export async function getDetectedTimeZoneForUser(
   userId: string,

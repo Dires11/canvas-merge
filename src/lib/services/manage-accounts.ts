@@ -11,7 +11,7 @@ import {
   getUserDomainByBaseUrl,
 } from "@/lib/data/canvas-domain";
 import { getPrismaErrorMessage } from "@/lib/data/utils";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/db";
 import { generateUrlSlug } from "@/lib/utils/generate-slug";
 import type { AddAccountInput, CanvasAccountInfo } from "@/lib/types/account";
 import type { DataResult, Result } from "@/lib/types/result";

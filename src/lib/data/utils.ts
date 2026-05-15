@@ -1,4 +1,4 @@
-import { Prisma } from "@db/client";
+import { Prisma } from "@/generated/prisma/client";
 
 export function getPrismaErrorMessage(
   error: unknown,

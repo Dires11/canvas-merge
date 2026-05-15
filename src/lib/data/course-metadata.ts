@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/db";
 import { getPrismaErrorMessage } from "./utils";
 import type { Result, DataResult } from "@/lib/types/result";
 

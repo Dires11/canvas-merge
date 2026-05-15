@@ -2,7 +2,7 @@ import { getUserCanvasAccountsWithTokens } from "@/lib/data/canvas-account";
 import { getAccountCourses } from "../../canvas";
 import { decryptToken } from "../../server/crypto";
 import { CourseFailure, UserCourse } from "../../types";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/db";
 import { resolveCourseColor } from "../../utils/colors/colors";
 import { deleteCourseMetadataMany } from "@/lib/data/course-metadata";
 import { after } from "next/server";

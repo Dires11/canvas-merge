@@ -1,6 +1,6 @@
-import { Prisma } from "@db/client";
+import { Prisma } from "@/generated/prisma/client";
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/db";
 import type { CanvasAccountInfo } from "@/lib/types/account";
 import type { Result } from "@/lib/types/result";
 import { getPrismaErrorMessage } from "./utils";
