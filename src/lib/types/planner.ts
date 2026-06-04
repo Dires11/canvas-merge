@@ -1,6 +1,7 @@
 import type { AccountSafeInfo } from "./account";
 
 export type Plannable =
+  | "assignment"
   | "announcement"
   | "discussion_topic"
   | "quiz"
@@ -29,6 +30,11 @@ export type RawPlannerItem = {
     late?: boolean;
     missing?: boolean;
   };
+  planner_override?: {
+    id: number;
+    marked_complete: boolean;
+    dismissed: boolean;
+  } | null;
 };
 
 export type ItemBase = {
@@ -54,6 +60,8 @@ export type Assignment = ItemBase & {
   due_at: string | null;
   points_possible: number | null;
   submission: SubmissionDetails;
+  plannerOverrideId: number | null;
+  plannerMarkedComplete: boolean;
 };
 export type Announcement = ItemBase & {
   posted_at: string;
@@ -75,14 +83,20 @@ export type MergedAssignment = ItemBase & {
   accountsSubmitted: Array<{
     accountId: string;
     submission: SubmissionDetails;
+    plannerOverrideId: number | null;
+    plannerMarkedComplete: boolean;
   }>;
   accountsNotSubmitted: Array<{
     accountId: string;
     submission: SubmissionDetails;
+    plannerOverrideId: number | null;
+    plannerMarkedComplete: boolean;
   }>;
   accountsMissingSubmission: Array<{
     accountId: string;
     submission: SubmissionDetails;
+    plannerOverrideId: number | null;
+    plannerMarkedComplete: boolean;
   }>;
 };
 

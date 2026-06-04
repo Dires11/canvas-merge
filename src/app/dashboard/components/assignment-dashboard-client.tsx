@@ -32,6 +32,8 @@ import type { CanvasDomainInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const KEY = "/api/planner/user-planner?merge=true";
+const EMPTY_ACCOUNTS: AccountSafeInfo[] = [];
+const EMPTY_ACCOUNT_ERRORS: string[] = [];
 
 const fetcher = async (url: string): Promise<UserPlanner> => {
   const r = await fetch(url, { credentials: "include" });
@@ -162,8 +164,8 @@ export function AssignmentDashboardClient({
   });
 
   const dayKey = useDayKey();
-  const accounts = data?.accountsSafeInfo ?? [];
-  const accountsWithErrors = data?.accountsWithErrors ?? [];
+  const accounts = data?.accountsSafeInfo ?? EMPTY_ACCOUNTS;
+  const accountsWithErrors = data?.accountsWithErrors ?? EMPTY_ACCOUNT_ERRORS;
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -232,6 +234,30 @@ export function AssignmentDashboardClient({
     }
   }
 
+  const filteredAccountId =
+    filters.domain.length === 0 &&
+    filters.course.length === 0 &&
+    filters.account.length === 1
+      ? filters.account[0]
+      : null;
+
+  function toggleAccountFilter(accountId: string) {
+    if (filteredAccountId === accountId) {
+      applyFilters({
+        domain: [],
+        account: [],
+        course: [],
+      });
+      return;
+    }
+
+    applyFilters({
+      domain: [],
+      account: [accountId],
+      course: [],
+    });
+  }
+
   const accountMap = useMemo<Record<string, AccountSafeInfo>>(() => {
     const map: Record<string, AccountSafeInfo> = {};
 
@@ -263,6 +289,8 @@ export function AssignmentDashboardClient({
   }, [courses]);
 
   const groupedByDomain = useMemo(() => {
+    void dayKey;
+
     const result: Record<string, Record<string, MergedAssignment[]>> = {};
 
     for (const [domainSlug, mergedItems] of Object.entries(
@@ -434,7 +462,11 @@ export function AssignmentDashboardClient({
                               )?.color ?? { l: 0.7, c: 0.1, h: 250 }
                             }
                             accountMap={accountMap}
-                            merged={true}
+                            onPlannerChanged={() =>
+                              mutate(undefined, { revalidate: true })
+                            }
+                            onToggleAccountFilter={toggleAccountFilter}
+                            filteredAccountId={filteredAccountId}
                           />
                         ))}
                       </div>

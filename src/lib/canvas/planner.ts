@@ -1,6 +1,20 @@
 import { Plannable, RawPlannerItem } from "../types";
 import { canvasFetchJson, CanvasResult } from "./fetch";
 
+export type PlannerOverride = {
+  id: number;
+  plannable_type: string;
+  plannable_id: number;
+  user_id: number;
+  assignment_id?: number | null;
+  workflow_state: string;
+  marked_complete: boolean;
+  dismissed: boolean;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string | null;
+};
+
 /**
  * Fetches planner items from Canvas API within the specified date range
  * @param domain The Canvas domain (e.g., "https://canvas.instructure.com")
@@ -42,7 +56,23 @@ export async function markPlannerItem(
   plannable_id: number,
   marked_complete: boolean,
 ) {
-  return canvasFetchJson(domain, `/api/v1/planner/overrides/`, {
+  return createPlannerOverride(
+    domain,
+    token,
+    plannable_type,
+    plannable_id,
+    marked_complete,
+  );
+}
+
+export async function createPlannerOverride(
+  domain: string,
+  token: string,
+  plannable_type: Plannable,
+  plannable_id: number,
+  marked_complete: boolean,
+): Promise<CanvasResult<PlannerOverride>> {
+  return canvasFetchJson<PlannerOverride>(domain, "/api/v1/planner/overrides", {
     method: "POST",
     token,
     body: {
@@ -51,4 +81,38 @@ export async function markPlannerItem(
       marked_complete,
     },
   });
+}
+
+export async function updatePlannerOverride(
+  domain: string,
+  token: string,
+  overrideId: number,
+  marked_complete: boolean,
+): Promise<CanvasResult<PlannerOverride>> {
+  return canvasFetchJson<PlannerOverride>(
+    domain,
+    `/api/v1/planner/overrides/${overrideId}`,
+    {
+      method: "PUT",
+      token,
+      body: {
+        marked_complete,
+      },
+    },
+  );
+}
+
+export async function deletePlannerOverride(
+  domain: string,
+  token: string,
+  overrideId: number,
+): Promise<CanvasResult<PlannerOverride>> {
+  return canvasFetchJson<PlannerOverride>(
+    domain,
+    `/api/v1/planner/overrides/${overrideId}`,
+    {
+      method: "DELETE",
+      token,
+    },
+  );
 }

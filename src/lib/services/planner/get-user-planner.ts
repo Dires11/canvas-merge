@@ -108,6 +108,8 @@ function normalize(
         ...baseItem,
         due_at: item.plannable?.due_at ?? null,
         points_possible: item.plannable?.points_possible ?? null,
+        plannerOverrideId: item.planner_override?.id ?? null,
+        plannerMarkedComplete: Boolean(item.planner_override?.marked_complete),
         submission: {
           submitted: Boolean(item.submissions?.submitted),
           graded: Boolean(item.submissions?.graded),
@@ -178,6 +180,8 @@ function mergeItemsByDomain(itemsByAccount: ItemsByAccount): MergedItems {
       existing[bucket].push({
         accountId,
         submission: assignment.submission,
+        plannerOverrideId: assignment.plannerOverrideId,
+        plannerMarkedComplete: assignment.plannerMarkedComplete,
       });
     }
 
