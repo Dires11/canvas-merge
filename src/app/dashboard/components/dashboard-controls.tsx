@@ -17,6 +17,7 @@ import {
 import { BookMarked, BrushCleaning, CircleUser, School } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { convertToDark } from "@/lib/utils/colors/colors";
+import { cn } from "@/lib/utils";
 
 type Props = {
   accounts: AccountSafeInfo[];
@@ -29,6 +30,7 @@ type Props = {
     pressed: boolean,
   ) => void;
   clearAll: (type?: keyof Filters) => void;
+  embedded?: boolean;
 };
 
 export function AssignmentDashboardControls({
@@ -38,14 +40,27 @@ export function AssignmentDashboardControls({
   filters,
   onFilterChange,
   clearAll,
+  embedded = false,
 }: Props) {
   return (
     <div>
-      <Menubar className="bg-glass/10 glass-border rounded-lg px-2 py-5 backdrop-blur-lg">
+      <Menubar
+        className={cn(
+          "rounded-lg",
+          embedded
+            ? "h-auto w-auto shrink-0 flex-nowrap gap-1 border-transparent bg-transparent p-0 shadow-none"
+            : "bg-glass/10 glass-border px-2 py-5 backdrop-blur-lg",
+        )}
+      >
         <MenubarMenu>
-          <MenubarTrigger>
-            <School className="mr-2 size-4" strokeWidth={1.8} />
-            Domains
+          <MenubarTrigger
+            className={cn(
+              embedded &&
+                "size-8 justify-center rounded-md border border-slate-300/40 bg-white/40 p-0 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] hover:bg-white/60 sm:size-auto sm:h-8 sm:px-2 sm:py-0 dark:border-white/10 dark:bg-glass/5 dark:shadow-none dark:hover:bg-glass/15",
+            )}
+          >
+            <School className="size-4 sm:mr-2" strokeWidth={1.8} />
+            <span className="hidden sm:inline">Domains</span>
           </MenubarTrigger>
           <MenubarContent className="bg-glass/10 glass-border w-64 backdrop-blur-lg">
             <MenubarItem onClick={() => clearAll("domain")}>
@@ -76,9 +91,14 @@ export function AssignmentDashboardControls({
         </MenubarMenu>
 
         <MenubarMenu>
-          <MenubarTrigger>
-            <CircleUser className="mr-2 size-4" strokeWidth={1.8} />
-            Accounts
+          <MenubarTrigger
+            className={cn(
+              embedded &&
+                "size-8 justify-center rounded-md border border-slate-300/40 bg-white/40 p-0 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] hover:bg-white/60 sm:size-auto sm:h-8 sm:px-2 sm:py-0 dark:border-white/10 dark:bg-glass/5 dark:shadow-none dark:hover:bg-glass/15",
+            )}
+          >
+            <CircleUser className="size-4 sm:mr-2" strokeWidth={1.8} />
+            <span className="hidden sm:inline">Accounts</span>
           </MenubarTrigger>
           <MenubarContent className="bg-glass/10 glass-border max-h-137 w-64 overflow-y-auto backdrop-blur-lg">
             <MenubarItem onClick={() => clearAll("account")}>
@@ -125,9 +145,14 @@ export function AssignmentDashboardControls({
         </MenubarMenu>
 
         <MenubarMenu>
-          <MenubarTrigger>
-            <BookMarked className="mr-2 size-4" strokeWidth={1.8} />
-            Courses
+          <MenubarTrigger
+            className={cn(
+              embedded &&
+                "size-8 justify-center rounded-md border border-slate-300/40 bg-white/40 p-0 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] hover:bg-white/60 sm:size-auto sm:h-8 sm:px-2 sm:py-0 dark:border-white/10 dark:bg-glass/5 dark:shadow-none dark:hover:bg-glass/15",
+            )}
+          >
+            <BookMarked className="size-4 sm:mr-2" strokeWidth={1.8} />
+            <span className="hidden sm:inline">Courses</span>
           </MenubarTrigger>
           <MenubarContent className="glass-border bg-glass/10 max-h-137 w-70 overflow-y-auto backdrop-blur-lg">
             <MenubarItem onClick={() => clearAll("course")}>
