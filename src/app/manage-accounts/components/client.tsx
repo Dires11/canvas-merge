@@ -183,7 +183,7 @@ export default function ManageAccountsClient({
                   >
                     <Avatar
                       size="lg"
-                      className="size-10 border border-white/20 bg-white/10 dark:border-white/10 sm:size-12"
+                      className="row-span-2 size-10 self-center border border-white/20 bg-white/10 dark:border-white/10 sm:row-span-1 sm:size-12"
                     >
                       <AvatarImage
                         src={account.avatarUrl}
