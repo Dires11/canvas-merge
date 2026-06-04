@@ -1,10 +1,17 @@
 "use client";
 
-import { useState, useOptimistic, startTransition, useEffect } from "react";
+import {
+  useState,
+  useOptimistic,
+  startTransition,
+  useEffect,
+  useMemo,
+} from "react";
 
 import { GlassContainer } from "@/components/glass-container";
 import { ConnectAccountGuide } from "@/components/manage-accounts/connect-account-guide";
 import type { AccountSafeInfo, CanvasDomainInfo } from "@/lib/types/index";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   addAccountAction,
@@ -17,6 +24,19 @@ import { FormModal } from "./form-modal";
 import { Button } from "@/components/ui/button";
 import { AddAccountForm } from "./add-account-form";
 import { UpdateAccountForm } from "./update-account-form";
+import { CircleUser, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+
+function getInitials(name: string) {
+  const initials = name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+
+  return initials || "CM";
+}
 
 export default function ManageAccountsClient({
   accounts,
@@ -28,6 +48,23 @@ export default function ManageAccountsClient({
   const [serverMsg, setServerMsg] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [optimisticAccounts, setOptimisticAccounts] = useOptimistic(accounts);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredAccounts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return optimisticAccounts;
+
+    return optimisticAccounts.filter((account) =>
+      [
+        account.name,
+        account.canvasDomain.name,
+        account.canvasDomain.baseUrl,
+        account.canvasDomain.slug,
+      ]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(query)),
+    );
+  }, [optimisticAccounts, searchQuery]);
 
   useEffect(() => {
     if (!serverMsg) return;
@@ -106,29 +143,85 @@ export default function ManageAccountsClient({
           )}
 
           {optimisticAccounts.length > 0 && (
-            <GlassContainer>
+            <GlassContainer className="space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-foreground/90 text-sm font-medium">
+                    {optimisticAccounts.length} linked{" "}
+                    {optimisticAccounts.length === 1 ? "account" : "accounts"}
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    Search by account, school, or Canvas URL.
+                  </p>
+                </div>
+
+                <div className="relative w-full sm:max-w-sm">
+                  <Search
+                    className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
+                    strokeWidth={1.8}
+                  />
+                  <Input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Search accounts"
+                    className="h-10 py-2 pr-3 pl-9"
+                    aria-label="Search linked accounts"
+                  />
+                </div>
+              </div>
+
               <ul className="space-y-4">
-                {optimisticAccounts.map((account) => (
+                {filteredAccounts.map((account) => (
                   <li
                     key={account.id}
-                    className="glass-border bg-glass/5 hover:bg-glass/10 flex items-center justify-between gap-4 rounded-2xl p-5 shadow-sm transition-colors hover:shadow-md"
+                    className="glass-border bg-glass/5 hover:bg-glass/10 grid gap-4 rounded-2xl p-4 shadow-sm transition-colors hover:shadow-md sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:p-5"
                   >
-                    <div>
-                      <h3 className="text-foreground/90 font-semibold">
-                        {account.name}
-                      </h3>
-                      <p className="text-foreground/60 text-sm">
-                        {account.canvasDomain.baseUrl}
-                      </p>
+                    <div className="flex min-w-0 items-center gap-4">
+                      <Avatar
+                        size="lg"
+                        className="size-12 border border-white/20 bg-white/10 dark:border-white/10"
+                      >
+                        <AvatarImage
+                          src={account.avatarUrl}
+                          alt={`${account.name}'s profile picture`}
+                          className="object-cover"
+                        />
+                        <AvatarFallback>
+                          {account.name ? (
+                            getInitials(account.name)
+                          ) : (
+                            <CircleUser
+                              className="text-foreground size-5"
+                              strokeWidth={1.5}
+                            />
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
 
-                      {account.expiredAt !== null && (
-                        <span className="text-foreground/90 mt-2 inline-flex items-center rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium">
-                          Token expired
-                        </span>
-                      )}
+                      <div className="min-w-0 leading-tight">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-foreground/90 truncate font-semibold">
+                            {account.name}
+                          </h3>
+
+                          {account.expiredAt !== null && (
+                            <span className="text-foreground/90 inline-flex items-center rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium">
+                              Token expired
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-muted-foreground mt-1 text-sm">
+                          {account.canvasDomain.name}
+                        </p>
+                        <p className="text-foreground/60 truncate text-xs">
+                          {account.canvasDomain.baseUrl}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex items-end gap-2">
+                    <div className="flex shrink-0 items-center justify-end gap-2">
                       <FormModal
                         trigger={
                           <button className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/40 px-3 py-1.5 text-xs font-medium text-blue-700 backdrop-blur transition-all hover:border-blue-300/70 hover:bg-blue-100/70 hover:shadow-md dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:border-blue-400/30 dark:hover:bg-blue-500/20">
@@ -158,6 +251,17 @@ export default function ManageAccountsClient({
                   </li>
                 ))}
               </ul>
+
+              {filteredAccounts.length === 0 && (
+                <div className="glass-border bg-glass/5 rounded-2xl px-4 py-8 text-center">
+                  <p className="text-foreground/90 text-sm font-medium">
+                    No linked accounts match your search.
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    Try searching by a name, school, or Canvas URL.
+                  </p>
+                </div>
+              )}
             </GlassContainer>
           )}
         </main>
