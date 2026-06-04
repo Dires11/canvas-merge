@@ -1,6 +1,5 @@
 import type { MergedAssignment } from "@/lib/types";
 import type { AccountSafeInfo } from "@/lib/types";
-import Link from "next/link";
 import { HoverOrTap } from "./hover-or-tap";
 import { convertToDark } from "@/lib/utils/colors/colors";
 import {
@@ -12,6 +11,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { ClockAlert } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+function getInitials(name: string) {
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
 
 function DueLabel({
   dueDate,
@@ -46,7 +55,6 @@ function DueLabel({
 
 export function AssignmentCard({
   item,
-  merged,
   accountMap,
   color,
 }: {
@@ -129,13 +137,13 @@ export function AssignmentCard({
               <HoverOrTap
                 key={acc.accountId}
                 trigger={
-                  <img
-                    src={account.avatarUrl}
-                    alt={`${account.name}'s avatar`}
-                    width={35}
-                    height={35}
-                    className="ring-card-foreground/20 my-0.5 ml-0.5 size-8 rounded-full ring"
-                  />
+                  <Avatar className="ring-card-foreground/20 my-0.5 ml-0.5 ring">
+                    <AvatarImage
+                      src={account.avatarUrl}
+                      alt={`${account.name}'s avatar`}
+                    />
+                    <AvatarFallback>{getInitials(account.name)}</AvatarFallback>
+                  </Avatar>
                 }
               >
                 <p>{account.name}</p>

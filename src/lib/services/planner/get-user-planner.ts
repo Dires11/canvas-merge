@@ -1,11 +1,12 @@
 import {
-  getUserCanvasAccounts,
+  type CanvasAccountWithToken,
   getUserCanvasAccountsWithTokens,
   markAccountAsExpired,
+  updateCanvasAccountInfo,
 } from "@/lib/data/canvas-account";
 import { getDetectedTimeZoneForUser } from "@/lib/data/user-settings";
 import { decryptToken } from "@/lib/server/crypto";
-import { getPlannerItems } from "@/lib/canvas";
+import { getAccountInfo, getPlannerItems } from "@/lib/canvas";
 import type {
   Announcement,
   Assignment,
@@ -21,6 +22,17 @@ import type {
   UserPlanner,
 } from "@/lib/types";
 import { DateTime } from "luxon";
+
+function toSafeAccount(account: CanvasAccountWithToken): AccountSafeInfo {
+  return {
+    id: account.id,
+    name: account.name,
+    expiredAt: account.expiredAt,
+    avatarUrl: account.avatarUrl,
+    canvasId: account.canvasId,
+    canvasDomain: account.canvasDomain,
+  };
+}
 
 /**
  * ----------------------------
@@ -224,15 +236,11 @@ export async function getUserPlanner(
   userId: string,
   merge: boolean = true,
 ): Promise<UserPlanner> {
-  const allAccounts = await getUserCanvasAccountsWithTokens(userId);
+  let allAccounts = await getUserCanvasAccountsWithTokens(userId);
 
   if (allAccounts.length === 0) {
     throw new Error("No accounts found");
   }
-
-  const accountsSafeInfo: AccountSafeInfo[] = allAccounts.map(
-    ({ accessToken, ...safe }) => safe,
-  );
 
   const accountsWithErrors: string[] = [];
 
@@ -248,9 +256,40 @@ export async function getUserPlanner(
       };
     }
 
+    const token = decryptToken(account.accessToken);
+    const accountInfo = await getAccountInfo({
+      baseUrl: account.canvasDomain.baseUrl,
+      token,
+    });
+    let currentAccount = account;
+
+    if (accountInfo.ok) {
+      const changed =
+        accountInfo.data.name !== account.name ||
+        accountInfo.data.avatarUrl !== account.avatarUrl ||
+        accountInfo.data.canvasId !== account.canvasId;
+
+      if (changed) {
+        const updated = await updateCanvasAccountInfo({
+          accountId: account.id,
+          userId,
+          accountInfo: accountInfo.data,
+        });
+
+        if (updated.ok) {
+          currentAccount = {
+            ...account,
+            name: accountInfo.data.name,
+            avatarUrl: accountInfo.data.avatarUrl,
+            canvasId: accountInfo.data.canvasId,
+          };
+        }
+      }
+    }
+
     const raw = await getPlannerItems(
       account.canvasDomain.baseUrl,
-      decryptToken(account.accessToken),
+      token,
       startISO,
       endISO,
     );
@@ -264,28 +303,32 @@ export async function getUserPlanner(
       }
 
       return {
-        account,
+        account: currentAccount,
         accountItems: null,
         error: raw.error,
       };
     }
 
     const normalized = normalize(
-      account.id,
-      account.canvasDomain.baseUrl,
-      account.canvasDomain.slug,
-      account.canvasDomain.name,
+      currentAccount.id,
+      currentAccount.canvasDomain.baseUrl,
+      currentAccount.canvasDomain.slug,
+      currentAccount.canvasDomain.name,
       raw.data,
     );
 
     return {
-      account,
+      account: currentAccount,
       accountItems: normalized,
       error: null,
     };
   });
 
   const results = await Promise.allSettled(fetchPromises);
+  allAccounts = results.map((result, index) =>
+    result.status === "fulfilled" ? result.value.account : allAccounts[index],
+  );
+  const accountsSafeInfo = allAccounts.map(toSafeAccount);
 
   const itemsByDomain: ItemsByDomain = {};
 

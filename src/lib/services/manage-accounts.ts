@@ -139,7 +139,12 @@ export async function updateCanvasTokenForUser(
   }
 
   const encryptedToken = encryptToken(newToken);
-  return updateCanvasAccountToken({ accountId, userId, token: encryptedToken });
+  return updateCanvasAccountToken({
+    accountId,
+    userId,
+    token: encryptedToken,
+    accountInfo: testConnectionResult.data,
+  });
 }
 
 export async function deleteCanvasAccountForUser(

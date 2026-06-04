@@ -18,6 +18,13 @@ type UpdateCanvasAccountTokenParams = {
   accountId: string;
   userId: string;
   token: string;
+  accountInfo: CanvasAccountInfo;
+};
+
+type UpdateCanvasAccountInfoParams = {
+  accountId: string;
+  userId: string;
+  accountInfo: CanvasAccountInfo;
 };
 
 type MarkCanvasAccountExpiredParams = {
@@ -159,13 +166,16 @@ export async function updateCanvasAccountToken(
   params: UpdateCanvasAccountTokenParams,
   db: DbClient = prisma,
 ): Promise<Result> {
-  const { accountId, userId, token } = params;
+  const { accountId, userId, token, accountInfo } = params;
 
   try {
     const result = await db.canvasAccount.updateMany({
       where: { id: accountId, userId },
       data: {
         accessToken: token,
+        name: accountInfo.name,
+        avatarUrl: accountInfo.avatarUrl,
+        canvasId: accountInfo.canvasId,
         expiredAt: null,
       },
     });
@@ -181,6 +191,39 @@ export async function updateCanvasAccountToken(
     const mapped = getPrismaErrorMessage(
       error,
       "Failed to update Canvas account token.",
+    );
+
+    return { ok: false, ...mapped };
+  }
+}
+
+export async function updateCanvasAccountInfo(
+  params: UpdateCanvasAccountInfoParams,
+  db: DbClient = prisma,
+): Promise<Result> {
+  const { accountId, userId, accountInfo } = params;
+
+  try {
+    const result = await db.canvasAccount.updateMany({
+      where: { id: accountId, userId },
+      data: {
+        name: accountInfo.name,
+        avatarUrl: accountInfo.avatarUrl,
+        canvasId: accountInfo.canvasId,
+      },
+    });
+
+    if (result.count === 0) {
+      return { ok: false, error: "Account not found.", status: 404 };
+    }
+
+    return { ok: true };
+  } catch (error) {
+    console.error("updateCanvasAccountInfo failed:", error);
+
+    const mapped = getPrismaErrorMessage(
+      error,
+      "Failed to update Canvas account info.",
     );
 
     return { ok: false, ...mapped };
