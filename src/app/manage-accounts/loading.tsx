@@ -29,7 +29,7 @@ export default function ManageAccountsLoading() {
                   key={i}
                   className="glass-border bg-glass/5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-3 rounded-2xl p-3 shadow-sm sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-4 sm:p-5"
                 >
-                  <Skeleton className="size-10 shrink-0 rounded-full border border-white/20 bg-white/10 dark:border-white/10 sm:size-12" />
+                  <Skeleton className="row-span-2 size-10 shrink-0 self-center rounded-full border border-white/20 bg-white/10 dark:border-white/10 sm:row-span-1 sm:size-12" />
 
                   <div className="min-w-0 space-y-2">
                     <Skeleton className="h-5 w-44 max-w-full" />
