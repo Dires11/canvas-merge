@@ -91,21 +91,6 @@ export function DashboardClient({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    if (mobileTabsCompact) return;
-
-    const list = mobileTabsListRef.current;
-    const activeTab = list?.querySelector<HTMLElement>(
-      `[data-state="active"][role="tab"]`,
-    );
-
-    activeTab?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "center",
-    });
-  }, [mobileTab, mobileTabsCompact]);
-
   const handleColorChange = async (
     courseId: number,
     domainSlug: string,
@@ -142,6 +127,20 @@ export function DashboardClient({
   );
   const MobileActiveTabIcon = MOBILE_TAB_ICONS[mobileTab];
 
+  function centerMobileTab(value: MobileDashboardTab) {
+    const list = mobileTabsListRef.current;
+    const tab = list?.querySelector<HTMLElement>(
+      `[data-value="${value}"][role="tab"]`,
+    );
+
+    if (!list || !tab) return;
+
+    list.scrollTo({
+      left: tab.offsetLeft - list.clientWidth / 2 + tab.clientWidth / 2,
+      behavior: "smooth",
+    });
+  }
+
   return (
     <>
       {/* Mobile: Tabs */}
@@ -149,8 +148,10 @@ export function DashboardClient({
         <Tabs
           value={mobileTab}
           onValueChange={(value) => {
-            setMobileTab(value as MobileDashboardTab);
+            const nextTab = value as MobileDashboardTab;
+            setMobileTab(nextTab);
             setMobileTabsCompact(false);
+            window.requestAnimationFrame(() => centerMobileTab(nextTab));
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           className="w-full"
@@ -187,8 +188,6 @@ export function DashboardClient({
                 ? "translate-y-3 scale-100 opacity-95"
                 : "translate-y-0 scale-100 opacity-100",
             )}
-            onFocusCapture={() => setMobileTabsCompact(false)}
-            onPointerDown={() => setMobileTabsCompact(false)}
           >
             <GlassContainer
               className={cn(
@@ -213,7 +212,10 @@ export function DashboardClient({
                     type="button"
                     className="flex size-7.5 min-w-0 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground shadow-none transition-all duration-300 ease-out hover:cursor-pointer"
                     aria-label={MOBILE_TAB_LABELS[mobileTab]}
-                    onClick={() => setMobileTabsCompact(false)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setMobileTabsCompact(false);
+                    }}
                   >
                     <MobileActiveTabIcon className="size-4" />
                   </button>
@@ -221,6 +223,7 @@ export function DashboardClient({
                   <>
                     <TabsTrigger
                       value="courses"
+                      data-value="courses"
                       className={cn("rounded-lg", mobileTabClassName)}
                     >
                       <BookMarked className="size-4" />
@@ -228,6 +231,7 @@ export function DashboardClient({
                     </TabsTrigger>
                     <TabsTrigger
                       value="assignments"
+                      data-value="assignments"
                       className={mobileTabClassName}
                     >
                       <ClipboardList className="size-4" />
@@ -235,6 +239,7 @@ export function DashboardClient({
                     </TabsTrigger>
                     <TabsTrigger
                       value="completed"
+                      data-value="completed"
                       className={mobileTabClassName}
                     >
                       <CheckCircle2 className="size-4" />
@@ -242,6 +247,7 @@ export function DashboardClient({
                     </TabsTrigger>
                     <TabsTrigger
                       value="announcements"
+                      data-value="announcements"
                       className={mobileTabClassName}
                     >
                       <Megaphone className="size-4" />
