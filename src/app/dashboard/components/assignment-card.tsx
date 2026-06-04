@@ -37,7 +37,22 @@ function getFirstName(name: string) {
 }
 
 function formatPoints(value: number) {
-  return Number.isInteger(value) ? String(value) : String(value);
+  if (Number.isInteger(value)) return String(value);
+
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function formatGrade(value: string | number) {
+  if (typeof value === "number") return formatPoints(value);
+
+  const parsed = Number(value);
+  if (Number.isFinite(parsed) && value.trim() !== "") {
+    return formatPoints(parsed);
+  }
+
+  return value;
 }
 
 function formatDateTime(value: string) {
@@ -121,8 +136,8 @@ function AccountAssignmentPopover({
   const gradeLabel =
     assignmentAccount.submission.graded && postedGrade != null
       ? maxPoints
-        ? `${postedGrade}/${maxPoints}`
-        : `Grade: ${postedGrade}`
+        ? `${formatGrade(postedGrade)}/${maxPoints}`
+        : `Grade: ${formatGrade(postedGrade)}`
       : maxPoints
         ? `-/${maxPoints}`
         : "-";
@@ -137,6 +152,7 @@ function AccountAssignmentPopover({
         : "Not submitted";
   const canToggleCompletion =
     mode === "active" || assignmentAccount.plannerMarkedComplete;
+  const comments = assignmentAccount.submission.comments;
 
   async function markComplete() {
     setPending(true);
@@ -255,6 +271,37 @@ function AccountAssignmentPopover({
           <p className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
             {error}
           </p>
+        )}
+
+        {mode === "completed" && (
+          <div className="glass-border mt-3 rounded-lg bg-background/25 px-3 py-2 dark:bg-glass/5">
+            <p className="text-xs font-medium text-muted-foreground">
+              Teacher comments
+            </p>
+            {comments.length > 0 ? (
+              <div className="mt-2 flex max-h-32 flex-col gap-2 overflow-y-auto pr-1">
+                {comments.map((comment) => (
+                  <div key={comment.id} className="text-xs">
+                    <div className="flex items-center justify-between gap-2 text-muted-foreground">
+                      <span className="truncate">
+                        {comment.author_name ?? "Teacher"}
+                      </span>
+                      <span className="shrink-0">
+                        {formatDateTime(comment.created_at)}
+                      </span>
+                    </div>
+                    <p className="mt-1 whitespace-pre-wrap text-foreground/90">
+                      {comment.comment}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-1 text-xs text-muted-foreground">
+                No comments yet.
+              </p>
+            )}
+          </div>
         )}
 
         <div className="mt-3 flex justify-end gap-2">

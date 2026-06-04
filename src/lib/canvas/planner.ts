@@ -21,6 +21,12 @@ export type CanvasSubmission = {
   grade: string | null;
   score: number | null;
   submitted_at: string | null;
+  submission_comments?: Array<{
+    id: number;
+    author_name?: string | null;
+    comment: string;
+    created_at: string;
+  }>;
   entered_grade?: string | null;
   entered_score?: number | null;
   graded_at?: string | null;
@@ -72,6 +78,9 @@ export async function getAssignmentSubmission(
     `/api/v1/courses/${courseId}/assignments/${assignmentId}/submissions/self`,
     {
       token,
+      searchParams: {
+        "include[]": "submission_comments",
+      },
     },
   );
 }

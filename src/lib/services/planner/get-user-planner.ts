@@ -85,9 +85,11 @@ async function enrichMissingGrades(
     items.map(async (item) => {
       if (
         !ASSIGNMENT_TYPE.has(item.plannable_type) ||
-        !item.submissions?.graded ||
-        item.submissions.grade != null ||
-        item.submissions.score != null
+        !item.submissions ||
+        (item.submissions.grade != null &&
+          item.submissions.score != null &&
+          item.submissions.submitted_at != null &&
+          item.submissions.submission_comments != null)
       ) {
         return item;
       }
@@ -112,6 +114,7 @@ async function enrichMissingGrades(
           score: submission.data.score ?? submission.data.entered_score ?? null,
           submitted_at:
             item.submissions.submitted_at ?? submission.data.submitted_at ?? null,
+          submission_comments: submission.data.submission_comments ?? [],
         },
       };
     }),
@@ -172,6 +175,7 @@ function normalize(
           missing: Boolean(item.submissions?.missing),
           grade: item.submissions?.grade ?? null,
           score: item.submissions?.score ?? null,
+          comments: item.submissions?.submission_comments ?? [],
         },
       };
       itemsByType.assignments.push(assignment);

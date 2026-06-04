@@ -113,6 +113,21 @@ function groupAssignmentsByDueDateLocal(
     (groups[label] ??= []).push(assignment);
   }
 
+  if (mode === "completed") {
+    for (const assignments of Object.values(groups)) {
+      assignments.sort((a, b) => {
+        const aDueAt = a.due_at ? new Date(a.due_at).getTime() : -Infinity;
+        const bDueAt = b.due_at ? new Date(b.due_at).getTime() : -Infinity;
+
+        if (aDueAt !== bDueAt) {
+          return bDueAt - aDueAt;
+        }
+
+        return a.title.localeCompare(b.title);
+      });
+    }
+  }
+
   return groups;
 }
 

@@ -33,6 +33,7 @@ export type RawPlannerItem = {
     missing?: boolean;
     grade?: string | null;
     score?: number | null;
+    submission_comments?: SubmissionComment[];
   };
   planner_override?: {
     id: number;
@@ -54,6 +55,13 @@ export type ItemBase = {
   domainSlug: string;
 };
 
+export type SubmissionComment = {
+  id: number;
+  author_name?: string | null;
+  comment: string;
+  created_at: string;
+};
+
 export type SubmissionDetails = {
   submitted: boolean;
   submittedAt: string | null;
@@ -62,6 +70,7 @@ export type SubmissionDetails = {
   missing: boolean;
   grade: string | null;
   score: number | null;
+  comments: SubmissionComment[];
 };
 
 export type Assignment = ItemBase & {
