@@ -283,59 +283,68 @@ export function AnnouncementsDashboard({
         )}
       </div>
 
-      {filteredAnnouncements.length === 0 && (
+      {filteredAnnouncements.length === 0 ? (
         <GlassContainer className="w-full">
           <p className="text-muted-foreground text-sm">
             No announcements found for the selected courses.
           </p>
         </GlassContainer>
+      ) : (
+        <GlassContainer className="w-full">
+          <div className="flex flex-col gap-2">
+            {filteredAnnouncements.map((announcement) => {
+              const color =
+                courseMap.get(
+                  getCourseValue(
+                    announcement.domainSlug,
+                    announcement.course_id,
+                  ),
+                )?.color ?? { l: 0.7, c: 0.1, h: 250 };
+              const dark = convertToDark(color);
+
+              return (
+                <a
+                  key={`${announcement.domainSlug}:${announcement.course_id}:${announcement.id}`}
+                  href={announcement.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="glass-border group flex items-stretch overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.08)] shadow-sm transition hover:bg-[oklch(var(--c-light)/0.13)] hover:shadow-md dark:bg-[oklch(var(--c-dark)/0.08)] dark:hover:bg-[oklch(var(--c-dark)/0.13)]"
+                  style={
+                    {
+                      "--c-light": `${color.l} ${color.c} ${color.h}`,
+                      "--c-dark": `${dark.l} ${dark.c} ${dark.h}`,
+                    } as React.CSSProperties
+                  }
+                >
+                  <span className="flex w-12 shrink-0 items-center justify-center bg-[oklch(var(--c-light)/0.48)] dark:bg-[oklch(var(--c-dark)/0.48)]">
+                    <Megaphone className="size-5 text-foreground/80" />
+                  </span>
+
+                  <span className="flex min-w-0 flex-1 items-start gap-3 p-3">
+                    <span className="min-w-0 flex-1">
+                      <span className="text-muted-foreground block truncate text-xs font-semibold">
+                        {announcement.course_name}
+                      </span>
+                      <span className="block text-base leading-snug font-semibold tracking-tight">
+                        {announcement.title}
+                      </span>
+                      <span className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                        <span>{announcement.domainLabel}</span>
+                        <span aria-hidden="true">/</span>
+                        <span>
+                          Posted {formatPostedAt(announcement.posted_at)}
+                        </span>
+                      </span>
+                    </span>
+
+                    <ExternalLink className="text-muted-foreground mt-1 size-4 shrink-0 opacity-70 transition group-hover:text-foreground group-hover:opacity-100" />
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </GlassContainer>
       )}
-
-      {filteredAnnouncements.map((announcement) => {
-        const color =
-          courseMap.get(
-            getCourseValue(announcement.domainSlug, announcement.course_id),
-          )?.color ?? { l: 0.7, c: 0.1, h: 250 };
-        const dark = convertToDark(color);
-
-        return (
-          <a
-            key={`${announcement.domainSlug}:${announcement.course_id}:${announcement.id}`}
-            href={announcement.url}
-            target="_blank"
-            rel="noreferrer"
-            className="glass-border group flex items-stretch overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.08)] shadow-sm transition hover:bg-[oklch(var(--c-light)/0.13)] hover:shadow-md dark:bg-[oklch(var(--c-dark)/0.08)] dark:hover:bg-[oklch(var(--c-dark)/0.13)]"
-            style={
-              {
-                "--c-light": `${color.l} ${color.c} ${color.h}`,
-                "--c-dark": `${dark.l} ${dark.c} ${dark.h}`,
-              } as React.CSSProperties
-            }
-          >
-            <span className="flex w-12 shrink-0 items-center justify-center bg-[oklch(var(--c-light)/0.48)] dark:bg-[oklch(var(--c-dark)/0.48)]">
-              <Megaphone className="size-5 text-foreground/80" />
-            </span>
-
-            <span className="flex min-w-0 flex-1 items-start gap-3 p-3">
-              <span className="min-w-0 flex-1">
-                <span className="text-muted-foreground block truncate text-xs font-semibold">
-                  {announcement.course_name}
-                </span>
-                <span className="block text-base leading-snug font-semibold tracking-tight">
-                  {announcement.title}
-                </span>
-                <span className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                  <span>{announcement.domainLabel}</span>
-                  <span aria-hidden="true">/</span>
-                  <span>Posted {formatPostedAt(announcement.posted_at)}</span>
-                </span>
-              </span>
-
-              <ExternalLink className="text-muted-foreground mt-1 size-4 shrink-0 opacity-70 transition group-hover:text-foreground group-hover:opacity-100" />
-            </span>
-          </a>
-        );
-      })}
     </div>
   );
 }

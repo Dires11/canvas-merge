@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AssignmentDashboardSkeleton } from "./assignment-dashboard-skeleton";
 import { GlassContainer } from "@/components/glass-container";
 import {
-  BookMarked,
   CheckCircle2,
   ClipboardList,
   Megaphone,
@@ -22,38 +21,10 @@ export function DashboardSkeleton() {
           <TabsContent value="completed" className="min-w-0" />
           <TabsContent value="announcements" className="min-w-0" />
           <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-40 px-4">
-            <GlassContainer className="mx-auto w-full max-w-xl p-1.5">
-              <TabsList className="scrollbar-hide flex h-9 w-full justify-start gap-1 overflow-x-auto overflow-y-hidden bg-transparent p-0">
-                <TabsTrigger
-                  value="courses"
-                  className="h-9 min-w-max shrink-0 rounded-lg border-0 px-4 text-sm"
-                  disabled
-                >
-                  <BookMarked className="size-4" />
-                  Courses
-                </TabsTrigger>
-                <TabsTrigger
-                  value="assignments"
-                  className="h-9 min-w-max shrink-0 border-0 px-4 text-sm"
-                >
-                  <ClipboardList className="size-4" />
-                  Assignments
-                </TabsTrigger>
-                <TabsTrigger
-                  value="completed"
-                  className="h-9 min-w-max shrink-0 border-0 px-4 text-sm"
-                >
-                  <CheckCircle2 className="size-4" />
-                  Completed
-                </TabsTrigger>
-                <TabsTrigger
-                  value="announcements"
-                  className="h-9 min-w-max shrink-0 border-0 px-4 text-sm"
-                >
-                  <Megaphone className="size-4" />
-                  Announcements
-                </TabsTrigger>
-              </TabsList>
+            <GlassContainer className="mx-auto flex size-7.5 items-center justify-center rounded-full bg-glass/25 p-0 shadow-[0_8px_28px_rgb(15_23_42_/_0.18)] backdrop-blur-lg dark:shadow-[0_8px_28px_rgb(0_0_0_/_0.24)]">
+              <div className="flex size-7.5 items-center justify-center rounded-full text-foreground">
+                <ClipboardList className="size-4" />
+              </div>
             </GlassContainer>
           </div>
         </Tabs>
