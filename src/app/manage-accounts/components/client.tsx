@@ -183,7 +183,7 @@ export default function ManageAccountsClient({
                   >
                     <Avatar
                       size="lg"
-                      className="row-span-2 size-10 self-center border border-white/20 bg-white/10 dark:border-white/10 sm:row-span-1 sm:size-12"
+                      className="size-10 self-center border border-white/20 bg-white/10 dark:border-white/10 sm:size-12"
                     >
                       <AvatarImage
                         src={account.avatarUrl}
@@ -202,9 +202,9 @@ export default function ManageAccountsClient({
                       </AvatarFallback>
                     </Avatar>
 
-                    <div className="min-w-0 leading-tight">
+                    <div className="min-w-0 space-y-0.5 leading-tight">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-foreground/90 truncate text-base font-semibold sm:text-lg">
+                        <h3 className="text-foreground/90 truncate text-sm font-semibold sm:text-base">
                           {account.name}
                         </h3>
 
@@ -215,7 +215,7 @@ export default function ManageAccountsClient({
                         )}
                       </div>
 
-                      <p className="text-muted-foreground mt-1 text-sm">
+                      <p className="text-muted-foreground text-sm">
                         {account.canvasDomain.name}
                       </p>
                       <p className="text-foreground/60 truncate text-xs sm:text-sm">
