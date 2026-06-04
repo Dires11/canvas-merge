@@ -107,16 +107,20 @@ export default function ManageAccountsClient({
 
   return (
     <div className="min-h-screen text-black dark:text-white">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
         <main className="space-y-5">
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-lg font-semibold tracking-tight">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-2xl font-semibold tracking-tight sm:text-lg">
               Linked Accounts
             </h2>
 
             {optimisticAccounts.length > 0 && (
               <FormModal
-                trigger={<Button>Link New Account</Button>}
+                trigger={
+                  <Button className="w-full text-sm sm:w-auto">
+                    Link New Account
+                  </Button>
+                }
                 title="Link Canvas Account"
               >
                 {({ close }) => (
@@ -143,7 +147,7 @@ export default function ManageAccountsClient({
           )}
 
           {optimisticAccounts.length > 0 && (
-            <GlassContainer className="space-y-4">
+            <GlassContainer className="space-y-4 p-3 sm:p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-foreground/90 text-sm font-medium">
@@ -175,53 +179,51 @@ export default function ManageAccountsClient({
                 {filteredAccounts.map((account) => (
                   <li
                     key={account.id}
-                    className="glass-border bg-glass/5 hover:bg-glass/10 grid gap-4 rounded-2xl p-4 shadow-sm transition-colors hover:shadow-md sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:p-5"
+                    className="glass-border bg-glass/5 hover:bg-glass/10 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-3 rounded-2xl p-3 shadow-sm transition-colors hover:shadow-md sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-4 sm:p-5"
                   >
-                    <div className="flex min-w-0 items-center gap-4">
-                      <Avatar
-                        size="lg"
-                        className="size-12 border border-white/20 bg-white/10 dark:border-white/10"
-                      >
-                        <AvatarImage
-                          src={account.avatarUrl}
-                          alt={`${account.name}'s profile picture`}
-                          className="object-cover"
-                        />
-                        <AvatarFallback>
-                          {account.name ? (
-                            getInitials(account.name)
-                          ) : (
-                            <CircleUser
-                              className="text-foreground size-5"
-                              strokeWidth={1.5}
-                            />
-                          )}
-                        </AvatarFallback>
-                      </Avatar>
+                    <Avatar
+                      size="lg"
+                      className="size-10 border border-white/20 bg-white/10 dark:border-white/10 sm:size-12"
+                    >
+                      <AvatarImage
+                        src={account.avatarUrl}
+                        alt={`${account.name}'s profile picture`}
+                        className="object-cover"
+                      />
+                      <AvatarFallback>
+                        {account.name ? (
+                          getInitials(account.name)
+                        ) : (
+                          <CircleUser
+                            className="text-foreground size-5"
+                            strokeWidth={1.5}
+                          />
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
 
-                      <div className="min-w-0 leading-tight">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-foreground/90 truncate font-semibold">
-                            {account.name}
-                          </h3>
+                    <div className="min-w-0 leading-tight">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-foreground/90 truncate text-base font-semibold sm:text-lg">
+                          {account.name}
+                        </h3>
 
-                          {account.expiredAt !== null && (
-                            <span className="text-foreground/90 inline-flex items-center rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium">
-                              Token expired
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-muted-foreground mt-1 text-sm">
-                          {account.canvasDomain.name}
-                        </p>
-                        <p className="text-foreground/60 truncate text-xs">
-                          {account.canvasDomain.baseUrl}
-                        </p>
+                        {account.expiredAt !== null && (
+                          <span className="text-foreground/90 inline-flex items-center rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium">
+                            Token expired
+                          </span>
+                        )}
                       </div>
+
+                      <p className="text-muted-foreground mt-1 text-sm">
+                        {account.canvasDomain.name}
+                      </p>
+                      <p className="text-foreground/60 truncate text-xs sm:text-sm">
+                        {account.canvasDomain.baseUrl}
+                      </p>
                     </div>
 
-                    <div className="flex shrink-0 items-center justify-end gap-2">
+                    <div className="col-start-2 flex shrink-0 items-center justify-start gap-2 sm:col-start-auto sm:justify-end">
                       <FormModal
                         trigger={
                           <button className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/40 px-3 py-1.5 text-xs font-medium text-blue-700 backdrop-blur transition-all hover:border-blue-300/70 hover:bg-blue-100/70 hover:shadow-md dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:border-blue-400/30 dark:hover:bg-blue-500/20">

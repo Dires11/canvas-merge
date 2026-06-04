@@ -3,14 +3,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function ManageAccountsLoading() {
   return (
     <div className="min-h-screen text-black dark:text-white">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
         <main className="space-y-5">
-          <div className="mb-5 flex items-center justify-between">
-            <Skeleton className="h-6 w-36" />
-            <Skeleton className="h-9 w-36 rounded-md" />
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Skeleton className="h-8 w-48 sm:h-6 sm:w-36" />
+            <Skeleton className="h-9 w-full rounded-md sm:w-36" />
           </div>
 
-          <div className="glass-border bg-glass/5 space-y-4 rounded-2xl p-4 shadow-sm backdrop-blur-lg">
+          <div className="glass-border bg-glass/5 space-y-4 rounded-2xl p-3 shadow-sm backdrop-blur-lg sm:p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-2">
                 <Skeleton className="h-4 w-32" />
@@ -27,19 +27,17 @@ export default function ManageAccountsLoading() {
               {Array.from({ length: 3 }).map((_, i) => (
                 <li
                   key={i}
-                  className="glass-border bg-glass/5 grid gap-4 rounded-2xl p-4 shadow-sm sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:p-5"
+                  className="glass-border bg-glass/5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-3 rounded-2xl p-3 shadow-sm sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-4 sm:p-5"
                 >
-                  <div className="flex min-w-0 items-center gap-4">
-                    <Skeleton className="size-12 shrink-0 rounded-full border border-white/20 bg-white/10 dark:border-white/10" />
+                  <Skeleton className="size-10 shrink-0 rounded-full border border-white/20 bg-white/10 dark:border-white/10 sm:size-12" />
 
-                    <div className="min-w-0 space-y-2">
-                      <Skeleton className="h-5 w-44 max-w-full" />
-                      <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-3 w-56 max-w-full" />
-                    </div>
+                  <div className="min-w-0 space-y-2">
+                    <Skeleton className="h-5 w-44 max-w-full" />
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-3 w-56 max-w-full" />
                   </div>
 
-                  <div className="flex shrink-0 items-center justify-end gap-2">
+                  <div className="col-start-2 flex shrink-0 items-center justify-start gap-2 sm:col-start-auto sm:justify-end">
                     <Skeleton className="h-7 w-16 rounded-full" />
                     <Skeleton className="h-7 w-16 rounded-full" />
                   </div>

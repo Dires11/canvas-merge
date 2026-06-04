@@ -50,20 +50,23 @@ export function UpdateAccountForm({ onSubmit }: Props) {
     <form
       noValidate
       onSubmit={handleSubmit(handleFormSubmit)}
-      className="text-card-foreground space-y-4"
+      className="text-card-foreground space-y-3 sm:space-y-4"
     >
-      <FieldGroup>
-        <Field className="gap-0.5" data-invalid={!!errors.token}>
-          <FieldLabel htmlFor="token">Canvas API Token</FieldLabel>
+      <FieldGroup className="gap-3 sm:gap-4">
+        <Field className="gap-1" data-invalid={!!errors.token}>
+          <FieldLabel htmlFor="token" className="text-sm font-medium">
+            Canvas API Token
+          </FieldLabel>
           <Input
             id="token"
             type="password"
             autoComplete="one-time-code"
             placeholder="e.g. abc123..."
             aria-invalid={!!errors.token}
+            className="h-11 rounded-xl text-sm sm:text-base"
             {...register("token")}
           />
-          <FieldDescription>
+          <FieldDescription className="text-xs sm:text-sm">
             Your token is encrypted before it is stored.
           </FieldDescription>
           <FieldError>{errors.token?.message ?? ""}</FieldError>
@@ -71,13 +74,17 @@ export function UpdateAccountForm({ onSubmit }: Props) {
 
         {errors.root && (
           <p
-            className="bg-destructive/10 border-destructive text-destructive rounded-xl border px-3 py-2"
+            className="bg-destructive/10 border-destructive text-destructive rounded-xl border px-3 py-2 text-sm"
             aria-live="polite"
           >
             {errors.root.message}
           </p>
         )}
-        <Button type="submit" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="h-11 w-full text-sm"
+        >
           {isSubmitting ? "Updating..." : "Update Token"}
         </Button>
       </FieldGroup>

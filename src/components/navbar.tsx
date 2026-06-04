@@ -49,9 +49,9 @@ export function Navbar() {
   );
 
   return (
-    <nav className="mx-auto my-8 max-w-7xl">
-      <GlassContainer className="flex items-center justify-between gap-3 px-3 py-2 sm:px-4">
-        <div className="text-foreground/80 flex min-w-0 items-center gap-3 text-base font-semibold tracking-tight sm:gap-5 lg:text-lg">
+    <nav className="mx-auto my-4 max-w-7xl px-3 sm:my-8 sm:px-6 lg:px-8">
+      <GlassContainer className="flex items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4">
+        <div className="text-foreground/80 flex min-w-0 items-center gap-2 text-sm font-semibold tracking-tight sm:gap-5 sm:text-base lg:text-lg">
           <Link
             href="/dashboard"
             className={clsx(
@@ -73,7 +73,7 @@ export function Navbar() {
           </Link>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-5">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-5">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -153,6 +153,22 @@ export function Navbar() {
             appearance={{
               elements: {
                 userButtonPopoverCard: "backdrop-blur-lg",
+              },
+            }}
+            userProfileProps={{
+              appearance: {
+                elements: {
+                  modalBackdrop:
+                    "bg-slate-950/65 backdrop-blur-sm dark:bg-slate-950/75",
+                  modalContent:
+                    "bg-background text-foreground shadow-2xl backdrop-blur-none dark:bg-slate-950",
+                  card: "bg-background text-foreground shadow-none dark:bg-slate-950",
+                  navbar:
+                    "bg-muted/70 text-foreground backdrop-blur-none dark:bg-slate-900",
+                  pageScrollBox:
+                    "bg-background text-foreground backdrop-blur-none dark:bg-slate-950",
+                  profilePage: "bg-background dark:bg-slate-950",
+                },
               },
             }}
           />
