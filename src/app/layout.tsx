@@ -6,8 +6,10 @@ import { SyncTimezone } from "@/components/sync-timezone";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClerkProvider, Show } from "@clerk/nextjs";
-import { ThemeProvider } from "next-themes";
-import { shadcn, neobrutalism } from "@clerk/ui/themes";
+import { shadcn } from "@clerk/ui/themes";
+import { ThemeProvider } from "@/components/theme-provider";
+
+const ENABLE_VERCEL_OBSERVABILITY = process.env.NODE_ENV === "production";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +37,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider>
           <ClerkProvider
             appearance={{
               theme: [shadcn],
@@ -56,8 +58,12 @@ export default function RootLayout({
             <SyncTimezone />
           </ClerkProvider>
         </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
+        {ENABLE_VERCEL_OBSERVABILITY && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   );

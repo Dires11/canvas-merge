@@ -2,11 +2,11 @@
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { GlassContainer } from "./glass-container";
 import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/theme-provider";
 import {
   DropdownMenu,
   DropdownMenuContent,
