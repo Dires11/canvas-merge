@@ -23,15 +23,20 @@ export type RawPlannerItem = {
     title?: string;
     due_at?: string | null;
     points_possible?: number | null;
+    assignment_id?: number | null;
   };
   submissions?: {
     submitted?: boolean;
+    submitted_at?: string | null;
     graded?: boolean;
     late?: boolean;
     missing?: boolean;
+    grade?: string | null;
+    score?: number | null;
   };
   planner_override?: {
     id: number;
+    assignment_id?: number | null;
     marked_complete: boolean;
     dismissed: boolean;
   } | null;
@@ -51,9 +56,12 @@ export type ItemBase = {
 
 export type SubmissionDetails = {
   submitted: boolean;
+  submittedAt: string | null;
   graded: boolean;
   late: boolean;
   missing: boolean;
+  grade: string | null;
+  score: number | null;
 };
 
 export type Assignment = ItemBase & {

@@ -36,9 +36,24 @@ function getFirstName(name: string) {
   return name.trim().split(/\s+/)[0] || "This Account";
 }
 
+function formatPoints(value: number) {
+  return Number.isInteger(value) ? String(value) : String(value);
+}
+
+function formatDateTime(value: string) {
+  return new Date(value).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
 type AssignmentAccount =
   | MergedAssignment["accountsNotSubmitted"][number]
-  | MergedAssignment["accountsMissingSubmission"][number];
+  | MergedAssignment["accountsMissingSubmission"][number]
+  | MergedAssignment["accountsSubmitted"][number];
 
 type OverrideResponse = {
   ok: boolean;
@@ -76,6 +91,7 @@ function AccountAssignmentPopover({
   onPlannerChanged,
   onToggleAccountFilter,
   filteredAccountId,
+  mode,
 }: {
   item: MergedAssignment;
   account: AccountSafeInfo;
@@ -83,6 +99,7 @@ function AccountAssignmentPopover({
   onPlannerChanged?: () => void;
   onToggleAccountFilter?: (accountId: string) => void;
   filteredAccountId?: string | null;
+  mode: "active" | "completed";
 }) {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -93,10 +110,33 @@ function AccountAssignmentPopover({
   const [changed, setChanged] = useState(false);
 
   const wasCreated = assignmentAccount.plannerOverrideId === null;
-  const isMarkedComplete = completeOverrideId !== null;
+  const isMarkedComplete =
+    completeOverrideId !== null || assignmentAccount.plannerMarkedComplete;
   const isFilteredToAccount = filteredAccountId === account.id;
   const firstName = getFirstName(account.name);
-  const statusLabel = isMarkedComplete ? "Marked complete" : "Not submitted";
+  const postedGrade =
+    assignmentAccount.submission.grade ?? assignmentAccount.submission.score;
+  const maxPoints =
+    item.points_possible != null ? formatPoints(item.points_possible) : null;
+  const gradeLabel =
+    assignmentAccount.submission.graded && postedGrade != null
+      ? maxPoints
+        ? `${postedGrade}/${maxPoints}`
+        : `Grade: ${postedGrade}`
+      : maxPoints
+        ? `-/${maxPoints}`
+        : "-";
+  const submittedLabel = assignmentAccount.submission.submittedAt
+    ? `Submitted: ${formatDateTime(assignmentAccount.submission.submittedAt)}`
+    : "Submitted: Unknown";
+  const statusLabel =
+    mode === "completed"
+      ? gradeLabel
+      : isMarkedComplete
+        ? "Marked complete"
+        : "Not submitted";
+  const canToggleCompletion =
+    mode === "active" || assignmentAccount.plannerMarkedComplete;
 
   async function markComplete() {
     setPending(true);
@@ -123,7 +163,8 @@ function AccountAssignmentPopover({
   }
 
   async function undo() {
-    if (!completeOverrideId) return;
+    const overrideId = completeOverrideId ?? assignmentAccount.plannerOverrideId;
+    if (!overrideId) return;
 
     setPending(true);
     setError(null);
@@ -132,7 +173,7 @@ function AccountAssignmentPopover({
       await updatePlannerOverride({
         action: wasCreated ? "undo_create" : "undo_update",
         accountId: account.id,
-        overrideId: completeOverrideId,
+        overrideId,
       });
 
       setCompleteOverrideId(null);
@@ -190,6 +231,11 @@ function AccountAssignmentPopover({
                 <p className="text-muted-foreground truncate text-xs">
                   {account.canvasDomain.name}
                 </p>
+                {mode === "completed" && (
+                  <p className="text-muted-foreground truncate text-xs">
+                    {submittedLabel}
+                  </p>
+                )}
               </div>
               <span
                 className={cn(
@@ -202,7 +248,6 @@ function AccountAssignmentPopover({
                 {statusLabel}
               </span>
             </div>
-
           </div>
         </div>
 
@@ -238,12 +283,16 @@ function AccountAssignmentPopover({
               "w-9 px-0 min-[420px]:w-auto min-[420px]:px-3",
               isMarkedComplete && "bg-glass/5 hover:bg-glass/15",
             )}
-            disabled={pending}
+            disabled={pending || !canToggleCompletion}
             onClick={isMarkedComplete ? undo : markComplete}
           >
             {isMarkedComplete ? <RotateCcw /> : <CheckCircle2 />}
             <span className="hidden truncate min-[420px]:inline">
-              {isMarkedComplete ? "Undo" : "Mark Complete"}
+              {isMarkedComplete
+                ? "Undo"
+                : mode === "completed"
+                  ? "Completed"
+                  : "Mark Complete"}
             </span>
           </Button>
         </div>
@@ -290,6 +339,7 @@ export function AssignmentCard({
   onPlannerChanged,
   onToggleAccountFilter,
   filteredAccountId,
+  mode = "active",
 }: {
   item: MergedAssignment;
   accountMap: Record<string, AccountSafeInfo>;
@@ -297,6 +347,7 @@ export function AssignmentCard({
   onPlannerChanged?: () => void;
   onToggleAccountFilter?: (accountId: string) => void;
   filteredAccountId?: string | null;
+  mode?: "active" | "completed";
 }) {
   const IconMap: Record<string, LucideIcon> = {
     assignment: NotebookPen,
@@ -305,10 +356,10 @@ export function AssignmentCard({
   };
 
   const IconComponent = IconMap[item.type] || ListTodo;
-  const unsubmittedAccounts = [
-    ...item.accountsNotSubmitted,
-    ...item.accountsMissingSubmission,
-  ];
+  const visibleAccounts =
+    mode === "completed"
+      ? item.accountsSubmitted
+      : [...item.accountsNotSubmitted, ...item.accountsMissingSubmission];
 
   let dueDate = null;
   let isDueAtMidnight = false;
@@ -365,7 +416,7 @@ export function AssignmentCard({
           className="md:hidden"
         />
         <div className="scrollbar-hide mt-2 flex min-w-0 gap-1.5 overflow-x-auto">
-          {unsubmittedAccounts.map((acc) => {
+          {visibleAccounts.map((acc) => {
             const account = accountMap[acc.accountId];
             if (!account) return;
             return (
@@ -377,6 +428,7 @@ export function AssignmentCard({
                 onPlannerChanged={onPlannerChanged}
                 onToggleAccountFilter={onToggleAccountFilter}
                 filteredAccountId={filteredAccountId}
+                mode={mode}
               />
             );
           })}

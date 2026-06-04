@@ -6,7 +6,12 @@ import {
 } from "@/lib/data/canvas-account";
 import { getDetectedTimeZoneForUser } from "@/lib/data/user-settings";
 import { decryptToken } from "@/lib/server/crypto";
-import { getAccountInfo, getPlannerItems } from "@/lib/canvas";
+import {
+  getAccountInfo,
+  getAssignmentSubmission,
+  getPlannerItems,
+  type PlannerItemFilter,
+} from "@/lib/canvas";
 import type {
   Announcement,
   Assignment,
@@ -18,7 +23,6 @@ import type {
   MergedItems,
   MergedItemsByDomain,
   RawPlannerItem,
-  SubmissionDetails,
   UserPlanner,
 } from "@/lib/types";
 import { DateTime } from "luxon";
@@ -63,6 +67,56 @@ function getUTCWeekRange(timezone: string, baseDate: Date = new Date()) {
  */
 
 const ASSIGNMENT_TYPE = new Set(["assignment", "discussion_topic", "quiz"]);
+
+function getSubmissionAssignmentId(item: RawPlannerItem) {
+  return (
+    item.planner_override?.assignment_id ??
+    item.plannable?.assignment_id ??
+    (item.plannable_type === "assignment" ? item.plannable_id : null)
+  );
+}
+
+async function enrichMissingGrades(
+  baseUrl: string,
+  token: string,
+  items: RawPlannerItem[],
+) {
+  return Promise.all(
+    items.map(async (item) => {
+      if (
+        !ASSIGNMENT_TYPE.has(item.plannable_type) ||
+        !item.submissions?.graded ||
+        item.submissions.grade != null ||
+        item.submissions.score != null
+      ) {
+        return item;
+      }
+
+      const assignmentId = getSubmissionAssignmentId(item);
+      if (!assignmentId) return item;
+
+      const submission = await getAssignmentSubmission(
+        baseUrl,
+        token,
+        item.course_id,
+        assignmentId,
+      );
+
+      if (!submission.ok) return item;
+
+      return {
+        ...item,
+        submissions: {
+          ...item.submissions,
+          grade: submission.data.grade ?? submission.data.entered_grade ?? null,
+          score: submission.data.score ?? submission.data.entered_score ?? null,
+          submitted_at:
+            item.submissions.submitted_at ?? submission.data.submitted_at ?? null,
+        },
+      };
+    }),
+  );
+}
 
 function normalize(
   accountId: string,
@@ -112,9 +166,12 @@ function normalize(
         plannerMarkedComplete: Boolean(item.planner_override?.marked_complete),
         submission: {
           submitted: Boolean(item.submissions?.submitted),
+          submittedAt: item.submissions?.submitted_at ?? null,
           graded: Boolean(item.submissions?.graded),
           late: Boolean(item.submissions?.late),
           missing: Boolean(item.submissions?.missing),
+          grade: item.submissions?.grade ?? null,
+          score: item.submissions?.score ?? null,
         },
       };
       itemsByType.assignments.push(assignment);
@@ -143,9 +200,11 @@ type BucketKey =
   | "accountsMissingSubmission"
   | "accountsNotSubmitted";
 
-function getBucket(submission: SubmissionDetails): BucketKey {
-  if (submission.submitted) return "accountsSubmitted";
-  if (submission.missing) return "accountsMissingSubmission";
+function getBucket(assignment: Assignment): BucketKey {
+  if (assignment.submission.submitted || assignment.plannerMarkedComplete) {
+    return "accountsSubmitted";
+  }
+  if (assignment.submission.missing) return "accountsMissingSubmission";
   return "accountsNotSubmitted";
 }
 
@@ -176,7 +235,7 @@ function mergeItemsByDomain(itemsByAccount: ItemsByAccount): MergedItems {
         assignmentsMap.set(key, existing);
       }
 
-      const bucket = getBucket(assignment.submission);
+      const bucket = getBucket(assignment);
       existing[bucket].push({
         accountId,
         submission: assignment.submission,
@@ -239,6 +298,7 @@ function mergeItemsByDomain(itemsByAccount: ItemsByAccount): MergedItems {
 export async function getUserPlanner(
   userId: string,
   merge: boolean = true,
+  filter: PlannerItemFilter = "incomplete_items",
 ): Promise<UserPlanner> {
   let allAccounts = await getUserCanvasAccountsWithTokens(userId);
 
@@ -296,6 +356,7 @@ export async function getUserPlanner(
       token,
       startISO,
       endISO,
+      filter,
     );
 
     if (!raw.ok) {
@@ -313,12 +374,21 @@ export async function getUserPlanner(
       };
     }
 
+    const plannerItems =
+      filter === "complete_items"
+        ? await enrichMissingGrades(
+            currentAccount.canvasDomain.baseUrl,
+            token,
+            raw.data,
+          )
+        : raw.data;
+
     const normalized = normalize(
       currentAccount.id,
       currentAccount.canvasDomain.baseUrl,
       currentAccount.canvasDomain.slug,
       currentAccount.canvasDomain.name,
-      raw.data,
+      plannerItems,
     );
 
     return {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserPlanner } from "@/lib/services/planner/get-user-planner";
 import { dedupeWithTtl } from "@/lib/utils/dedupe";
+import type { PlannerItemFilter } from "@/lib/canvas";
 
 export async function GET(req: NextRequest) {
   const { userId } = await auth();
@@ -10,16 +11,20 @@ export async function GET(req: NextRequest) {
   }
 
   const merge = req.nextUrl.searchParams.get("merge") === "true";
+  const requestedFilter = req.nextUrl.searchParams.get("filter");
+  const filter: PlannerItemFilter =
+    requestedFilter === "complete_items" ? "complete_items" : "incomplete_items";
 
-  const key = `weekly-assignments|user=${userId}|merge=${merge}`;
+  const key = `weekly-assignments|user=${userId}|merge=${merge}|filter=${filter}`;
   console.log("---- API: received request for /api/planner/weekly-assignments");
   try {
     const { hit, data } = await dedupeWithTtl(key, 10_000, async () => {
       console.log("----API: computing /api/planner/weekly-assignments", {
         userId,
         merge,
+        filter,
       });
-      return await getUserPlanner(userId, merge);
+      return await getUserPlanner(userId, merge, filter);
     });
 
     return NextResponse.json(data, {
@@ -28,13 +33,13 @@ export async function GET(req: NextRequest) {
         "x-cache": hit,
       },
     });
-  } catch (error: any) {
-    if (error?.message === "No accounts found") {
-      return NextResponse.json({ error: error.message }, { status: 404 });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch planner items";
+
+    if (message === "No accounts found") {
+      return NextResponse.json({ error: message }, { status: 404 });
     }
-    return NextResponse.json(
-      { error: error?.message || "Failed to fetch planner items" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

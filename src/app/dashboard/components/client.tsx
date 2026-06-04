@@ -10,14 +10,21 @@ import { CourseTab } from "./course-tab";
 import { useRouter } from "next/navigation";
 import { GlassContainer } from "@/components/glass-container";
 import type { CanvasDomainInfo } from "@/lib/types";
+type CourseColor = UserCourse["color"];
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "";
+}
 
 export function DashboardClient({
   initialCourses,
   plannerData,
+  completedPlannerData,
   domainsData,
 }: {
   initialCourses: UserCourse[];
   plannerData: UserPlanner | null;
+  completedPlannerData: UserPlanner | null;
   domainsData: CanvasDomainInfo[];
 }) {
   const [courses, setCourses] = useState<UserCourse[]>(initialCourses);
@@ -26,7 +33,7 @@ export function DashboardClient({
   const handleColorChange = async (
     courseId: number,
     domainSlug: string,
-    newColor: any,
+    newColor: CourseColor,
   ) => {
     const prevCourses = courses;
 
@@ -42,8 +49,8 @@ export function DashboardClient({
     // persist
     try {
       await updateCourseColor(courseId, domainSlug, newColor);
-    } catch (error: any) {
-      if (error?.message?.includes("UNAUTHORIZED")) {
+    } catch (error: unknown) {
+      if (getErrorMessage(error).includes("UNAUTHORIZED")) {
         router.push("/auth/sign-in");
         return;
       }
@@ -69,6 +76,9 @@ export function DashboardClient({
               <TabsTrigger value="assignments" className="flex-1 border-0">
                 Assignments
               </TabsTrigger>
+              <TabsTrigger value="completed" className="flex-1 border-0">
+                Completed
+              </TabsTrigger>
             </TabsList>
           </GlassContainer>
           <TabsContent value="courses" className="min-w-0">
@@ -81,19 +91,49 @@ export function DashboardClient({
               domains={domainsData}
             />
           </TabsContent>
+          <TabsContent value="completed" className="min-w-0">
+            <AssignmentDashboardClient
+              initialData={completedPlannerData}
+              courses={courses}
+              domains={domainsData}
+              mode="completed"
+            />
+          </TabsContent>
         </Tabs>
       </div>
 
-      {/* Desktop: Sidebar + Assignments */}
+      {/* Desktop: Sidebar + Assignment Tabs */}
       <div className="hidden min-h-screen grid-cols-[320px_minmax(0,1fr)] gap-4 p-4 md:grid">
         <CourseSidebar courses={courses} onColorChange={handleColorChange} />
         <main className="min-w-0">
           <div className="mx-auto w-full max-w-4xl">
-            <AssignmentDashboardClient
-              initialData={plannerData}
-              courses={courses}
-              domains={domainsData}
-            />
+            <Tabs defaultValue="assignments" className="w-full">
+              <GlassContainer className="mb-4 w-full p-0">
+                <TabsList className="w-full bg-inherit">
+                  <TabsTrigger value="assignments" className="flex-1 border-0">
+                    Assignments
+                  </TabsTrigger>
+                  <TabsTrigger value="completed" className="flex-1 border-0">
+                    Completed
+                  </TabsTrigger>
+                </TabsList>
+              </GlassContainer>
+              <TabsContent value="assignments" className="min-w-0">
+                <AssignmentDashboardClient
+                  initialData={plannerData}
+                  courses={courses}
+                  domains={domainsData}
+                />
+              </TabsContent>
+              <TabsContent value="completed" className="min-w-0">
+                <AssignmentDashboardClient
+                  initialData={completedPlannerData}
+                  courses={courses}
+                  domains={domainsData}
+                  mode="completed"
+                />
+              </TabsContent>
+            </Tabs>
           </div>
         </main>
       </div>

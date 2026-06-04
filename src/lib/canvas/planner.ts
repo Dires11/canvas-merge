@@ -1,6 +1,8 @@
 import { Plannable, RawPlannerItem } from "../types";
 import { canvasFetchJson, CanvasResult } from "./fetch";
 
+export type PlannerItemFilter = "incomplete_items" | "complete_items";
+
 export type PlannerOverride = {
   id: number;
   plannable_type: string;
@@ -13,6 +15,15 @@ export type PlannerOverride = {
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;
+};
+
+export type CanvasSubmission = {
+  grade: string | null;
+  score: number | null;
+  submitted_at: string | null;
+  entered_grade?: string | null;
+  entered_score?: number | null;
+  graded_at?: string | null;
 };
 
 /**
@@ -37,6 +48,7 @@ export async function getPlannerItems(
   token: string,
   startISO: string,
   endISO: string,
+  filter: PlannerItemFilter = "incomplete_items",
 ): Promise<CanvasResult<RawPlannerItem[]>> {
   return canvasFetchJson<RawPlannerItem[]>(domain, "/api/v1/planner/items", {
     token,
@@ -44,9 +56,24 @@ export async function getPlannerItems(
       start_date: startISO,
       end_date: endISO,
       per_page: 100,
-      filter: "incomplete_items",
+      filter,
     },
   });
+}
+
+export async function getAssignmentSubmission(
+  domain: string,
+  token: string,
+  courseId: number,
+  assignmentId: number,
+): Promise<CanvasResult<CanvasSubmission>> {
+  return canvasFetchJson<CanvasSubmission>(
+    domain,
+    `/api/v1/courses/${courseId}/assignments/${assignmentId}/submissions/self`,
+    {
+      token,
+    },
+  );
 }
 
 export async function markPlannerItem(

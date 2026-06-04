@@ -31,9 +31,9 @@ import { AssignmentDashboardControls } from "./dashboard-controls";
 import type { CanvasDomainInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const KEY = "/api/planner/user-planner?merge=true";
 const EMPTY_ACCOUNTS: AccountSafeInfo[] = [];
 const EMPTY_ACCOUNT_ERRORS: string[] = [];
+type AssignmentViewMode = "active" | "completed";
 
 const fetcher = async (url: string): Promise<UserPlanner> => {
   const r = await fetch(url, { credentials: "include" });
@@ -91,18 +91,25 @@ function getDueLabelLocal(due_at: string | null): string {
   return `Due in ${diffDays} days`;
 }
 
-function groupAssignmentsByDueDateLocal(assignments: MergedAssignment[]) {
+function groupAssignmentsByDueDateLocal(
+  assignments: MergedAssignment[],
+  mode: AssignmentViewMode,
+) {
   const groups: Record<string, MergedAssignment[]> = {};
 
   for (const assignment of assignments) {
-    if (
-      assignment.accountsNotSubmitted.length === 0 &&
-      assignment.accountsMissingSubmission.length === 0
-    ) {
-      continue;
+    if (mode === "active") {
+      if (
+        assignment.accountsNotSubmitted.length === 0 &&
+        assignment.accountsMissingSubmission.length === 0
+      ) {
+        continue;
+      }
+    } else {
+      if (assignment.accountsSubmitted.length === 0) continue;
     }
 
-    const label = getDueLabelLocal(assignment.due_at);
+    const label = mode === "completed" ? "completed" : getDueLabelLocal(assignment.due_at);
     (groups[label] ??= []).push(assignment);
   }
 
@@ -113,6 +120,7 @@ type Props = {
   initialData?: UserPlanner | null;
   courses: UserCourse[];
   domains: CanvasDomainInfo[];
+  mode?: AssignmentViewMode;
 };
 
 type DomainMap = Record<string, CanvasDomainInfo>;
@@ -153,8 +161,13 @@ export function AssignmentDashboardClient({
   initialData,
   courses,
   domains,
+  mode = "active",
 }: Props) {
-  const { data, error, isValidating, mutate } = useSWR(KEY, fetcher, {
+  const plannerFilter =
+    mode === "completed" ? "complete_items" : "incomplete_items";
+  const key = `/api/planner/user-planner?merge=true&filter=${plannerFilter}`;
+
+  const { data, error, isValidating, mutate } = useSWR(key, fetcher, {
     fallbackData: initialData ?? undefined,
     revalidateOnFocus: true,
     revalidateIfStale: false,
@@ -346,12 +359,19 @@ export function AssignmentDashboardClient({
       }
 
       if (assignments.length > 0) {
-        result[domainSlug] = groupAssignmentsByDueDateLocal(assignments);
+        result[domainSlug] = groupAssignmentsByDueDateLocal(assignments, mode);
       }
     }
 
     return result;
-  }, [data?.merged, dayKey, filters.account, filters.domain, filters.course]);
+  }, [
+    data?.merged,
+    dayKey,
+    filters.account,
+    filters.domain,
+    filters.course,
+    mode,
+  ]);
 
   if (error) {
     return (
@@ -371,6 +391,8 @@ export function AssignmentDashboardClient({
   }
 
   if (!data) return <div>No data</div>;
+
+  const hasAssignments = Object.keys(groupedByDomain).length > 0;
 
   return (
     <div className="text-foreground flex flex-col gap-4">
@@ -432,6 +454,16 @@ export function AssignmentDashboardClient({
         </div>
       )}
 
+      {!hasAssignments && (
+        <GlassContainer className="w-full">
+          <p className="text-muted-foreground text-sm">
+            {mode === "completed"
+              ? "No completed assignments found for this view."
+              : "No active assignments found for this view."}
+          </p>
+        </GlassContainer>
+      )}
+
       {Object.entries(groupedByDomain).map(([domainSlug, groups]) => {
         const domainInfo = domainMap[domainSlug];
 
@@ -450,7 +482,11 @@ export function AssignmentDashboardClient({
                 {Object.entries(groups).map(([label, assignments]) => {
                   return (
                     <div key={label} className="mt-1">
-                      <h2 className={cn("text-lg tracking-tight")}>{label}</h2>
+                      {mode === "active" && (
+                        <h2 className={cn("text-lg tracking-tight")}>
+                          {label}
+                        </h2>
+                      )}
                       <div className="flex flex-col gap-1.5">
                         {assignments.map((assignment) => (
                           <AssignmentCard
@@ -467,6 +503,7 @@ export function AssignmentDashboardClient({
                             }
                             onToggleAccountFilter={toggleAccountFilter}
                             filteredAccountId={filteredAccountId}
+                            mode={mode}
                           />
                         ))}
                       </div>
