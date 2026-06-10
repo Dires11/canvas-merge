@@ -1,0 +1,272 @@
+"use client"
+
+import Link from "next/link"
+import { motion, useReducedMotion, type Transition, type TargetAndTransition } from "framer-motion"
+import { Sparkles } from "lucide-react"
+import { useTheme } from "@/components/theme-provider"
+import { DashboardMockup } from "./dashboard-mockup"
+
+const PARTICLES = [
+  { left: "8%",  size: 2,   duration: 5.2, delay: 0    },
+  { left: "22%", size: 1.5, duration: 6.8, delay: -1.6 },
+  { left: "44%", size: 2,   duration: 4.8, delay: -3.1 },
+  { left: "60%", size: 1,   duration: 7.2, delay: -0.9 },
+  { left: "78%", size: 2,   duration: 5.6, delay: -2.2 },
+  { left: "34%", size: 1.5, duration: 8.3, delay: -4.4 },
+  { left: "70%", size: 1,   duration: 6.1, delay: -1.1 },
+  { left: "52%", size: 1.5, duration: 5.9, delay: -2.7 },
+]
+
+export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
+  const reduce = useReducedMotion()
+  const { resolvedTheme } = useTheme()
+  const isLight = resolvedTheme === "light"
+
+  const primaryHref  = isSignedIn ? "/dashboard" : "/sign-up"
+  const primaryLabel = isSignedIn ? "Open dashboard" : "Start merging"
+
+  const heroBg = isLight
+    ? "linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #ddd6fe 100%)"
+    : "linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%)"
+
+  const orbOpacity = isLight ? 0.18 : 0.38
+  const headlineAccent = isLight ? "#6366f1" : "#a5b4fc"
+
+  const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
+
+  const fadeUp = (delay: number): { initial?: TargetAndTransition; animate?: TargetAndTransition; transition?: Transition } =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 18 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.7, delay, ease: EASE },
+        }
+
+  return (
+    <section
+      className="relative isolate min-h-screen overflow-hidden"
+      style={{ background: heroBg }}
+    >
+      {/* Stars (dark mode only) */}
+      {!isLight && (
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: [
+              "radial-gradient(1.5px 1.5px at 5% 8%,  rgba(255,255,255,0.90) 0%, transparent 100%)",
+              "radial-gradient(1px   1px   at 18% 6%,  rgba(255,255,255,0.65) 0%, transparent 100%)",
+              "radial-gradient(1px   1px   at 38% 14%, rgba(255,255,255,0.50) 0%, transparent 100%)",
+              "radial-gradient(1.5px 1.5px at 62% 4%,  rgba(255,255,255,0.80) 0%, transparent 100%)",
+              "radial-gradient(1px   1px   at 75% 12%, rgba(255,255,255,0.55) 0%, transparent 100%)",
+              "radial-gradient(1px   1px   at 90% 7%,  rgba(255,255,255,0.70) 0%, transparent 100%)",
+              "radial-gradient(1px   1px   at 12% 38%, rgba(255,255,255,0.45) 0%, transparent 100%)",
+              "radial-gradient(1px   1px   at 52% 28%, rgba(255,255,255,0.55) 0%, transparent 100%)",
+              "radial-gradient(1.5px 1.5px at 95% 45%, rgba(255,255,255,0.65) 0%, transparent 100%)",
+              "radial-gradient(1px   1px   at 28% 60%, rgba(255,255,255,0.40) 0%, transparent 100%)",
+            ].join(", "),
+            animation: reduce ? undefined : "twinkle 10s ease-in-out infinite alternate",
+          }}
+        />
+      )}
+
+      {/* Orbs */}
+      {!reduce && (
+        <>
+          <motion.div
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              width: 640, height: 640, top: -230, right: -60,
+              background: `radial-gradient(circle, rgba(99,102,241,${orbOpacity}) 0%, transparent 65%)`,
+            }}
+            animate={{ x: [0, -28, 12, 0], y: [0, 18, -14, 0] }}
+            transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              width: 440, height: 440, bottom: -150, left: -80,
+              background: `radial-gradient(circle, rgba(139,92,246,${isLight ? 0.14 : 0.30}) 0%, transparent 65%)`,
+            }}
+            animate={{ x: [0, 28, 0], y: [0, -22, 0] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              width: 300, height: 300, top: "45%", left: "36%",
+              background: `radial-gradient(circle, rgba(6,182,212,${isLight ? 0.08 : 0.14}) 0%, transparent 65%)`,
+            }}
+            animate={{ y: [0, -28, 0] }}
+            transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </>
+      )}
+
+      {/* Particles (dark mode only) */}
+      {!reduce && !isLight && PARTICLES.map((p, i) => (
+        <motion.div
+          key={i}
+          className="pointer-events-none absolute rounded-full bg-white/55"
+          style={{ width: p.size, height: p.size, left: p.left, top: "95%" }}
+          animate={{ y: [0, "-100vh"], x: [0, 12] }}
+          transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: "linear" }}
+        />
+      ))}
+
+      {/* Navbar */}
+      {!isSignedIn && (
+        <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 py-[18px] sm:px-14">
+          <div
+            className="flex items-center gap-[10px] text-[15px] font-bold"
+            style={{ color: isLight ? "#1e1b4b" : "#fff" }}
+          >
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-lg"
+              style={{ background: isLight ? "#6366f1" : "#fff" }}
+            >
+              <Sparkles className="size-[14px]" style={{ color: isLight ? "#fff" : "#0f0f13" }} />
+            </div>
+            CanvasMerge
+          </div>
+          <div className="flex gap-2">
+            <Link
+              href="/sign-in"
+              className="rounded-lg px-4 py-[7px] text-[13px] font-semibold transition-colors"
+              style={
+                isLight
+                  ? { background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.18)", color: "#6366f1" }
+                  : { background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.13)", color: "rgba(255,255,255,0.80)" }
+              }
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/sign-up"
+              className="rounded-lg px-4 py-[7px] text-[13px] font-bold transition-colors"
+              style={
+                isLight
+                  ? { background: "#1e1b4b", color: "#fff" }
+                  : { background: "#fff", color: "#0f0f13" }
+              }
+            >
+              Get started
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Content grid */}
+      <div className="relative z-10 grid items-center gap-10 px-6 pt-[100px] pb-[60px] sm:px-14 lg:grid-cols-[1fr_1.3fr]">
+        {/* Left — copy */}
+        <div className="flex flex-col">
+          <motion.div {...fadeUp(0)}>
+            <div
+              className="mb-[22px] inline-flex items-center gap-2 rounded-full px-[14px] py-[5px] text-[12px] font-semibold"
+              style={
+                isLight
+                  ? { background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.18)", color: "#6366f1" }
+                  : { background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)", color: "rgba(255,255,255,0.72)" }
+              }
+            >
+              <Sparkles className="size-[13px]" style={{ color: isLight ? "#6366f1" : "#a5b4fc" }} />
+              Built for students with more than one Canvas world
+            </div>
+          </motion.div>
+
+          <motion.h1
+            {...fadeUp(0.1)}
+            className="text-[clamp(46px,5.5vw,80px)] font-black leading-[0.95] tracking-[-0.035em]"
+            style={{ color: isLight ? "#1e1b4b" : "#fff" }}
+          >
+            Every Canvas.
+            <br />
+            <span style={{ color: headlineAccent }}>One view.</span>
+          </motion.h1>
+
+          <motion.p
+            {...fadeUp(0.22)}
+            className="mt-[18px] max-w-[460px] text-[16px] leading-[1.65]"
+            style={{ color: isLight ? "#4c4891" : "rgba(255,255,255,0.58)" }}
+          >
+            One calm command center for every Canvas campus, course, due date, and assignment competing for your attention.
+          </motion.p>
+
+          <motion.div {...fadeUp(0.34)} className="mt-[26px] flex gap-[10px]">
+            <Link
+              href={primaryHref}
+              className="inline-flex items-center gap-[6px] rounded-[10px] px-[22px] py-3 text-[14px] font-bold transition-colors"
+              style={
+                isLight
+                  ? { background: "#1e1b4b", color: "#fff" }
+                  : { background: "#fff", color: "#0f0f13" }
+              }
+            >
+              {primaryLabel}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center rounded-[10px] px-[22px] py-3 text-[14px] font-semibold transition-colors"
+              style={
+                isLight
+                  ? { background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.18)", color: "#6366f1" }
+                  : { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.16)", color: "rgba(255,255,255,0.80)" }
+              }
+            >
+              View dashboard
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* Right — dashboard mockup (hidden on mobile) */}
+        <motion.div
+          className="hidden lg:flex items-center justify-center"
+          initial={reduce ? undefined : { opacity: 0, y: 18 }}
+          animate={reduce ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.18, ease: EASE }}
+        >
+          <div style={{ width: "100%", perspective: 1200 }}>
+            <motion.div
+              style={{ transform: "rotateY(-10deg) rotateX(3deg)" }}
+              animate={reduce ? undefined : { y: [0, -10, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <DashboardMockup />
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Scroll hint */}
+      {!reduce && (
+        <motion.div
+          className="absolute bottom-[26px] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-[5px]"
+          animate={{ y: [0, 7, 0] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <div
+            className="h-1 w-1 rounded-full"
+            style={{ background: isLight ? "rgba(99,102,241,0.38)" : "rgba(255,255,255,0.38)" }}
+          />
+          <div
+            className="w-px h-7"
+            style={{
+              background: isLight
+                ? "linear-gradient(to bottom, rgba(99,102,241,0.30), transparent)"
+                : "linear-gradient(to bottom, rgba(255,255,255,0.30), transparent)",
+            }}
+          />
+          <div
+            className="h-1 w-1 rounded-full"
+            style={{ background: isLight ? "rgba(99,102,241,0.38)" : "rgba(255,255,255,0.38)" }}
+          />
+        </motion.div>
+      )}
+
+      <style>{`@keyframes twinkle{0%{opacity:.7}100%{opacity:1}}`}</style>
+    </section>
+  )
+}
