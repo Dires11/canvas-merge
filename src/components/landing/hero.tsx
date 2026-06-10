@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { motion, useReducedMotion, type Transition, type TargetAndTransition } from "framer-motion"
+import { motion, useReducedMotion, type TargetAndTransition, type Transition, type Target } from "framer-motion"
 import { Sparkles } from "lucide-react"
 import { useTheme } from "@/components/theme-provider"
 import { DashboardMockup } from "./dashboard-mockup"
@@ -16,6 +16,8 @@ const PARTICLES = [
   { left: "70%", size: 1,   duration: 6.1, delay: -1.1 },
   { left: "52%", size: 1.5, duration: 5.9, delay: -2.7 },
 ]
+
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 
 export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
   const reduce = useReducedMotion()
@@ -32,9 +34,7 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
   const orbOpacity = isLight ? 0.18 : 0.38
   const headlineAccent = isLight ? "#6366f1" : "#a5b4fc"
 
-  const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
-
-  const fadeUp = (delay: number): { initial?: TargetAndTransition; animate?: TargetAndTransition; transition?: Transition } =>
+  const fadeUp = (delay: number): { initial?: Target; animate?: TargetAndTransition; transition?: Transition } | object =>
     reduce
       ? {}
       : {
@@ -104,9 +104,9 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
       )}
 
       {/* Particles (dark mode only) */}
-      {!reduce && !isLight && PARTICLES.map((p, i) => (
+      {!reduce && !isLight && PARTICLES.map((p) => (
         <motion.div
-          key={i}
+          key={p.left}
           className="pointer-events-none absolute rounded-full bg-white/55"
           style={{ width: p.size, height: p.size, left: p.left, top: "95%" }}
           animate={{ y: [0, "-100vh"], x: [0, 12] }}
@@ -203,21 +203,23 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
               }
             >
               {primaryLabel}
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center rounded-[10px] px-[22px] py-3 text-[14px] font-semibold transition-colors"
-              style={
-                isLight
-                  ? { background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.18)", color: "#6366f1" }
-                  : { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.16)", color: "rgba(255,255,255,0.80)" }
-              }
-            >
-              View dashboard
-            </Link>
+            {isSignedIn && (
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center rounded-[10px] px-[22px] py-3 text-[14px] font-semibold transition-colors"
+                style={
+                  isLight
+                    ? { background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.18)", color: "#6366f1" }
+                    : { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.16)", color: "rgba(255,255,255,0.80)" }
+                }
+              >
+                View dashboard
+              </Link>
+            )}
           </motion.div>
         </div>
 
@@ -230,7 +232,7 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
         >
           <div style={{ width: "100%", perspective: 1200 }}>
             <motion.div
-              style={{ transform: "rotateY(-10deg) rotateX(3deg)" }}
+              style={{ rotateY: -10, rotateX: 3 }}
               animate={reduce ? undefined : { y: [0, -10, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
             >
