@@ -44,6 +44,7 @@ function hexToLight(hex: string) {
 export function DashboardMockup({ className = "" }: { className?: string }) {
   const [activeTab, setActiveTab] = useState<Tab>("assignments")
   const [activeChip, setActiveChip] = useState<Chip>("all")
+  // visual-only selection — highlights the active sidebar row in the demo
   const [activeCourse, setActiveCourse] = useState<string>("1")
 
   const filteredAssignments = MOCK_ASSIGNMENTS.filter((a) => {
@@ -90,6 +91,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
           {(["assignments", "completed", "announcements"] as Tab[]).map((tab) => (
             <button
               key={tab}
+              type="button"
               onClick={() => setActiveTab(tab)}
               className="cursor-pointer rounded-[7px] px-[14px] py-[5px] text-[11px] font-semibold capitalize transition-all duration-150"
               style={{
@@ -108,7 +110,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
       </div>
 
       {/* Body */}
-      <div className="flex" style={{ background: "oklch(0.27 0.05 268)", height: 460 }}>
+      <div className="flex" style={{ background: "oklch(0.27 0.05 268)", height: "460px" }}>
         {/* Sidebar */}
         <div
           className="flex w-[200px] shrink-0 flex-col overflow-hidden"
@@ -124,6 +126,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
             {MOCK_COURSES.map((course) => (
               <button
                 key={course.id}
+                type="button"
                 onClick={() => setActiveCourse(course.id)}
                 className="flex cursor-pointer items-stretch text-left transition-colors duration-150"
                 style={{
@@ -195,7 +198,8 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
                 <Search size={11} className="shrink-0" />
                 Search assignments…
               </div>
-              <div
+              <button
+                type="button"
                 className="flex cursor-pointer items-center gap-[5px] rounded-[7px] px-[10px] py-[5px] text-[11px] font-semibold"
                 style={{
                   background: "rgba(255,255,255,0.05)",
@@ -205,7 +209,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
               >
                 <SlidersHorizontal size={11} />
                 Filter
-              </div>
+              </button>
             </div>
             <div className="flex flex-wrap gap-[5px]">
               {(
@@ -219,6 +223,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
               ).map(([val, label]) => (
                 <button
                   key={val}
+                  type="button"
                   onClick={() => setActiveChip(val)}
                   className="cursor-pointer rounded-full px-[10px] py-[3px] text-[10px] font-semibold transition-all duration-150"
                   style={{
@@ -444,7 +449,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
                   return (
                     <div
                       key={ann.id}
-                      className="flex cursor-pointer items-stretch overflow-hidden rounded-xl"
+                      className="flex items-stretch overflow-hidden rounded-xl"
                       style={{
                         background: hexRgba(course.color, 0.07),
                         borderStyle: "solid",
