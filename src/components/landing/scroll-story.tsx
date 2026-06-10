@@ -382,10 +382,6 @@ function Step({ num, active, title, desc, children }: StepProps) {
 }
 
 function StepGrid({ activeStep }: { activeStep: number }) {
-  // Track the furthest step reached — steps stay visible once revealed
-  const [maxStep, setMaxStep] = useState(activeStep)
-  if (activeStep > maxStep) setMaxStep(activeStep)
-
   return (
     <div className="relative grid w-full max-w-[1300px] grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-0">
       {/* Faint base line */}
@@ -410,7 +406,7 @@ function StepGrid({ activeStep }: { activeStep: number }) {
           height: 1,
           background: "linear-gradient(90deg, #6366f1, #06b6d4)",
           transformOrigin: "left center",
-          transform: `scaleX(${maxStep === 0 ? 0 : maxStep === 1 ? 0.5 : 1})`,
+          transform: `scaleX(${activeStep === 0 ? 0 : activeStep === 1 ? 0.5 : 1})`,
           transition: "transform 0.7s cubic-bezier(0.22,1,0.36,1)",
         }}
         aria-hidden="true"
@@ -418,7 +414,7 @@ function StepGrid({ activeStep }: { activeStep: number }) {
 
       <Step
         num={1}
-        active={maxStep >= 0}
+        active={activeStep >= 0}
         title="Canvas, as-is"
         desc="One campus per tab. Verbose names. No cross-campus view. No filters."
       >
@@ -444,7 +440,7 @@ function StepGrid({ activeStep }: { activeStep: number }) {
 
       <Step
         num={2}
-        active={maxStep >= 1}
+        active={activeStep >= 1}
         title="CanvasMerge syncs"
         desc="Add each Canvas domain and token. Encryption happens automatically."
       >
@@ -453,7 +449,7 @@ function StepGrid({ activeStep }: { activeStep: number }) {
 
       <Step
         num={3}
-        active={maxStep >= 2}
+        active={activeStep >= 2}
         title="One readable dashboard"
         desc="All campuses merged. Color-coded. Clean filters. Light and dark mode."
       >
