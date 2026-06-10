@@ -1,8 +1,8 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState } from "react"
 import Image from "next/image"
-import { motion, useScroll, useTransform, useReducedMotion, type MotionValue } from "framer-motion"
+import { useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion"
 import { hexRgba, courseById, MOCK_COURSES, MOCK_ASSIGNMENTS } from "./mock-data"
 
 const DOMAINS = [
@@ -362,14 +362,7 @@ function Step({ num, active, title, desc, children }: StepProps) {
   )
 }
 
-function StepGrid({ activeStepValue, initialStep = 0 }: { activeStepValue: MotionValue<number> | undefined; initialStep?: number }) {
-  const [activeStep, setActiveStep] = useState(initialStep)
-
-  useEffect(() => {
-    if (!activeStepValue) return
-    const unsub = activeStepValue.on("change", (v) => setActiveStep(Math.round(v)))
-    return unsub
-  }, [activeStepValue])
+function StepGrid({ activeStep }: { activeStep: number }) {
 
   return (
     <div className="relative grid w-full max-w-[1080px] grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-0">
@@ -436,13 +429,17 @@ function StepGrid({ activeStepValue, initialStep = 0 }: { activeStepValue: Motio
 export function ScrollStory() {
   const containerRef = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
+  const [activeStep, setActiveStep] = useState(0)
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   })
 
-  const activeStepValue = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], [0, 1, 2, 2])
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const next = v < 0.33 ? 0 : v < 0.66 ? 1 : 2
+    setActiveStep(next)
+  })
 
   return (
     <div
@@ -473,7 +470,7 @@ export function ScrollStory() {
           </p>
         </div>
 
-        <StepGrid activeStepValue={reduce ? undefined : activeStepValue} initialStep={reduce ? 2 : 0} />
+        <StepGrid activeStep={reduce ? 2 : activeStep} />
       </div>
     </div>
   )
