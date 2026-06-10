@@ -1,6 +1,21 @@
-import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server"
+import { Hero }         from "@/components/landing/hero"
+import { ScrollStory }  from "@/components/landing/scroll-story"
+import { FeatureCards } from "@/components/landing/feature-cards"
+import { HowItWorks }   from "@/components/landing/how-it-works"
+import { CtaSection }   from "@/components/landing/cta-section"
 
 export default async function Home() {
-  redirect("/dashboard");
-  // TODO: add a landing page
+  const { userId } = await auth()
+  const isSignedIn = Boolean(userId)
+
+  return (
+    <main className="overflow-x-hidden">
+      <Hero         isSignedIn={isSignedIn} />
+      <ScrollStory />
+      <FeatureCards />
+      <HowItWorks  />
+      <CtaSection   isSignedIn={isSignedIn} />
+    </main>
+  )
 }
