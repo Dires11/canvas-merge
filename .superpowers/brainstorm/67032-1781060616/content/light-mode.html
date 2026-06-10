@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Light Mode Approach</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f13;
+    color: #f0f0f5;
+    padding: 32px 24px 48px;
+    min-height: 100vh;
+  }
+  .header { text-align: center; margin-bottom: 36px; }
+  .header h1 { font-size: 22px; font-weight: 600; color: #fff; }
+  .header p { margin-top: 8px; font-size: 14px; color: #888; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .card {
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.08);
+    transition: all 0.2s ease;
+    background: #18181f;
+    position: relative;
+  }
+  .card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+  .card.selected { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.2); }
+  .card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 10px; right: 10px;
+    background: #6366f1;
+    color: #fff;
+    font-size: 11px; font-weight: 700;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+  }
+
+  /* Shared mini-hero styles */
+  .mini-hero {
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: flex-end;
+    padding: 14px;
+  }
+  .mini-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .mini-section {
+    height: 60px;
+    padding: 8px 14px;
+    display: flex; align-items: center;
+  }
+  .mini-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .mini-bar { height: 6px; border-radius: 3px; margin-top: 6px; }
+  .mini-bar-sm { height: 4px; border-radius: 2px; margin-top: 4px; width: 70%; }
+
+  /* --- Option A: Hero always dark --- */
+  .hero-always-dark {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+  }
+  .hero-always-dark .orb {
+    position: absolute;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(99,102,241,0.45) 0%, transparent 70%);
+    top: -60px; right: -30px;
+    border-radius: 50%;
+  }
+  .hero-always-dark .orb2 {
+    width: 130px; height: 130px;
+    background: radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%);
+    top: unset; right: unset;
+    bottom: -20px; left: 20px;
+  }
+  .hero-always-dark .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 25%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 72%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,0.5) 0%, transparent 100%);
+  }
+  .hero-always-dark .tag-mini {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7);
+    font-size: 8px; padding: 2px 7px; border-radius: 10px; font-weight: 600;
+    display: inline-block; margin-bottom: 5px;
+  }
+  .hero-always-dark .title { color: #fff; font-size: 18px; font-weight: 800; line-height: 1.1; }
+
+  .section-light { background: #fff; }
+  .section-light .mini-label { color: #222; }
+  .section-light .mini-bar { background: #e5e7eb; }
+  .section-light .mini-bar-sm { background: #f3f4f6; }
+
+  .section-dark { background: #0f0f13; }
+  .section-dark .mini-label { color: rgba(255,255,255,0.7); }
+  .section-dark .mini-bar { background: rgba(255,255,255,0.1); }
+  .section-dark .mini-bar-sm { background: rgba(255,255,255,0.06); }
+
+  .mode-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 3px 8px; border-radius: 10px;
+    text-transform: uppercase;
+  }
+  .mode-badge.light { background: #f3f4f6; color: #555; }
+  .mode-badge.dark { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+  .mode-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .mode-dot.light { background: #fbbf24; }
+  .mode-dot.dark { background: #818cf8; }
+
+  /* --- Option B: Adaptive hero --- */
+  .hero-light-mode-b {
+    background: linear-gradient(135deg, #f8f7ff 0%, #ede9fe 50%, #ddd6fe 100%);
+  }
+  .hero-light-mode-b .orb-light {
+    position: absolute;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%);
+    top: -50px; right: -20px;
+    border-radius: 50%;
+  }
+  .hero-light-mode-b .orb-light2 {
+    width: 130px; height: 130px;
+    background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
+    top: unset; right: unset;
+    bottom: -20px; left: 30px;
+  }
+  .hero-light-mode-b .tag-mini {
+    background: rgba(99,102,241,0.1);
+    border: 1px solid rgba(99,102,241,0.2);
+    color: #6366f1;
+    font-size: 8px; padding: 2px 7px; border-radius: 10px; font-weight: 600;
+    display: inline-block; margin-bottom: 5px;
+  }
+  .hero-light-mode-b .title { color: #1e1b4b; font-size: 18px; font-weight: 800; line-height: 1.1; }
+
+  /* --- Option C: Hero always dark, sections get glass/frost --- */
+  .hero-c {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+  }
+  .hero-c .orb { position: absolute; width: 200px; height: 200px; background: radial-gradient(circle, rgba(99,102,241,0.45) 0%, transparent 70%); top: -60px; right: -30px; border-radius: 50%; }
+  .hero-c .orb2 { width: 130px; height: 130px; background: radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%); top: unset; right: unset; bottom: -20px; left: 20px; }
+  .hero-c .stars { position: absolute; inset: 0; background-image: radial-gradient(1px 1px at 25% 30%, rgba(255,255,255,0.6) 0%, transparent 100%), radial-gradient(1px 1px at 65% 18%, rgba(255,255,255,0.5) 0%, transparent 100%), radial-gradient(1px 1px at 82% 58%, rgba(255,255,255,0.4) 0%, transparent 100%); }
+  .hero-c .tag-mini { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 8px; padding: 2px 7px; border-radius: 10px; font-weight: 600; display: inline-block; margin-bottom: 5px; }
+  .hero-c .title { color: #fff; font-size: 18px; font-weight: 800; line-height: 1.1; }
+
+  .section-frost-light {
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .section-frost-dark {
+    background: rgba(15,15,19,0.88);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .section-frost-light .mini-label { color: #333; }
+  .section-frost-light .mini-bar { background: rgba(0,0,0,0.08); }
+  .section-frost-dark .mini-label { color: rgba(255,255,255,0.65); }
+  .section-frost-dark .mini-bar { background: rgba(255,255,255,0.08); }
+
+  /* Page stack preview */
+  .page-stack { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; }
+
+  .card-body {
+    padding: 14px 16px 18px;
+    background: #18181f;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-body h3 { font-size: 14px; font-weight: 700; color: #f0f0f5; }
+  .card-body p { font-size: 11px; color: #666; margin-top: 4px; line-height: 1.5; }
+
+  .mode-row {
+    display: flex; gap: 6px; margin-bottom: 8px;
+  }
+
+  .footer { text-align: center; margin-top: 28px; font-size: 13px; color: #555; }
+
+  @media (max-width: 700px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>How should light mode work?</h1>
+  <p>You chose Deep Space (Option A). It's inherently dark — how should the light mode version look?</p>
+</div>
+
+<div class="cards">
+
+  <!-- Option A: Hero always dark -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div style="padding: 14px 14px 0;">
+      <div class="mode-row">
+        <span class="mode-badge dark"><span class="mode-dot dark"></span>dark</span>
+        <span class="mode-badge dark"><span class="mode-dot dark"></span>same</span>
+      </div>
+    </div>
+    <div class="page-stack" style="margin: 0 14px 0;">
+      <div class="mini-hero hero-always-dark">
+        <div class="stars"></div>
+        <div class="orb"></div>
+        <div class="orb orb2"></div>
+        <div style="position:relative;z-index:1">
+          <div class="tag-mini">For students juggling campuses</div>
+          <div class="title">One merged view<br>for all your Canvas.</div>
+        </div>
+      </div>
+      <div class="mini-section section-light">
+        <div>
+          <div class="mini-label">Features · light mode body</div>
+          <div class="mini-bar" style="width:80%"></div>
+          <div class="mini-bar-sm"></div>
+        </div>
+      </div>
+      <div class="mini-section section-dark" style="height:50px">
+        <div>
+          <div class="mini-label">CTA · dark section</div>
+          <div class="mini-bar" style="width:60%"></div>
+        </div>
+      </div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="card-body">
+      <h3>A — Hero stays dark, body adapts</h3>
+      <p>The space hero is always dark (looks stunning). Sections below switch between light/dark. Most marketing sites do this (Vercel, Linear, Stripe).</p>
+    </div>
+  </div>
+
+  <!-- Option B: Adaptive hero -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div style="padding: 14px 14px 0;">
+      <div class="mode-row">
+        <span class="mode-badge dark"><span class="mode-dot dark"></span>dark</span>
+        <span class="mode-badge light"><span class="mode-dot light"></span>light adapts</span>
+      </div>
+    </div>
+    <div style="margin: 0 14px; display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+      <!-- Dark version -->
+      <div>
+        <div style="font-size:9px;color:#555;text-align:center;margin-bottom:4px;font-weight:600">Dark</div>
+        <div style="border-radius:10px;overflow:hidden">
+          <div class="mini-hero hero-always-dark" style="height:120px">
+            <div class="stars"></div>
+            <div class="orb"></div>
+            <div style="position:relative;z-index:1">
+              <div class="tag-mini">For students</div>
+              <div class="title" style="font-size:14px">One merged view<br>for Canvas.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Light version -->
+      <div>
+        <div style="font-size:9px;color:#555;text-align:center;margin-bottom:4px;font-weight:600">Light</div>
+        <div style="border-radius:10px;overflow:hidden">
+          <div class="mini-hero hero-light-mode-b" style="height:120px">
+            <div class="orb-light"></div>
+            <div class="orb-light orb-light2"></div>
+            <div style="position:relative;z-index:1">
+              <div class="tag-mini">For students</div>
+              <div class="title" style="font-size:14px">One merged view<br>for Canvas.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="card-body">
+      <h3>B — Full adaptive hero</h3>
+      <p>Dark mode: deep space. Light mode: soft lavender/violet gradient with the same orb shapes. Consistent layout, different palette — cohesive feel.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Hero dark, glass sections -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div style="padding: 14px 14px 0;">
+      <div class="mode-row">
+        <span class="mode-badge dark"><span class="mode-dot dark"></span>dark</span>
+        <span class="mode-badge light"><span class="mode-dot light"></span>glass body</span>
+      </div>
+    </div>
+    <div class="page-stack" style="margin: 0 14px 0;">
+      <div class="mini-hero hero-c">
+        <div class="stars"></div>
+        <div class="orb"></div>
+        <div class="orb orb2"></div>
+        <div style="position:relative;z-index:1">
+          <div class="tag-mini">For students juggling campuses</div>
+          <div class="title">One merged view<br>for all your Canvas.</div>
+        </div>
+      </div>
+      <div class="mini-section section-frost-light">
+        <div>
+          <div class="mini-label">Features · frosted glass (light)</div>
+          <div class="mini-bar" style="width:80%"></div>
+          <div class="mini-bar-sm"></div>
+        </div>
+      </div>
+      <div class="mini-section section-frost-dark" style="height:50px">
+        <div>
+          <div class="mini-label">CTA · frosted glass (dark)</div>
+          <div class="mini-bar" style="width:60%"></div>
+        </div>
+      </div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="card-body">
+      <h3>C — Dark hero, glass body sections</h3>
+      <p>Hero is always dark. The body sections use a frosted glass treatment that sits between fully white and fully dark — premium feel in both modes.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Click a card to select, then reply in the terminal.</span>
+</div>
+
+<script>
+function toggleSelect(el) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  fetch('/select', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'click', choice: el.getAttribute('data-choice'), text: el.querySelector('h3').textContent })
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>

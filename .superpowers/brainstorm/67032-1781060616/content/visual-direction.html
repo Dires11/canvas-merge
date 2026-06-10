@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visual Direction — CanvasMerge Landing</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f13;
+    color: #f0f0f5;
+    padding: 32px 24px 48px;
+    min-height: 100vh;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .header h1 { font-size: 22px; font-weight: 600; color: #fff; }
+  .header p { margin-top: 8px; font-size: 14px; color: #888; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .card {
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .card:hover { transform: translateY(-3px); }
+  .card.selected { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.2); }
+  .card.selected::after {
+    content: '✓ Selected';
+    position: absolute;
+    top: 12px; right: 12px;
+    background: #6366f1;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  .preview {
+    height: 280px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 24px;
+    overflow: hidden;
+  }
+
+  /* Option A — Deep space / cosmic gradient */
+  .preview-a {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+  }
+  .preview-a .orb1 {
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(99,102,241,0.45) 0%, transparent 70%);
+    top: -80px; right: -40px;
+    border-radius: 50%;
+  }
+  .preview-a .orb2 {
+    position: absolute;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%);
+    bottom: 20px; left: 40px;
+    border-radius: 50%;
+  }
+  .preview-a .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 70%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 15% 55%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 25%, rgba(255,255,255,0.7) 0%, transparent 100%);
+  }
+
+  /* Option B — Clean white / editorial */
+  .preview-b {
+    background: #ffffff;
+  }
+  .preview-b .grid-lines {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .preview-b .accent-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4);
+  }
+  .preview-b .tag {
+    display: inline-block;
+    background: #f1f0ff;
+    color: #6366f1;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .preview-b .h1 { font-size: 32px; font-weight: 800; color: #0f0f13; line-height: 1.1; }
+  .preview-b .sub { font-size: 13px; color: #555; margin-top: 8px; }
+  .preview-b .cta {
+    margin-top: 16px;
+    display: flex; gap: 8px;
+  }
+  .preview-b .btn-primary { background: #0f0f13; color: #fff; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+  .preview-b .btn-sec { background: transparent; color: #0f0f13; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1.5px solid #ddd; }
+
+  /* Option C — Bold dark + cyan glow */
+  .preview-c {
+    background: #080b14;
+  }
+  .preview-c .glow {
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse, rgba(6,182,212,0.25) 0%, transparent 70%);
+  }
+  .preview-c .line {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(6,182,212,0.6), transparent);
+  }
+  .preview-c .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(6,182,212,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6,182,212,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Option D — Rich gradient / Apple-style */
+  .preview-d {
+    background: linear-gradient(160deg, #1a0533 0%, #0d1117 50%, #001a2e 100%);
+  }
+  .preview-d .blob1 {
+    position: absolute;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(168,85,247,0.5) 0%, transparent 65%);
+    top: -60px; left: -40px;
+    border-radius: 50%;
+    filter: blur(30px);
+  }
+  .preview-d .blob2 {
+    position: absolute;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(6,182,212,0.4) 0%, transparent 65%);
+    bottom: -30px; right: 20px;
+    border-radius: 50%;
+    filter: blur(30px);
+  }
+  .preview-d .badge {
+    position: absolute; top: 20px; left: 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.75);
+    font-size: 11px; padding: 4px 12px;
+    border-radius: 20px; backdrop-filter: blur(8px);
+  }
+
+  /* shared dark card text */
+  .dark-text .tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.65);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 10px; letter-spacing: 0.04em;
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .dark-text .h1 { font-size: 30px; font-weight: 800; color: #fff; line-height: 1.15; }
+  .dark-text .sub { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 8px; max-width: 220px; }
+  .dark-text .cta { margin-top: 16px; display: flex; gap: 8px; }
+  .dark-text .btn-primary { background: #fff; color: #0f0f13; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+  .dark-text .btn-sec { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid rgba(255,255,255,0.15); }
+
+  /* cyan glow option C specific text */
+  .preview-c .h1 { color: #fff; }
+  .preview-c .tag-c {
+    display: inline-block;
+    background: rgba(6,182,212,0.12);
+    color: #22d3ee;
+    font-size: 11px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 10px; letter-spacing: 0.04em;
+    border: 1px solid rgba(6,182,212,0.25);
+  }
+
+  .card-body {
+    padding: 16px 20px 20px;
+    background: #18181f;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-body h3 { font-size: 15px; font-weight: 700; color: #f0f0f5; }
+  .card-body p { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.5; }
+
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 13px;
+    color: #555;
+  }
+  .footer span { color: #888; }
+
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>What's the overall vibe?</h1>
+  <p>Pick the visual direction that feels right for CanvasMerge's landing page. Click a card to select.</p>
+</div>
+
+<div class="cards">
+
+  <!-- A: Deep space -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="preview preview-a">
+      <div class="stars"></div>
+      <div class="orb1"></div>
+      <div class="orb2"></div>
+      <div class="dark-text" style="position:relative;z-index:1">
+        <div class="tag">For students juggling campuses</div>
+        <div class="h1">One merged<br>view for all<br>your Canvas.</div>
+        <div class="sub">Connect every campus. See what's due.</div>
+        <div class="cta">
+          <div class="btn-primary">Start merging →</div>
+          <div class="btn-sec">View dashboard</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Deep Space</h3>
+      <p>Dark indigo/purple cosmos with floating orbs and subtle star field. Mysterious, premium, immersive. Animations: particles drifting, orbs pulsing.</p>
+    </div>
+  </div>
+
+  <!-- B: Clean white editorial -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="preview preview-b">
+      <div class="grid-lines"></div>
+      <div class="accent-bar"></div>
+      <div style="position:relative;z-index:1">
+        <div class="tag">For students juggling campuses</div>
+        <div class="h1">One merged view<br>for all your Canvas.</div>
+        <div class="sub">Connect every campus. See what's due.</div>
+        <div class="cta">
+          <div class="btn-primary">Start merging →</div>
+          <div class="btn-sec">View dashboard</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Clean & Editorial</h3>
+      <p>Crisp white with a subtle grid and a bold gradient accent bar. Minimal, confident, Notion-inspired. Animations: text revealing line by line, smooth stagger.</p>
+    </div>
+  </div>
+
+  <!-- C: Cyber / cyan grid -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="preview preview-c">
+      <div class="grid"></div>
+      <div class="glow"></div>
+      <div class="line"></div>
+      <div style="position:relative;z-index:1">
+        <div class="tag-c">For students juggling campuses</div>
+        <div class="dark-text">
+          <div class="h1" style="color:#fff">One merged<br>view for all<br>your Canvas.</div>
+          <div class="sub">Connect every campus. See what's due.</div>
+          <div class="cta">
+            <div class="btn-primary">Start merging →</div>
+            <div class="btn-sec">View dashboard</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Cyber / Cyan Glow</h3>
+      <p>Near-black with a glowing cyan horizon and technical grid lines. Precise, techy, Vercel-inspired. Animations: grid scanning, glow pulsing.</p>
+    </div>
+  </div>
+
+  <!-- D: Rich gradient Apple-style -->
+  <div class="card" data-choice="d" onclick="toggleSelect(this)">
+    <div class="preview preview-d">
+      <div class="blob1"></div>
+      <div class="blob2"></div>
+      <div class="badge">For students juggling campuses</div>
+      <div class="dark-text" style="position:relative;z-index:1">
+        <div class="h1">One merged<br>view for all<br>your Canvas.</div>
+        <div class="sub">Connect every campus. See what's due.</div>
+        <div class="cta">
+          <div class="btn-primary">Start merging →</div>
+          <div class="btn-sec">View dashboard</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>D — Rich Gradient</h3>
+      <p>Deep purple-to-midnight with large blurred color blobs in the background. Lush, Apple-esque, modern SaaS. Animations: blobs slowly morphing, text floating in.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Click a card to select, then reply in the terminal.</span>
+</div>
+
+<script>
+function toggleSelect(el) {
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+
+  const choice = el.getAttribute('data-choice');
+  const name = el.querySelector('h3').textContent;
+
+  fetch('/select', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'click', choice, text: name })
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>

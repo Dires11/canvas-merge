@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanvasMerge — Landing Page v2</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: #0a0a0f;
+  color: #f0f0f5;
+  overflow-x: hidden;
+}
+
+/* ── section labels ── */
+.label {
+  position: absolute; top: 10px; left: 12px; z-index: 200;
+  background: rgba(99,102,241,0.18); border: 1px solid rgba(99,102,241,0.35);
+  color: #a5b4fc; font-size: 9px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+}
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 100px 56px 60px;
+  gap: 48px;
+}
+
+/* nav */
+.nav {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 56px; z-index: 20;
+}
+.logo { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 15px; font-weight: 700; }
+.logo-box {
+  width: 32px; height: 32px; background: #fff; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-right { display: flex; gap: 8px; }
+.btn-ghost { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13); color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 8px; }
+.btn-white { background: #fff; color: #0f0f13; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 8px; }
+
+/* background layers */
+.stars {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 5% 8%, rgba(255,255,255,.9) 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 6%, rgba(255,255,255,.65) 0%,transparent 100%),
+    radial-gradient(1px 1px at 38% 14%, rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 62% 4%, rgba(255,255,255,.8) 0%,transparent 100%),
+    radial-gradient(1px 1px at 75% 12%, rgba(255,255,255,.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 90% 7%, rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 12% 38%, rgba(255,255,255,.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 52% 28%, rgba(255,255,255,.55) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 95% 45%, rgba(255,255,255,.65) 0%,transparent 100%),
+    radial-gradient(1px 1px at 28% 60%, rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 68% 55%, rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 83% 70%, rgba(255,255,255,.45) 0%,transparent 100%);
+  animation: twinkle 10s ease-in-out infinite alternate;
+}
+@keyframes twinkle { 0%{opacity:.7} 100%{opacity:1} }
+
+.orb { position: absolute; border-radius: 50%; pointer-events: none; }
+.orb-a { width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.38) 0%,transparent 65%);top:-220px;right:-80px;animation:drift1 16s ease-in-out infinite; }
+.orb-b { width:420px;height:420px;background:radial-gradient(circle,rgba(139,92,246,.3) 0%,transparent 65%);bottom:-140px;left:-80px;animation:drift2 20s ease-in-out infinite; }
+.orb-c { width:280px;height:280px;background:radial-gradient(circle,rgba(6,182,212,.14) 0%,transparent 65%);top:45%;left:38%;animation:drift3 24s ease-in-out infinite; }
+@keyframes drift1{0%,100%{transform:translate(0,0)}33%{transform:translate(-28px,18px)}66%{transform:translate(12px,-14px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(28px,-22px)}}
+@keyframes drift3{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-28px)}}
+
+.particle{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);pointer-events:none;animation:floatup linear infinite;}
+.pa{width:2px;height:2px;left:8%;top:95%;animation-duration:5.2s;animation-delay:0s}
+.pb{width:1.5px;height:1.5px;left:22%;top:90%;animation-duration:6.8s;animation-delay:-1.6s}
+.pc{width:2px;height:2px;left:44%;top:88%;animation-duration:4.8s;animation-delay:-3.1s}
+.pd{width:1px;height:1px;left:60%;top:93%;animation-duration:7.2s;animation-delay:-.9s}
+.pe{width:2px;height:2px;left:78%;top:91%;animation-duration:5.6s;animation-delay:-2.2s}
+.pf{width:1.5px;height:1.5px;left:34%;top:85%;animation-duration:8.3s;animation-delay:-4.4s}
+.pg{width:1px;height:1px;left:70%;top:87%;animation-duration:6.1s;animation-delay:-1.1s}
+.ph{width:1.5px;height:1.5px;left:52%;top:92%;animation-duration:5.9s;animation-delay:-2.7s}
+@keyframes floatup{0%{transform:translateY(0) translateX(0);opacity:0}8%{opacity:.7}92%{opacity:.4}100%{transform:translateY(-100vh) translateX(12px);opacity:0}}
+
+/* hero left */
+.hero-left { position: relative; z-index: 5; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+  color: rgba(255,255,255,.72); font-size: 12px; font-weight: 600;
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 22px;
+  animation: fadeup .9s ease both;
+}
+.hero-h1 {
+  font-size: clamp(44px, 5.5vw, 76px); font-weight: 900;
+  line-height: .95; letter-spacing: -.035em; color: #fff;
+  animation: fadeup .9s .1s ease both;
+}
+.hero-h1 .accent { color: #a5b4fc; }
+.hero-p {
+  margin-top: 18px; font-size: 16px; color: rgba(255,255,255,.58);
+  line-height: 1.65; max-width: 460px;
+  animation: fadeup .9s .22s ease both;
+}
+.hero-cta {
+  margin-top: 26px; display: flex; gap: 10px;
+  animation: fadeup .9s .34s ease both;
+}
+.btn-primary { background:#fff;color:#0f0f13;font-size:14px;font-weight:700;padding:12px 22px;border-radius:10px;display:inline-flex;align-items:center;gap:6px; }
+.btn-sec { background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.8);font-size:14px;font-weight:600;padding:12px 22px;border-radius:10px; }
+
+@keyframes fadeup { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+/* scroll hint */
+.scroll-hint {
+  position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  z-index: 5; animation: bob 2.2s ease-in-out infinite;
+}
+.sh-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.38); }
+.sh-line { width: 1px; height: 28px; background: linear-gradient(to bottom, rgba(255,255,255,.3), transparent); }
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* ══ DASHBOARD MOCKUP (hero right) ══ */
+.hero-right {
+  position: relative; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeup .9s .18s ease both;
+}
+.mockup-wrap {
+  width: 100%;
+  max-width: 580px;
+  perspective: 1200px;
+}
+.mockup-tilt {
+  transform: rotateY(-12deg) rotateX(4deg);
+  transform-style: preserve-3d;
+  animation: float 7s ease-in-out infinite;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1), 0 0 60px rgba(99,102,241,.18);
+}
+@keyframes float{0%,100%{transform:rotateY(-12deg) rotateX(4deg) translateY(0)}50%{transform:rotateY(-12deg) rotateX(4deg) translateY(-10px)}}
+
+.dash {
+  background: #0f111a;
+  border-radius: 14px;
+  overflow: hidden;
+  font-size: 11px;
+  display: flex; flex-direction: column;
+}
+
+/* dash top bar */
+.dash-topbar {
+  background: #0a0c14; border-bottom: 1px solid rgba(255,255,255,.07);
+  padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+}
+.dash-logo { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,.9); font-size: 12px; font-weight: 700; }
+.dash-logo-box { width: 22px; height: 22px; background: #fff; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+.dash-tabs { display: flex; gap: 2px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 3px; }
+.dash-tab { font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 6px; color: rgba(255,255,255,.45); }
+.dash-tab.active { background: rgba(255,255,255,.12); color: rgba(255,255,255,.9); }
+.dash-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; }
+
+/* dash body */
+.dash-body { display: flex; flex: 1; }
+
+/* sidebar */
+.dash-sidebar {
+  width: 175px; flex-shrink: 0;
+  background: rgba(255,255,255,.02);
+  border-right: 1px solid rgba(255,255,255,.06);
+  padding: 12px 0;
+}
+.sidebar-header {
+  padding: 0 12px 8px;
+  font-size: 10px; font-weight: 700; color: rgba(255,255,255,.35);
+  text-transform: uppercase; letter-spacing: .07em;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  margin-bottom: 6px;
+}
+.course-item {
+  display: flex; align-items: stretch; gap: 0;
+  padding: 0 8px 0 0; margin: 0 6px;
+  border-radius: 7px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid transparent;
+  margin-bottom: 2px; overflow: hidden;
+  transition: background .15s;
+}
+.course-item.active { background: rgba(99,102,241,.12); border-color: rgba(99,102,241,.2); }
+.course-bar { width: 3px; flex-shrink: 0; border-radius: 0; }
+.course-info { padding: 5px 8px; flex: 1; min-width: 0; }
+.course-domain { font-size: 9px; color: rgba(255,255,255,.35); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.course-name { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.8); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.course-item.active .course-name { color: #c7d2fe; }
+.sidebar-section { padding: 10px 12px 6px; font-size: 9px; font-weight: 700; color: rgba(255,255,255,.2); text-transform: uppercase; letter-spacing: .07em; margin-top: 4px; }
+
+/* main area */
+.dash-main { flex: 1; min-width: 0; padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+
+/* filter bar */
+.filter-bar {
+  display: flex; flex-direction: column; gap: 5px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 10px; padding: 7px 9px;
+}
+.filter-row1 { display: flex; gap: 5px; align-items: center; }
+.search-box {
+  flex: 1; display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09);
+  border-radius: 6px; padding: 4px 8px;
+  color: rgba(255,255,255,.35); font-size: 10px;
+}
+.filter-btn {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09);
+  border-radius: 6px; padding: 4px 8px; font-size: 10px; color: rgba(255,255,255,.5); font-weight: 600;
+}
+.chip-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.chip {
+  font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.45);
+  background: rgba(255,255,255,.04);
+}
+.chip.active { background: rgba(99,102,241,.18); border-color: rgba(99,102,241,.35); color: #c7d2fe; }
+
+/* date group */
+.date-group { display: flex; flex-direction: column; gap: 4px; }
+.date-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .07em; padding: 0 2px; }
+
+/* assignment card */
+.a-card {
+  display: flex; align-items: stretch;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 9px; overflow: hidden;
+}
+.a-icon { width: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.a-body { flex: 1; min-width: 0; padding: 6px 8px; }
+.a-course { font-size: 9px; color: rgba(255,255,255,.35); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.a-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.a-due { font-size: 9px; color: rgba(255,255,255,.3); margin-top: 2px; display: flex; align-items: center; gap: 3px; }
+.a-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; padding: 6px 10px; gap: 4px; }
+.a-pts { font-size: 9px; font-weight: 600; color: rgba(255,255,255,.35); }
+.avatar-row { display: flex; gap: -2px; }
+.av { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,.15); font-size: 7px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+/* SVG icons inline */
+.ico { display: inline-block; vertical-align: middle; }
+
+/* ══════════════════════════════════════
+   SECTION 2 — STICKY SCROLL STORY
+══════════════════════════════════════ */
+.story-section {
+  background: #09090e;
+  padding: 80px 56px;
+  position: relative;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.overline { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #818cf8; margin-bottom: 10px; }
+.sec-h2 { font-size: clamp(28px, 3.5vw, 40px); font-weight: 800; color: #fff; line-height: 1.1; }
+.sec-sub { font-size: 15px; color: rgba(255,255,255,.45); margin-top: 8px; }
+
+.steps-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 0; margin-top: 48px; position: relative;
+  max-width: 1040px; margin-left: auto; margin-right: auto;
+}
+.steps-grid::before {
+  content: ''; position: absolute;
+  top: 19px; left: calc(16.66% + 16px); right: calc(16.66% + 16px);
+  height: 1px;
+  background: linear-gradient(90deg, rgba(99,102,241,.5), rgba(6,182,212,.5));
+}
+.step-col { display: flex; flex-direction: column; align-items: center; padding: 0 16px; }
+.step-num {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid rgba(99,102,241,.4); background: #09090e;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: rgba(165,180,252,.7);
+  position: relative; z-index: 1; margin-bottom: 18px; flex-shrink: 0;
+}
+.step-col.active .step-num { background: #6366f1; border-color: #6366f1; color: #fff; box-shadow: 0 0 0 8px rgba(99,102,241,.12); }
+.step-card {
+  width: 100%; border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+  margin-bottom: 14px;
+}
+.step-title { font-size: 13px; font-weight: 700; color: #f0f0f5; margin-bottom: 5px; text-align: center; }
+.step-desc { font-size: 11px; color: rgba(255,255,255,.38); line-height: 1.55; text-align: center; }
+
+/* Step 1 — multiple tabs */
+.tabs-preview { padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.tab-row {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 7px; padding: 7px 10px;
+}
+.tab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.tab-lines { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.tab-line { height: 6px; border-radius: 3px; background: rgba(255,255,255,.14); }
+.tab-line-sm { height: 5px; border-radius: 2px; background: rgba(255,255,255,.07); width: 55%; }
+.tab-badge { font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,.06); color: rgba(255,255,255,.3); }
+
+/* Step 2 — merge */
+.merge-preview { padding: 20px 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 110px; justify-content: center; }
+.merge-row { display: flex; align-items: center; gap: -6px; }
+.mc {
+  width: 30px; height: 30px; border-radius: 50%; border: 2px solid;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800;
+  animation: mpulse 2.2s ease-in-out infinite;
+}
+.mc1 { border-color: #6366f1; color: #6366f1; background: rgba(99,102,241,.1); margin-right: -8px; z-index: 1; }
+.mc2 { border-color: #8b5cf6; color: #8b5cf6; background: rgba(139,92,246,.1); z-index: 2; animation-delay: .3s; }
+.mc3 { border-color: #06b6d4; color: #06b6d4; background: rgba(6,182,212,.1); margin-left: -8px; z-index: 1; animation-delay: .6s; }
+@keyframes mpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.merge-arrow { color: rgba(255,255,255,.25); font-size: 14px; animation: apulse 1.6s ease-in-out infinite; }
+@keyframes apulse{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.75;transform:scale(1.2)}}
+.merge-result {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg,#6366f1,#8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 24px rgba(99,102,241,.45);
+  animation: rglow 2s ease-in-out infinite;
+}
+@keyframes rglow{0%,100%{box-shadow:0 0 20px rgba(99,102,241,.4)}50%{box-shadow:0 0 32px rgba(99,102,241,.7)}}
+.merge-caption { font-size: 9px; color: rgba(255,255,255,.3); letter-spacing: .05em; }
+
+/* Step 3 — actual dashboard mockup (mini version) */
+.mini-dash {
+  background: #0f111a; overflow: hidden; font-size: 10px;
+  display: flex; flex-direction: column;
+}
+.mini-topbar {
+  background: #0a0c14; border-bottom: 1px solid rgba(255,255,255,.07);
+  padding: 6px 10px; display: flex; align-items: center; justify-content: space-between;
+}
+.mini-logo-box { width: 16px; height: 16px; background: #fff; border-radius: 3px; }
+.mini-logo { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; color: rgba(255,255,255,.9); }
+.mini-tabs-row { display: flex; gap: 1px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 5px; padding: 2px; }
+.mini-tab { font-size: 8px; font-weight: 600; padding: 2px 7px; border-radius: 3px; color: rgba(255,255,255,.4); }
+.mini-tab.active { background: rgba(255,255,255,.12); color: rgba(255,255,255,.9); }
+
+.mini-body { display: flex; min-height: 110px; }
+.mini-sidebar {
+  width: 95px; border-right: 1px solid rgba(255,255,255,.06);
+  padding: 7px 0; background: rgba(255,255,255,.02);
+}
+.mini-sidebar-hdr { padding: 0 7px 5px; font-size: 7px; font-weight: 700; color: rgba(255,255,255,.25); text-transform: uppercase; letter-spacing: .07em; border-bottom: 1px solid rgba(255,255,255,.04); margin-bottom: 4px; }
+.mc-item { display: flex; align-items: stretch; margin: 0 4px 2px; border-radius: 4px; background: rgba(255,255,255,.03); overflow: hidden; border: 1px solid transparent; }
+.mc-item.active { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.2); }
+.mc-bar { width: 2.5px; flex-shrink: 0; }
+.mc-text { padding: 3px 5px; }
+.mc-dom { font-size: 7px; color: rgba(255,255,255,.28); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-name { font-size: 8px; font-weight: 600; color: rgba(255,255,255,.72); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-item.active .mc-name { color: #c7d2fe; }
+
+.mini-main { flex: 1; padding: 7px; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
+.mini-filter { display: flex; gap: 3px; }
+.mini-search { flex: 1; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 4px; padding: 3px 6px; font-size: 8px; color: rgba(255,255,255,.3); display: flex; align-items: center; gap: 3px; }
+.mini-chip-row { display: flex; gap: 2px; }
+.mini-chip { font-size: 7px; font-weight: 600; padding: 2px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.35); }
+.mini-chip.a { background: rgba(99,102,241,.15); border-color: rgba(99,102,241,.3); color: #c7d2fe; }
+
+.mini-date-lbl { font-size: 7px; font-weight: 700; color: rgba(255,255,255,.25); text-transform: uppercase; letter-spacing: .06em; }
+.mini-card {
+  display: flex; align-items: stretch;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 6px; overflow: hidden;
+}
+.mini-ci { width: 22px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.mini-cb { flex: 1; padding: 4px 5px; min-width: 0; }
+.mini-cn { font-size: 7px; color: rgba(255,255,255,.3); font-weight: 600; text-transform: uppercase; }
+.mini-ct { font-size: 8px; font-weight: 700; color: rgba(255,255,255,.82); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-cd { font-size: 7px; color: rgba(255,255,255,.28); margin-top: 1px; }
+.mini-cr { padding: 4px 5px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 2px; }
+.mini-pts { font-size: 7px; color: rgba(255,255,255,.3); }
+.mini-avs { display: flex; }
+.mini-av { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,.3); font-size: 6px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-left: -3px; }
+.mini-av:first-child { margin-left: 0; }
+
+/* ══════════════════════════════════════
+   FEATURES
+══════════════════════════════════════ */
+.features-section {
+  padding: 80px 56px;
+  background: #0c0c16;
+  border-top: 1px solid rgba(255,255,255,.05);
+  position: relative;
+}
+.features-section::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,.3), transparent);
+}
+.feat-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  max-width: 1040px; margin: 40px auto 0;
+}
+.feat-card {
+  border-radius: 14px; border: 1px solid rgba(255,255,255,.07);
+  background: rgba(255,255,255,.03); padding: 20px;
+}
+.feat-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+}
+.fi-cyan { background: rgba(6,182,212,.12); color: #22d3ee; }
+.fi-green { background: rgba(34,197,94,.12); color: #4ade80; }
+.fi-amber { background: rgba(251,191,36,.12); color: #fbbf24; }
+.fi-rose { background: rgba(244,63,94,.12); color: #fb7185; }
+.feat-title { font-size: 13px; font-weight: 700; color: #f0f0f5; margin-bottom: 7px; }
+.feat-desc { font-size: 11px; color: rgba(255,255,255,.4); line-height: 1.6; }
+
+/* ══════════════════════════════════════
+   HOW IT WORKS
+══════════════════════════════════════ */
+.how-section {
+  padding: 80px 56px;
+  background: #07070f;
+  border-top: 1px solid rgba(255,255,255,.04);
+  position: relative;
+}
+.how-steps { display: flex; flex-direction: column; gap: 10px; max-width: 500px; margin: 36px auto 0; }
+.how-step {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+  border-radius: 12px; padding: 14px 18px;
+}
+.how-num { width: 34px; height: 34px; border-radius: 9px; background: #fff; color: #0f0f13; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.how-text { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.8); }
+
+/* ══════════════════════════════════════
+   CTA
+══════════════════════════════════════ */
+.cta-section {
+  padding: 90px 56px 110px;
+  background: linear-gradient(180deg,#07070f 0%,#0c0c1e 100%);
+  text-align: center; position: relative; overflow: hidden;
+}
+.cta-glow {
+  position: absolute; width: 500px; height: 500px;
+  background: radial-gradient(circle,rgba(99,102,241,.18) 0%,transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%,-50%); border-radius: 50%;
+}
+.cta-h2 { font-size: clamp(26px,4vw,46px); font-weight: 900; color: #fff; position: relative; z-index: 1; }
+.cta-sub { font-size: 15px; color: rgba(255,255,255,.46); margin-top: 10px; position: relative; z-index: 1; }
+.cta-btns { display: flex; gap: 10px; justify-content: center; margin-top: 26px; position: relative; z-index: 1; }
+.btn-cta { background: #fff; color: #0f0f13; font-size: 14px; font-weight: 700; padding: 12px 26px; border-radius: 10px; }
+.btn-cta-sec { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.72); font-size: 14px; font-weight: 600; padding: 12px 26px; border-radius: 10px; }
+
+/* ══════════════════════════════════════
+   LIGHT MODE PREVIEW
+══════════════════════════════════════ */
+.light-hero {
+  background: linear-gradient(135deg,#f5f3ff 0%,#ede9fe 50%,#ddd6fe 100%);
+  padding: 80px 56px 70px; position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+}
+.lh-orb1 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle,rgba(99,102,241,.18) 0%,transparent 70%); top:-180px;right:-80px;border-radius:50%; }
+.lh-orb2 { position: absolute; width: 340px; height: 340px; background: radial-gradient(circle,rgba(139,92,246,.14) 0%,transparent 70%); bottom:-120px;left:-60px;border-radius:50%; }
+.lh-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.18); color: #6366f1; font-size: 12px; font-weight: 600; padding: 5px 13px; border-radius: 20px; margin-bottom: 20px; position: relative; z-index: 1; }
+.lh-h1 { font-size: clamp(38px,4.5vw,62px); font-weight: 900; line-height: .95; letter-spacing: -.035em; color: #1e1b4b; position: relative; z-index: 1; }
+.lh-h1 .accent { color: #6366f1; }
+.lh-p { font-size: 15px; color: #4c4891; line-height: 1.65; max-width: 420px; margin-top: 16px; position: relative; z-index: 1; }
+.lh-cta { display: flex; gap: 10px; margin-top: 22px; position: relative; z-index: 1; }
+.btn-lh-p { background: #1e1b4b; color: #fff; font-size: 13px; font-weight: 700; padding: 11px 20px; border-radius: 9px; display: inline-flex; align-items: center; gap: 5px; }
+.btn-lh-s { background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.22); color: #6366f1; font-size: 13px; font-weight: 600; padding: 11px 20px; border-radius: 9px; }
+
+/* light mode dashboard mockup */
+.lh-right { position: relative; z-index: 1; }
+.lh-mockup-wrap { perspective: 1200px; }
+.lh-mockup-tilt {
+  transform: rotateY(-12deg) rotateX(4deg);
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 30px 70px rgba(30,27,75,.18), 0 0 0 1px rgba(99,102,241,.15);
+}
+.lh-dash {
+  background: #fafbff; font-size: 11px;
+  display: flex; flex-direction: column; border-radius: 12px; overflow: hidden;
+}
+.lh-topbar {
+  background: #f0edff; border-bottom: 1px solid rgba(99,102,241,.1);
+  padding: 9px 13px; display: flex; align-items: center; justify-content: space-between;
+}
+.lh-logo { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #1e1b4b; }
+.lh-logo-box { width: 20px; height: 20px; background: #6366f1; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+.lh-tabs-row { display: flex; gap: 1px; background: rgba(99,102,241,.07); border: 1px solid rgba(99,102,241,.12); border-radius: 7px; padding: 2px; }
+.lh-tab { font-size: 9px; font-weight: 600; padding: 3px 9px; border-radius: 5px; color: rgba(30,27,75,.4); }
+.lh-tab.active { background: #fff; color: #1e1b4b; box-shadow: 0 1px 3px rgba(99,102,241,.1); }
+.lh-av { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg,#6366f1,#8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #fff; }
+
+.lh-body { display: flex; }
+.lh-sidebar {
+  width: 165px; border-right: 1px solid rgba(99,102,241,.08);
+  padding: 10px 0; background: rgba(99,102,241,.03);
+}
+.lh-sb-hdr { padding: 0 10px 7px; font-size: 9px; font-weight: 700; color: rgba(30,27,75,.35); text-transform: uppercase; letter-spacing: .07em; border-bottom: 1px solid rgba(99,102,241,.06); margin-bottom: 5px; }
+.lh-ci { display: flex; align-items: stretch; margin: 0 5px 2px; border-radius: 6px; background: rgba(99,102,241,.04); border: 1px solid transparent; overflow: hidden; }
+.lh-ci.active { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.18); }
+.lh-cbar { width: 3px; flex-shrink: 0; }
+.lh-cinfo { padding: 4px 7px; }
+.lh-cdom { font-size: 8px; color: rgba(30,27,75,.38); }
+.lh-cname { font-size: 9px; font-weight: 600; color: rgba(30,27,75,.75); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lh-ci.active .lh-cname { color: #4338ca; }
+
+.lh-main { flex: 1; padding: 9px; display: flex; flex-direction: column; gap: 6px; }
+.lh-filter { display: flex; gap: 4px; align-items: center; background: rgba(99,102,241,.04); border: 1px solid rgba(99,102,241,.1); border-radius: 8px; padding: 6px 8px; }
+.lh-search { flex: 1; display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.7); border: 1px solid rgba(99,102,241,.12); border-radius: 5px; padding: 3px 7px; font-size: 9px; color: rgba(30,27,75,.4); }
+.lh-chip-row { display: flex; gap: 3px; }
+.lh-chip { font-size: 8px; font-weight: 600; padding: 2px 7px; border-radius: 10px; border: 1px solid rgba(99,102,241,.12); color: rgba(30,27,75,.4); }
+.lh-chip.a { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.25); color: #6366f1; }
+.lh-date { font-size: 8px; font-weight: 700; color: rgba(30,27,75,.35); text-transform: uppercase; letter-spacing: .06em; }
+.lh-card { display: flex; align-items: stretch; background: #fff; border: 1px solid rgba(99,102,241,.1); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(99,102,241,.06); margin-bottom: 3px; }
+.lh-ci2 { width: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.lh-cb { flex: 1; padding: 5px 7px; min-width: 0; }
+.lh-cn { font-size: 7px; color: rgba(30,27,75,.38); font-weight: 600; text-transform: uppercase; }
+.lh-ct { font-size: 9px; font-weight: 700; color: rgba(30,27,75,.85); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lh-cd { font-size: 7px; color: rgba(30,27,75,.35); margin-top: 1px; }
+.lh-cr { padding: 5px 7px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 3px; }
+.lh-pts { font-size: 7px; color: rgba(30,27,75,.35); }
+.lh-avrow { display: flex; }
+.lh-smav { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.9); font-size: 6px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: #fff; margin-left: -3px; }
+.lh-smav:first-child { margin-left: 0; }
+
+/* annotation footer */
+.annots {
+  background: #0a0a0f; border-top: 1px solid rgba(255,255,255,.06);
+  padding: 16px 56px; display: flex; gap: 20px; flex-wrap: wrap;
+}
+.ann { display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,.38); font-size: 11px; }
+.ann-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+.lm-sep { background: #e8e2f8; padding: 8px 56px; text-align: center; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9ca3c8; border-top: 3px solid rgba(99,102,241,.25); }
+</style>
+</head>
+<body>
+
+<!-- ══ SECTION 1: HERO (dark) ══ -->
+<section class="hero" style="position:relative">
+  <div class="label">① Hero — text left · floating dashboard preview right · orbiting + particles</div>
+
+  <nav class="nav">
+    <div class="logo">
+      <div class="logo-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0f0f13" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      CanvasMerge
+    </div>
+    <div class="nav-right">
+      <div class="btn-ghost">Sign in</div>
+      <div class="btn-white">Get started</div>
+    </div>
+  </nav>
+
+  <div class="stars"></div>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+  <div class="particle pa"></div><div class="particle pb"></div><div class="particle pc"></div>
+  <div class="particle pd"></div><div class="particle pe"></div><div class="particle pf"></div>
+  <div class="particle pg"></div><div class="particle ph"></div>
+
+  <!-- Left: copy -->
+  <div class="hero-left">
+    <div class="hero-badge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>
+      Built for students with more than one Canvas world
+    </div>
+    <h1 class="hero-h1">Every Canvas.<br><span class="accent">One view.</span></h1>
+    <p class="hero-p">One calm command center for every Canvas campus, course, due date, and assignment competing for your attention.</p>
+    <div class="hero-cta">
+      <div class="btn-primary">
+        Start merging
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="btn-sec">View dashboard</div>
+    </div>
+  </div>
+
+  <!-- Right: dashboard mockup -->
+  <div class="hero-right">
+    <div class="mockup-wrap">
+      <div class="mockup-tilt">
+        <div class="dash">
+          <!-- top bar -->
+          <div class="dash-topbar">
+            <div class="dash-logo">
+              <div class="dash-logo-box">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0f0f13" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>
+              </div>
+              CanvasMerge
+            </div>
+            <div class="dash-tabs">
+              <div class="dash-tab active">Assignments</div>
+              <div class="dash-tab">Completed</div>
+              <div class="dash-tab">Announcements</div>
+            </div>
+            <div class="dash-avatar">DM</div>
+          </div>
+          <!-- body -->
+          <div class="dash-body">
+            <!-- sidebar -->
+            <div class="dash-sidebar">
+              <div class="sidebar-header">Courses · 7</div>
+              <div class="course-item active">
+                <div class="course-bar" style="background:#6366f1"></div>
+                <div class="course-info">
+                  <div class="course-domain">state.edu</div>
+                  <div class="course-name">Linear Algebra</div>
+                </div>
+              </div>
+              <div class="course-item">
+                <div class="course-bar" style="background:#8b5cf6"></div>
+                <div class="course-info">
+                  <div class="course-domain">state.edu</div>
+                  <div class="course-name">Algorithms II</div>
+                </div>
+              </div>
+              <div class="course-item">
+                <div class="course-bar" style="background:#06b6d4"></div>
+                <div class="course-info">
+                  <div class="course-domain">cc.edu</div>
+                  <div class="course-name">English 101</div>
+                </div>
+              </div>
+              <div class="course-item">
+                <div class="course-bar" style="background:#f59e0b"></div>
+                <div class="course-info">
+                  <div class="course-domain">cc.edu</div>
+                  <div class="course-name">Chemistry</div>
+                </div>
+              </div>
+              <div class="course-item">
+                <div class="course-bar" style="background:#ec4899"></div>
+                <div class="course-info">
+                  <div class="course-domain">state.edu</div>
+                  <div class="course-name">Psych 200</div>
+                </div>
+              </div>
+              <div class="course-item">
+                <div class="course-bar" style="background:#22c55e"></div>
+                <div class="course-info">
+                  <div class="course-domain">cc.edu</div>
+                  <div class="course-name">Stats & Data</div>
+                </div>
+              </div>
+            </div>
+            <!-- main -->
+            <div class="dash-main">
+              <div class="filter-bar">
+                <div class="filter-row1">
+                  <div class="search-box">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    Search assignments…
+                  </div>
+                  <div class="filter-btn">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    Filter
+                  </div>
+                </div>
+                <div class="chip-row">
+                  <div class="chip active">All</div>
+                  <div class="chip">Overdue</div>
+                  <div class="chip">Due today</div>
+                  <div class="chip">This week</div>
+                  <div class="chip">No due date</div>
+                </div>
+              </div>
+
+              <div class="date-group">
+                <div class="date-label">Due today</div>
+                <div class="a-card">
+                  <div class="a-icon" style="background:rgba(99,102,241,.15)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  </div>
+                  <div class="a-body">
+                    <div class="a-course" style="color:rgba(99,102,241,.7)">Linear Algebra</div>
+                    <div class="a-title">Problem Set 7 — Eigenvalues</div>
+                    <div class="a-due">
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      Due today at 11:59 PM
+                    </div>
+                  </div>
+                  <div class="a-right">
+                    <div class="a-pts">50 pts</div>
+                    <div class="avatar-row">
+                      <div class="av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff">DM</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="a-card">
+                  <div class="a-icon" style="background:rgba(6,182,212,.12)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  </div>
+                  <div class="a-body">
+                    <div class="a-course" style="color:rgba(6,182,212,.6)">English 101</div>
+                    <div class="a-title">Reading Response — Chapter 4</div>
+                    <div class="a-due">
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      Due today at 11:59 PM
+                    </div>
+                  </div>
+                  <div class="a-right">
+                    <div class="a-pts">25 pts</div>
+                    <div class="avatar-row">
+                      <div class="av" style="background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff">DM</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="date-group">
+                <div class="date-label">Due tomorrow</div>
+                <div class="a-card">
+                  <div class="a-icon" style="background:rgba(245,158,11,.12)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                  </div>
+                  <div class="a-body">
+                    <div class="a-course" style="color:rgba(245,158,11,.65)">Chemistry</div>
+                    <div class="a-title">Lab Report — Titration</div>
+                    <div class="a-due">
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      Due tomorrow at 9:00 AM
+                    </div>
+                  </div>
+                  <div class="a-right">
+                    <div class="a-pts">100 pts</div>
+                    <div class="avatar-row">
+                      <div class="av" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff">DM</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><div class="sh-dot"></div><div class="sh-line"></div><div class="sh-dot"></div></div>
+</section>
+
+<!-- ══ SECTION 2: STORY ══ -->
+<section class="story-section" style="position:relative">
+  <div class="label">② Sticky scroll story — step 1→2→3 activates as you scroll through · Framer Motion useScroll</div>
+  <div style="max-width:1040px;margin:0 auto;text-align:center">
+    <div class="overline">From chaos to clarity</div>
+    <h2 class="sec-h2">Your Canvas world, finally merged.</h2>
+    <p class="sec-sub">Scroll to watch it come together.</p>
+  </div>
+
+  <div class="steps-grid">
+    <!-- step 1 -->
+    <div class="step-col">
+      <div class="step-num">1</div>
+      <div class="step-card">
+        <div class="tabs-preview">
+          <div style="font-size:8px;font-weight:700;color:rgba(255,255,255,.22);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">3 separate Canvas tabs</div>
+          <div class="tab-row">
+            <div class="tab-dot" style="background:#6366f1"></div>
+            <div class="tab-lines"><div class="tab-line" style="width:70%"></div><div class="tab-line-sm"></div></div>
+            <div class="tab-badge">state.edu</div>
+          </div>
+          <div class="tab-row">
+            <div class="tab-dot" style="background:#8b5cf6"></div>
+            <div class="tab-lines"><div class="tab-line" style="width:80%"></div><div class="tab-line-sm"></div></div>
+            <div class="tab-badge">state.edu</div>
+          </div>
+          <div class="tab-row">
+            <div class="tab-dot" style="background:#06b6d4"></div>
+            <div class="tab-lines"><div class="tab-line" style="width:60%"></div><div class="tab-line-sm"></div></div>
+            <div class="tab-badge">cc.edu</div>
+          </div>
+        </div>
+      </div>
+      <div class="step-title">Add your accounts</div>
+      <div class="step-desc">Connect each Canvas domain and token. Takes under a minute per campus.</div>
+    </div>
+
+    <!-- step 2 -->
+    <div class="step-col active">
+      <div class="step-num">2</div>
+      <div class="step-card">
+        <div class="merge-preview">
+          <div class="merge-row">
+            <div class="mc mc1">A</div>
+            <div class="mc mc2">B</div>
+            <div class="mc mc3">C</div>
+          </div>
+          <div class="merge-arrow">↓</div>
+          <div class="merge-result">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="merge-caption">syncing · tokens encrypted</div>
+        </div>
+      </div>
+      <div class="step-title">CanvasMerge syncs</div>
+      <div class="step-desc">Tokens are encrypted at rest. Courses and planner items are pulled together automatically.</div>
+    </div>
+
+    <!-- step 3: real dashboard mockup -->
+    <div class="step-col">
+      <div class="step-num">3</div>
+      <div class="step-card">
+        <div class="mini-dash">
+          <div class="mini-topbar">
+            <div class="mini-logo">
+              <div class="mini-logo-box"></div>
+              CanvasMerge
+            </div>
+            <div class="mini-tabs-row">
+              <div class="mini-tab active">Assignments</div>
+              <div class="mini-tab">Completed</div>
+            </div>
+          </div>
+          <div class="mini-body">
+            <div class="mini-sidebar">
+              <div class="mini-sidebar-hdr">Courses · 7</div>
+              <div class="mc-item active">
+                <div class="mc-bar" style="background:#6366f1"></div>
+                <div class="mc-text"><div class="mc-dom">state.edu</div><div class="mc-name">Linear Algebra</div></div>
+              </div>
+              <div class="mc-item">
+                <div class="mc-bar" style="background:#8b5cf6"></div>
+                <div class="mc-text"><div class="mc-dom">state.edu</div><div class="mc-name">Algorithms II</div></div>
+              </div>
+              <div class="mc-item">
+                <div class="mc-bar" style="background:#06b6d4"></div>
+                <div class="mc-text"><div class="mc-dom">cc.edu</div><div class="mc-name">English 101</div></div>
+              </div>
+              <div class="mc-item">
+                <div class="mc-bar" style="background:#f59e0b"></div>
+                <div class="mc-text"><div class="mc-dom">cc.edu</div><div class="mc-name">Chemistry</div></div>
+              </div>
+            </div>
+            <div class="mini-main">
+              <div class="mini-filter">
+                <div class="mini-search">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  Search…
+                </div>
+              </div>
+              <div class="mini-chip-row">
+                <div class="mini-chip a">All</div>
+                <div class="mini-chip">Overdue</div>
+                <div class="mini-chip">Today</div>
+              </div>
+              <div class="mini-date-lbl">Due today</div>
+              <div class="mini-card">
+                <div class="mini-ci" style="background:rgba(99,102,241,.15)">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="mini-cb">
+                  <div class="mini-cn" style="color:rgba(99,102,241,.6)">Linear Algebra</div>
+                  <div class="mini-ct">Problem Set 7</div>
+                  <div class="mini-cd">Due today · 11:59 PM</div>
+                </div>
+                <div class="mini-cr">
+                  <div class="mini-pts">50 pts</div>
+                  <div class="mini-avs">
+                    <div class="mini-av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">D</div>
+                  </div>
+                </div>
+              </div>
+              <div class="mini-card">
+                <div class="mini-ci" style="background:rgba(6,182,212,.1)">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </div>
+                <div class="mini-cb">
+                  <div class="mini-cn" style="color:rgba(6,182,212,.6)">English 101</div>
+                  <div class="mini-ct">Reading Response</div>
+                  <div class="mini-cd">Due today · 11:59 PM</div>
+                </div>
+                <div class="mini-cr">
+                  <div class="mini-pts">25 pts</div>
+                  <div class="mini-avs">
+                    <div class="mini-av" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">D</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-title">One readable dashboard</div>
+      <div class="step-desc">All due dates in one place. Campus-aware filters. Light and dark mode.</div>
+    </div>
+  </div>
+
+  <div style="max-width:1040px;margin:28px auto 0;padding:0 0">
+    <div style="background:rgba(99,102,241,.07);border:1px dashed rgba(99,102,241,.22);border-radius:10px;padding:12px 18px;font-size:11px;color:rgba(255,255,255,.38);">
+      <strong style="color:#a5b4fc">In the real page:</strong> This is sticky while you scroll. Steps illuminate sequentially as scroll progress crosses each threshold — powered by Framer Motion <code style="font-size:10px;background:rgba(255,255,255,.05);padding:2px 5px;border-radius:3px">useScroll + useTransform</code>.
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ══ -->
+<section class="features-section" style="position:relative">
+  <div class="label">③ Features — each card slides up on scroll · staggered delay</div>
+  <div style="max-width:1040px;margin:0 auto;text-align:center">
+    <div class="overline">Less switching, more finishing</div>
+    <h2 class="sec-h2">The parts students actually need.</h2>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card">
+      <div class="feat-icon fi-cyan">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div class="feat-title">Bring every Canvas account together</div>
+      <div class="feat-desc">Connect school, dual-enrollment, and campus accounts without juggling tabs or calendars.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-green">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="feat-title">See the work that needs you next</div>
+      <div class="feat-desc">Assignments, due dates, and completed items in one dashboard built for quick scanning.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-amber">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      </div>
+      <div class="feat-title">Filter down to the moment</div>
+      <div class="feat-desc">Move between courses, campuses, and completion states when your week gets loud.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-rose">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div class="feat-title">Keep access tokens protected</div>
+      <div class="feat-desc">Canvas tokens are encrypted at rest while CanvasMerge does the retrieval work for you.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="how-section" style="position:relative">
+  <div class="label">④ How it works — steps slide in from left · staggered</div>
+  <div style="text-align:center">
+    <div class="overline">From setup to sorted</div>
+    <h2 class="sec-h2">Your schoolwork gets one readable lane.</h2>
+  </div>
+  <div class="how-steps">
+    <div class="how-step"><div class="how-num">1</div><div class="how-text">Sign in once.</div></div>
+    <div class="how-step"><div class="how-num">2</div><div class="how-text">Add each Canvas domain and token.</div></div>
+    <div class="how-step"><div class="how-num">3</div><div class="how-text">Open a merged planner that stays readable.</div></div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section" style="position:relative">
+  <div class="label">⑤ CTA — ambient glow · fade up</div>
+  <div class="cta-glow"></div>
+  <h2 class="cta-h2">Bring every Canvas deadline into view.</h2>
+  <p class="cta-sub">Start with one account, add the rest when you are ready.</p>
+  <div class="cta-btns">
+    <div class="btn-cta">Start merging →</div>
+    <div class="btn-cta-sec">Sign in</div>
+  </div>
+</section>
+
+<!-- ══ LIGHT MODE ══ -->
+<div class="lm-sep">☀ Light mode hero preview ↓</div>
+<section class="light-hero">
+  <div class="lh-orb1"></div><div class="lh-orb2"></div>
+
+  <div style="position:relative;z-index:1">
+    <div class="lh-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>
+      Built for students with more than one Canvas world
+    </div>
+    <h1 class="lh-h1">Every Canvas.<br><span class="accent">One view.</span></h1>
+    <p class="lh-p">One calm command center for every Canvas campus, course, due date, and assignment.</p>
+    <div class="lh-cta">
+      <div class="btn-lh-p">Start merging <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="btn-lh-s">View dashboard</div>
+    </div>
+  </div>
+
+  <!-- light dashboard mockup -->
+  <div class="lh-right">
+    <div class="lh-mockup-wrap">
+      <div class="lh-mockup-tilt">
+        <div class="lh-dash">
+          <div class="lh-topbar">
+            <div class="lh-logo">
+              <div class="lh-logo-box">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>
+              </div>
+              CanvasMerge
+            </div>
+            <div class="lh-tabs-row">
+              <div class="lh-tab active">Assignments</div>
+              <div class="lh-tab">Completed</div>
+              <div class="lh-tab">Announcements</div>
+            </div>
+            <div class="lh-av">DM</div>
+          </div>
+          <div class="lh-body">
+            <div class="lh-sidebar">
+              <div class="lh-sb-hdr">Courses · 7</div>
+              <div class="lh-ci active">
+                <div class="lh-cbar" style="background:#6366f1"></div>
+                <div class="lh-cinfo"><div class="lh-cdom">state.edu</div><div class="lh-cname">Linear Algebra</div></div>
+              </div>
+              <div class="lh-ci">
+                <div class="lh-cbar" style="background:#8b5cf6"></div>
+                <div class="lh-cinfo"><div class="lh-cdom">state.edu</div><div class="lh-cname">Algorithms II</div></div>
+              </div>
+              <div class="lh-ci">
+                <div class="lh-cbar" style="background:#06b6d4"></div>
+                <div class="lh-cinfo"><div class="lh-cdom">cc.edu</div><div class="lh-cname">English 101</div></div>
+              </div>
+              <div class="lh-ci">
+                <div class="lh-cbar" style="background:#f59e0b"></div>
+                <div class="lh-cinfo"><div class="lh-cdom">cc.edu</div><div class="lh-cname">Chemistry</div></div>
+              </div>
+              <div class="lh-ci">
+                <div class="lh-cbar" style="background:#22c55e"></div>
+                <div class="lh-cinfo"><div class="lh-cdom">cc.edu</div><div class="lh-cname">Stats & Data</div></div>
+              </div>
+            </div>
+            <div class="lh-main">
+              <div class="lh-filter">
+                <div class="lh-search">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  Search assignments…
+                </div>
+              </div>
+              <div class="lh-chip-row">
+                <div class="lh-chip a">All</div>
+                <div class="lh-chip">Overdue</div>
+                <div class="lh-chip">Today</div>
+                <div class="lh-chip">This week</div>
+              </div>
+              <div class="lh-date">Due today</div>
+              <div class="lh-card">
+                <div class="lh-ci2" style="background:rgba(99,102,241,.1)">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="lh-cb"><div class="lh-cn" style="color:rgba(99,102,241,.55)">Linear Algebra</div><div class="lh-ct">Problem Set 7 — Eigenvalues</div><div class="lh-cd">Due today · 11:59 PM</div></div>
+                <div class="lh-cr">
+                  <div class="lh-pts">50 pts</div>
+                  <div class="lh-avrow"><div class="lh-smav" style="background:#6366f1">D</div></div>
+                </div>
+              </div>
+              <div class="lh-card">
+                <div class="lh-ci2" style="background:rgba(6,182,212,.1)">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </div>
+                <div class="lh-cb"><div class="lh-cn" style="color:rgba(6,182,212,.6)">English 101</div><div class="lh-ct">Reading Response</div><div class="lh-cd">Due today · 11:59 PM</div></div>
+                <div class="lh-cr">
+                  <div class="lh-pts">25 pts</div>
+                  <div class="lh-avrow"><div class="lh-smav" style="background:#06b6d4">D</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- annotations -->
+<div class="annots">
+  <div class="ann"><div class="ann-dot" style="background:#6366f1"></div>Hero: text left + tilted dashboard mockup right — fills the viewport</div>
+  <div class="ann"><div class="ann-dot" style="background:#8b5cf6"></div>Dashboard mockup uses real app structure: sidebar with color bars, cards with icon + course + title + due + avatars</div>
+  <div class="ann"><div class="ann-dot" style="background:#06b6d4"></div>Framer Motion: orb drift, particle float, hero text stagger, scroll-story step activation, whileInView for sections</div>
+  <div class="ann"><div class="ann-dot" style="background:#22c55e"></div>No emojis — all icons are inline SVG (matching lucide-react shapes used in the real app)</div>
+</div>
+
+</body>
+</html>

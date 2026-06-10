@@ -2,7 +2,7 @@
 
 Canvas Merge is a Next.js application that integrates with the Canvas LMS API to allow users to connect multiple Canvas accounts and unify their course and planner data into a single, streamlined dashboard. By centralizing assignments, schedules, and course information across accounts, it eliminates the need to switch between platforms and simplifies academic management.
 
-Live site: [canvas-merge.vercel.app](https://canvas-merge.vercel.app/auth/sign-in)
+Live site: [canvas-merge.vercel.app](https://canvas-merge.vercel.app)
 
 ## Screenshots
 
@@ -77,8 +77,8 @@ Then open [http://localhost:3000](http://localhost:3000).
 
 ## App Flow
 
-1. Visit the app and sign in.
-2. The root route redirects to `/dashboard`.
+1. Visit the landing page and sign in.
+2. Open `/dashboard` after signing in.
 3. If no Canvas accounts are connected yet, the dashboard guides the user through connecting one.
 4. Once connected, the dashboard loads merged courses and planner data.
 

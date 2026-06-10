@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animation Style</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f13;
+    color: #f0f0f5;
+    padding: 32px 24px 48px;
+    min-height: 100vh;
+  }
+  .header { text-align: center; margin-bottom: 36px; }
+  .header h1 { font-size: 22px; font-weight: 600; }
+  .header p { margin-top: 8px; font-size: 14px; color: #888; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .card {
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.08);
+    transition: all 0.2s;
+    background: #18181f;
+    position: relative;
+  }
+  .card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+  .card.selected { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.2); }
+  .card.selected::after {
+    content: '✓';
+    position: absolute; top: 10px; right: 10px;
+    background: #6366f1; color: #fff;
+    font-size: 11px; font-weight: 700;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+  }
+
+  /* Demo stage */
+  .stage {
+    height: 220px;
+    background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+
+  /* ========== Option A: Subtle / Breathing ========== */
+  .stage-a .orb1 {
+    position: absolute;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%);
+    top: -80px; right: -60px;
+    border-radius: 50%;
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .stage-a .orb2 {
+    position: absolute;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%);
+    bottom: -40px; left: -20px;
+    border-radius: 50%;
+    animation: breathe 8s ease-in-out infinite reverse;
+  }
+  .stage-a .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 12%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 45%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 75%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 90% 20%, rgba(255,255,255,0.7) 0%, transparent 100%);
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.12); opacity: 0.8; }
+  }
+  .stage-a .text-block { position: relative; z-index: 1; text-align: left; }
+  .stage-a .badge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 10px; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; animation: fade-in-up 1s ease forwards; }
+  .stage-a .title { font-size: 22px; font-weight: 800; color: #fff; line-height: 1.1; animation: fade-in-up 1s 0.15s ease both; }
+  .stage-a .sub { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 6px; animation: fade-in-up 1s 0.3s ease both; }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========== Option B: Dynamic / Parallax ========== */
+  .stage-b {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+  }
+  .stage-b .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    animation: float-particle linear infinite;
+  }
+  .stage-b .p1 { width: 2px; height: 2px; left: 10%; animation-duration: 4s; animation-delay: 0s; top: 80%; }
+  .stage-b .p2 { width: 1.5px; height: 1.5px; left: 25%; animation-duration: 5.5s; animation-delay: -1s; top: 90%; }
+  .stage-b .p3 { width: 2px; height: 2px; left: 45%; animation-duration: 3.8s; animation-delay: -2s; top: 85%; }
+  .stage-b .p4 { width: 1px; height: 1px; left: 65%; animation-duration: 6s; animation-delay: -0.5s; top: 88%; }
+  .stage-b .p5 { width: 2px; height: 2px; left: 80%; animation-duration: 4.5s; animation-delay: -1.5s; top: 92%; }
+  .stage-b .p6 { width: 1.5px; height: 1.5px; left: 55%; animation-duration: 7s; animation-delay: -3s; top: 78%; }
+  @keyframes float-particle {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(-220px) translateX(20px); opacity: 0; }
+  }
+  .stage-b .orb-b1 {
+    position: absolute;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 70%);
+    top: -90px; right: -50px;
+    border-radius: 50%;
+    animation: orbit1 12s ease-in-out infinite;
+  }
+  .stage-b .orb-b2 {
+    position: absolute;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%);
+    bottom: -60px; left: -30px;
+    border-radius: 50%;
+    animation: orbit2 15s ease-in-out infinite;
+  }
+  @keyframes orbit1 {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    33% { transform: translate(-20px, 15px) rotate(120deg); }
+    66% { transform: translate(10px, -10px) rotate(240deg); }
+  }
+  @keyframes orbit2 {
+    0%, 100% { transform: translate(0,0); }
+    50% { transform: translate(25px, -20px); }
+  }
+  .stage-b .text-block-b { position: relative; z-index: 1; text-align: left; }
+  .stage-b .badge-b { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 10px; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; }
+  .stage-b .title-b { font-size: 22px; font-weight: 800; color: #fff; line-height: 1.1; }
+  .stage-b .sub-b { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 6px; }
+
+  /* ========== Option C: Cinematic / Scroll Driven ========== */
+  .stage-c {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+  }
+  .stage-c .aurora {
+    position: absolute; inset: 0;
+    background: conic-gradient(from 180deg at 50% 50%,
+      rgba(99,102,241,0) 0deg,
+      rgba(139,92,246,0.15) 60deg,
+      rgba(6,182,212,0.1) 120deg,
+      rgba(99,102,241,0) 180deg,
+      rgba(168,85,247,0.12) 240deg,
+      rgba(99,102,241,0) 360deg);
+    animation: aurora-spin 20s linear infinite;
+    transform-origin: center;
+  }
+  @keyframes aurora-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .stage-c .glare {
+    position: absolute;
+    top: -30%; left: 50%; transform: translateX(-50%);
+    width: 120%; height: 60%;
+    background: radial-gradient(ellipse, rgba(99,102,241,0.2) 0%, transparent 70%);
+    animation: glare-pulse 4s ease-in-out infinite;
+  }
+  @keyframes glare-pulse {
+    0%, 100% { opacity: 0.6; transform: translateX(-50%) scaleX(1); }
+    50% { opacity: 1; transform: translateX(-50%) scaleX(1.1); }
+  }
+  .stage-c .word1 { display: inline-block; animation: word-in 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .stage-c .word2 { display: inline-block; animation: word-in 0.6s 0.1s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .stage-c .word3 { display: inline-block; animation: word-in 0.6s 0.2s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .stage-c .word4 { display: inline-block; animation: word-in 0.6s 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .stage-c .word5 { display: inline-block; animation: word-in 0.6s 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+  @keyframes word-in {
+    from { opacity: 0; transform: translateY(20px) rotateX(-30deg); }
+    to { opacity: 1; transform: translateY(0) rotateX(0); }
+  }
+  .stage-c .text-block-c { position: relative; z-index: 1; text-align: left; }
+  .stage-c .badge-c { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); font-size: 10px; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; animation: fade-in-c 0.8s ease both; }
+  @keyframes fade-in-c { from { opacity: 0; } to { opacity: 1; } }
+  .stage-c .title-c { font-size: 22px; font-weight: 800; color: #fff; line-height: 1.1; perspective: 400px; }
+  .stage-c .sub-c { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 6px; animation: fade-in-c 1s 0.6s ease both; }
+
+  /* Stars shared */
+  .stars-shared {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 42%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 28% 62%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 88% 22%, rgba(255,255,255,0.8) 0%, transparent 100%);
+  }
+
+  .card-body {
+    padding: 14px 16px 18px;
+    background: #18181f;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .card-body h3 { font-size: 14px; font-weight: 700; color: #f0f0f5; }
+  .card-body p { font-size: 11px; color: #666; margin-top: 4px; line-height: 1.5; }
+  .tag-row { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+  .tag { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 10px; letter-spacing: 0.04em; }
+  .tag-green { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .tag-yellow { background: rgba(251,191,36,0.12); color: #fbbf24; }
+  .tag-purple { background: rgba(168,85,247,0.15); color: #c084fc; }
+  .tag-blue { background: rgba(99,102,241,0.15); color: #818cf8; }
+
+  .footer { text-align: center; margin-top: 28px; font-size: 13px; color: #555; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>How animated should it feel?</h1>
+  <p>All use Framer Motion (already installed). Live previews below — the animations are running right now.</p>
+</div>
+
+<div class="cards">
+
+  <!-- A: Subtle / Breathing -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="stage stage-a">
+      <div class="stars"></div>
+      <div class="orb1"></div>
+      <div class="orb2"></div>
+      <div class="text-block">
+        <div class="badge">For students juggling campuses</div>
+        <div class="title">One merged view<br>for Canvas.</div>
+        <div class="sub">Connect every campus. See what's due.</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Subtle & Breathing</h3>
+      <p>Orbs gently pulse in/out. Text slides up on load. Stars always visible. Scroll sections fade in as they enter the viewport. Nothing fights for attention.</p>
+      <div class="tag-row">
+        <span class="tag tag-green">Calm</span>
+        <span class="tag tag-green">Fast-loading</span>
+        <span class="tag tag-green">Accessible</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: Dynamic / Particles -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="stage stage-b">
+      <div class="stars-shared"></div>
+      <div class="orb-b1"></div>
+      <div class="orb-b2"></div>
+      <div class="particle p1"></div>
+      <div class="particle p2"></div>
+      <div class="particle p3"></div>
+      <div class="particle p4"></div>
+      <div class="particle p5"></div>
+      <div class="particle p6"></div>
+      <div class="text-block-b">
+        <div class="badge-b">For students juggling campuses</div>
+        <div class="title-b">One merged view<br>for Canvas.</div>
+        <div class="sub-b">Connect every campus. See what's due.</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Dynamic & Particles</h3>
+      <p>Orbs orbit slowly. Tiny particles float upward. Text animates in with a stagger. On scroll, sections slide in from the side. Hero has a mild parallax depth effect.</p>
+      <div class="tag-row">
+        <span class="tag tag-yellow">Lively</span>
+        <span class="tag tag-yellow">Immersive</span>
+        <span class="tag tag-yellow">Moderate weight</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: Cinematic -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="stage stage-c">
+      <div class="stars-shared"></div>
+      <div class="aurora"></div>
+      <div class="glare"></div>
+      <div class="text-block-c">
+        <div class="badge-c">For students juggling campuses</div>
+        <div class="title-c">
+          <span class="word1">One </span>
+          <span class="word2">merged </span>
+          <span class="word3">view</span><br>
+          <span class="word4">for </span>
+          <span class="word5">Canvas.</span>
+        </div>
+        <div class="sub-c">Connect every campus. See what's due.</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Cinematic & Word-by-Word</h3>
+      <p>Aurora / conic gradient sweeps behind the hero. Headline reveals word-by-word with a spring flip. Scroll sections animate with bigger, more dramatic entrances.</p>
+      <div class="tag-row">
+        <span class="tag tag-purple">Dramatic</span>
+        <span class="tag tag-purple">Memorable</span>
+        <span class="tag tag-blue">Heavier perf</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>The animations above are live CSS previews. Framer Motion will make them smoother in-app. Click a card, then reply in the terminal.</span>
+</div>
+
+<script>
+function toggleSelect(el) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  fetch('/select', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'click', choice: el.getAttribute('data-choice'), text: el.querySelector('h3').textContent })
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>

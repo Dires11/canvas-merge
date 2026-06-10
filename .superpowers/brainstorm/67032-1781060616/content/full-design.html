@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanvasMerge — Full Landing Page Design</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0f;
+    color: #f0f0f5;
+    overflow-x: hidden;
+  }
+
+  /* ─── Section labels ─── */
+  .section-tag {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: rgba(99,102,241,0.18);
+    border: 1px solid rgba(99,102,241,0.35);
+    color: #a5b4fc;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px;
+    z-index: 100;
+  }
+
+  /* ═══════════════════════════════════
+     SECTION 1 — HERO
+  ═══════════════════════════════════ */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 40px 56px;
+  }
+
+  /* Navbar */
+  .hero-nav {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    z-index: 10;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 16px; font-weight: 700; }
+  .logo-icon { width: 34px; height: 34px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 16px; height: 16px; color: #0f0f13; }
+  .nav-btns { display: flex; gap: 8px; }
+  .btn-ghost { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 8px; }
+  .btn-white { background: #fff; color: #0f0f13; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 8px; }
+
+  /* Orbs */
+  .orb {
+    position: absolute; border-radius: 50%; pointer-events: none;
+  }
+  .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(99,102,241,0.4) 0%, transparent 65%); top: -200px; right: -100px; animation: orb-drift1 14s ease-in-out infinite; }
+  .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 65%); bottom: -100px; left: -50px; animation: orb-drift2 18s ease-in-out infinite; }
+  .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(6,182,212,0.18) 0%, transparent 65%); top: 40%; left: 50%; animation: orb-drift3 22s ease-in-out infinite; }
+  @keyframes orb-drift1 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(-30px,20px)} 66%{transform:translate(15px,-15px)} }
+  @keyframes orb-drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-25px)} }
+  @keyframes orb-drift3 { 0%,100%{transform:translate(-50%,0)} 50%{transform:translate(-50%,-30px)} }
+
+  /* Stars */
+  .stars {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8% 12%, rgba(255,255,255,0.85) 0%,transparent 100%),
+      radial-gradient(1px 1px at 22% 8%, rgba(255,255,255,0.6) 0%,transparent 100%),
+      radial-gradient(1px 1px at 42% 20%, rgba(255,255,255,0.5) 0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 65% 5%, rgba(255,255,255,0.75) 0%,transparent 100%),
+      radial-gradient(1px 1px at 78% 18%, rgba(255,255,255,0.55) 0%,transparent 100%),
+      radial-gradient(1px 1px at 88% 35%, rgba(255,255,255,0.7) 0%,transparent 100%),
+      radial-gradient(1px 1px at 15% 45%, rgba(255,255,255,0.4) 0%,transparent 100%),
+      radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.5) 0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 92% 60%, rgba(255,255,255,0.65) 0%,transparent 100%),
+      radial-gradient(1px 1px at 30% 72%, rgba(255,255,255,0.45) 0%,transparent 100%);
+    animation: stars-twinkle 8s ease-in-out infinite alternate;
+  }
+  @keyframes stars-twinkle { 0%{opacity:0.7} 100%{opacity:1} }
+
+  /* Particles */
+  .particle { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.55); pointer-events: none; animation: float-up linear infinite; }
+  .pa { width:2px;height:2px; left:12%; top:95%; animation-duration:5s; animation-delay:0s; }
+  .pb { width:1.5px;height:1.5px; left:27%; top:90%; animation-duration:6.5s; animation-delay:-1.5s; }
+  .pc { width:2px;height:2px; left:48%; top:88%; animation-duration:4.5s; animation-delay:-3s; }
+  .pd { width:1px;height:1px; left:64%; top:93%; animation-duration:7s; animation-delay:-0.8s; }
+  .pe { width:2px;height:2px; left:80%; top:91%; animation-duration:5.5s; animation-delay:-2s; }
+  .pf { width:1.5px;height:1.5px; left:36%; top:85%; animation-duration:8s; animation-delay:-4s; }
+  .pg { width:1px;height:1px; left:72%; top:87%; animation-duration:6s; animation-delay:-1s; }
+  @keyframes float-up {
+    0%{transform:translateY(0) translateX(0);opacity:0}
+    8%{opacity:0.7}
+    92%{opacity:0.4}
+    100%{transform:translateY(-100vh) translateX(15px);opacity:0}
+  }
+
+  /* Hero content */
+  .hero-content { position: relative; z-index: 5; max-width: 900px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.72); font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; margin-bottom: 24px; animation: fade-up 0.9s ease both; }
+  .hero-badge svg { width: 14px; height: 14px; color: #a5b4fc; }
+  .hero-h1 { font-size: clamp(52px, 8vw, 88px); font-weight: 900; line-height: 0.95; color: #fff; letter-spacing: -0.03em; animation: fade-up 0.9s 0.1s ease both; }
+  .hero-h1 .word { display: inline-block; }
+  .hero-sub { margin-top: 20px; font-size: 18px; color: rgba(255,255,255,0.62); line-height: 1.6; max-width: 520px; animation: fade-up 0.9s 0.25s ease both; }
+  .hero-cta { margin-top: 28px; display: flex; gap: 12px; animation: fade-up 0.9s 0.38s ease both; }
+  .btn-hero-primary { background: #fff; color: #0f0f13; font-size: 14px; font-weight: 700; padding: 12px 24px; border-radius: 10px; display: flex; align-items: center; gap: 6px; }
+  .btn-hero-sec { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.82); font-size: 14px; font-weight: 600; padding: 12px 24px; border-radius: 10px; }
+  .scroll-hint { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 5; animation: bounce 2s ease-in-out infinite; }
+  .scroll-hint-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.4); }
+  .scroll-hint-line { width: 1px; height: 32px; background: linear-gradient(to bottom, rgba(255,255,255,0.35), transparent); }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+  @keyframes fade-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ═══════════════════════════════════
+     SECTION 2 — STICKY SCROLL STORY
+  ═══════════════════════════════════ */
+  .scroll-story-wrapper {
+    background: #0a0a0f;
+    position: relative;
+    padding: 80px 0;
+  }
+  .scroll-story-label {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 0 40px;
+  }
+  .overline { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #818cf8; margin-bottom: 10px; }
+  .section-h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; line-height: 1.1; }
+  .section-sub { font-size: 16px; color: rgba(255,255,255,0.5); margin-top: 10px; }
+
+  .story-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+  }
+  .story-steps::before {
+    content: '';
+    position: absolute;
+    top: 60px; left: calc(40px + 16.66%); right: calc(40px + 16.66%);
+    height: 1px;
+    background: linear-gradient(90deg, rgba(99,102,241,0.5), rgba(6,182,212,0.5));
+  }
+
+  .story-step {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: 0 20px;
+  }
+  .step-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid rgba(99,102,241,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: #a5b4fc;
+    background: #0a0a0f;
+    position: relative; z-index: 1; margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+  .story-step.active .step-dot { background: #6366f1; border-color: #6366f1; color: #fff; box-shadow: 0 0 0 8px rgba(99,102,241,0.15); }
+  .step-preview {
+    width: 100%; border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 16px;
+    background: #12121a;
+  }
+  .step-title { font-size: 14px; font-weight: 700; color: #f0f0f5; margin-bottom: 6px; }
+  .step-desc { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+  /* Step 1 preview — scattered tabs */
+  .preview-chaos {
+    padding: 14px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .chaos-tab {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 6px; padding: 7px 10px;
+  }
+  .chaos-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .chaos-text { flex: 1; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.12); }
+  .chaos-sub { width: 40%; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.06); }
+  .chaos-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+
+  /* Step 2 preview — merging animation */
+  .preview-merge {
+    padding: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; min-height: 120px;
+  }
+  .merge-ring {
+    position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .merge-circle {
+    width: 36px; height: 36px; border-radius: 50%; border: 2px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800;
+    animation: merge-pulse 2s ease-in-out infinite;
+  }
+  .mc1 { border-color: #6366f1; color: #6366f1; background: rgba(99,102,241,0.1); margin-right: -10px; z-index: 1; }
+  .mc2 { border-color: #8b5cf6; color: #8b5cf6; background: rgba(139,92,246,0.1); z-index: 2; }
+  .mc3 { border-color: #06b6d4; color: #06b6d4; background: rgba(6,182,212,0.1); margin-left: -10px; z-index: 1; }
+  @keyframes merge-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  .merge-arrow { font-size: 16px; color: rgba(255,255,255,0.3); animation: arrow-pulse 1.5s ease-in-out infinite; }
+  @keyframes arrow-pulse { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.15)} }
+  .merge-result {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 900; color: #fff;
+    box-shadow: 0 0 20px rgba(99,102,241,0.4);
+    animation: result-glow 2s ease-in-out infinite;
+  }
+  @keyframes result-glow { 0%,100%{box-shadow:0 0 20px rgba(99,102,241,0.4)} 50%{box-shadow:0 0 30px rgba(99,102,241,0.65)} }
+  .merge-caption { font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 0.05em; }
+
+  /* Step 3 preview — dashboard mockup */
+  .preview-dashboard {
+    display: flex; gap: 0;
+    min-height: 130px;
+  }
+  .dash-sidebar {
+    width: 38%; border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 10px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .dash-sidebar-label { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; padding: 0 2px; }
+  .course-item {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 5px; border-radius: 4px;
+    background: rgba(255,255,255,0.03);
+  }
+  .course-item.active { background: rgba(99,102,241,0.15); }
+  .course-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .course-name { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.2); flex: 1; }
+  .course-item.active .course-name { background: rgba(165,180,252,0.5); }
+  .campus-tag { height: 5px; border-radius: 2px; background: rgba(255,255,255,0.08); width: 55%; }
+
+  .dash-main { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .dash-date-label { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.06em; }
+  .dash-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 7px; border-radius: 5px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.03);
+  }
+  .check-circle { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+  .check-circle.done { background: #22c55e; border-color: #22c55e; }
+  .item-text { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.18); flex: 1; }
+  .item-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ═══════════════════════════════════
+     SECTION 3 — FEATURE CARDS
+  ═══════════════════════════════════ */
+  .features-section {
+    padding: 80px 40px;
+    background: #0f0f18;
+    position: relative;
+  }
+  .features-section::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 1100px;
+    margin: 40px auto 0;
+  }
+  .feature-card {
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.03);
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .feature-card:hover { border-color: rgba(99,102,241,0.35); }
+  .feature-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 14px;
+  }
+  .fi-cyan { background: rgba(6,182,212,0.12); }
+  .fi-green { background: rgba(34,197,94,0.12); }
+  .fi-amber { background: rgba(251,191,36,0.12); }
+  .fi-rose { background: rgba(244,63,94,0.12); }
+  .feature-title { font-size: 14px; font-weight: 700; color: #f0f0f5; margin-bottom: 8px; }
+  .feature-desc { font-size: 12px; color: rgba(255,255,255,0.42); line-height: 1.6; }
+
+  /* ═══════════════════════════════════
+     SECTION 4 — HOW IT WORKS (dark)
+  ═══════════════════════════════════ */
+  .how-section {
+    padding: 80px 40px;
+    background: #070710;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .how-steps { display: flex; flex-direction: column; gap: 12px; max-width: 520px; margin: 40px auto 0; }
+  .how-step {
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px; padding: 16px 20px;
+    transition: border-color 0.2s;
+  }
+  .how-step:hover { border-color: rgba(99,102,241,0.3); }
+  .step-num { width: 36px; height: 36px; border-radius: 10px; background: #fff; color: #0f0f13; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-text { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.82); }
+
+  /* ═══════════════════════════════════
+     SECTION 5 — CTA
+  ═══════════════════════════════════ */
+  .cta-section {
+    padding: 80px 40px 100px;
+    background: linear-gradient(180deg, #070710 0%, #0c0c1a 100%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-orb {
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .cta-h2 { font-size: clamp(28px, 4vw, 48px); font-weight: 900; color: #fff; position: relative; z-index: 1; }
+  .cta-sub { font-size: 16px; color: rgba(255,255,255,0.5); margin-top: 12px; position: relative; z-index: 1; }
+  .cta-btns { display: flex; gap: 12px; justify-content: center; margin-top: 28px; position: relative; z-index: 1; }
+  .btn-cta { background: #fff; color: #0f0f13; font-size: 14px; font-weight: 700; padding: 13px 28px; border-radius: 10px; }
+  .btn-cta-sec { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.75); font-size: 14px; font-weight: 600; padding: 13px 28px; border-radius: 10px; }
+
+  /* ═══════════════════════════════════
+     LIGHT MODE PREVIEW
+  ═══════════════════════════════════ */
+  .light-preview {
+    background: #f8f7ff;
+    padding: 40px;
+    border-top: 3px solid rgba(99,102,241,0.3);
+  }
+  .light-preview-label {
+    text-align: center;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #6366f1; margin-bottom: 24px;
+  }
+  .light-hero-mini {
+    max-width: 800px; margin: 0 auto;
+    border-radius: 16px; overflow: hidden;
+    background: linear-gradient(135deg, #f8f7ff 0%, #ede9fe 50%, #ddd6fe 100%);
+    padding: 40px 40px 50px;
+    position: relative;
+  }
+  .light-orb1 { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%); top: -150px; right: -80px; border-radius: 50%; }
+  .light-orb2 { position: absolute; width: 260px; height: 260px; background: radial-gradient(circle, rgba(139,92,246,0.14) 0%, transparent 70%); bottom: -80px; left: -30px; border-radius: 50%; }
+  .light-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.18); color: #6366f1; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 18px; position: relative; z-index: 1; }
+  .light-h1 { font-size: 38px; font-weight: 900; color: #1e1b4b; line-height: 1; letter-spacing: -0.03em; position: relative; z-index: 1; }
+  .light-sub { font-size: 15px; color: #4c4891; margin-top: 12px; max-width: 380px; line-height: 1.6; position: relative; z-index: 1; }
+  .light-cta { display: flex; gap: 10px; margin-top: 22px; position: relative; z-index: 1; }
+  .btn-light-primary { background: #1e1b4b; color: #fff; font-size: 13px; font-weight: 700; padding: 10px 20px; border-radius: 9px; }
+  .btn-light-sec { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); color: #6366f1; font-size: 13px; font-weight: 600; padding: 10px 20px; border-radius: 9px; }
+
+  /* ─── Annotations ─── */
+  .annotation-bar {
+    background: #13131e;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 18px 40px;
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 11px;
+  }
+  .ann { display: flex; align-items: center; gap: 7px; color: rgba(255,255,255,0.45); }
+  .ann-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .ann-dot-anim { background: #6366f1; }
+  .ann-dot-mockup { background: #8b5cf6; }
+  .ann-dot-scroll { background: #06b6d4; }
+  .ann-dot-framer { background: #818cf8; }
+
+  /* Dividers */
+  .section-divider {
+    background: #0a0a0f; padding: 10px 40px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.2); text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  @media (max-width: 768px) {
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .story-steps { grid-template-columns: 1fr; }
+    .hero { padding: 0 20px 40px; }
+    .hero-nav { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ SECTION 1: HERO ═══ -->
+<section class="hero" style="position:relative">
+  <div class="section-tag">① Hero — full viewport · animated orbs + particles + staggered text</div>
+
+  <nav class="hero-nav">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      CanvasMerge
+    </div>
+    <div class="nav-btns">
+      <div class="btn-ghost">Sign in</div>
+      <div class="btn-white">Get started</div>
+    </div>
+  </nav>
+
+  <div class="stars"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="particle pa"></div>
+  <div class="particle pb"></div>
+  <div class="particle pc"></div>
+  <div class="particle pd"></div>
+  <div class="particle pe"></div>
+  <div class="particle pf"></div>
+  <div class="particle pg"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>
+      Built for students with more than one Canvas world
+    </div>
+    <h1 class="hero-h1">
+      <span class="word">Every </span>
+      <span class="word">Canvas.</span><br>
+      <span class="word">One </span>
+      <span class="word" style="color: #a5b4fc">view.</span>
+    </h1>
+    <p class="hero-sub">One calm command center for every Canvas campus, course, due date, and assignment competing for your attention.</p>
+    <div class="hero-cta">
+      <div class="btn-hero-primary">Start merging <span style="margin-left:2px">→</span></div>
+      <div class="btn-hero-sec">View dashboard</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-hint-dot"></div>
+    <div class="scroll-hint-line"></div>
+    <div class="scroll-hint-dot"></div>
+  </div>
+</section>
+
+<div class="section-divider">scroll ↓ sticky story section</div>
+
+<!-- ═══ SECTION 2: STICKY SCROLL STORY ═══ -->
+<section class="scroll-story-wrapper" style="position:relative">
+  <div class="section-tag">② Sticky Scroll — 3 steps animate as you scroll through · Framer Motion useScroll</div>
+  <div class="scroll-story-label">
+    <div class="overline">From chaos to clarity</div>
+    <h2 class="section-h2">Your Canvas world, finally merged.</h2>
+    <p class="section-sub">Scroll to see how it works.</p>
+  </div>
+
+  <div class="story-steps">
+    <!-- Step 1 -->
+    <div class="story-step">
+      <div class="step-dot">1</div>
+      <div class="step-preview">
+        <div class="preview-chaos">
+          <div class="chaos-label">3 separate Canvas tabs</div>
+          <div class="chaos-tab">
+            <div class="chaos-dot" style="background:#6366f1"></div>
+            <div>
+              <div class="chaos-text"></div>
+              <div class="chaos-sub" style="margin-top:4px"></div>
+            </div>
+          </div>
+          <div class="chaos-tab">
+            <div class="chaos-dot" style="background:#8b5cf6"></div>
+            <div>
+              <div class="chaos-text"></div>
+              <div class="chaos-sub" style="margin-top:4px"></div>
+            </div>
+          </div>
+          <div class="chaos-tab">
+            <div class="chaos-dot" style="background:#06b6d4"></div>
+            <div>
+              <div class="chaos-text"></div>
+              <div class="chaos-sub" style="margin-top:4px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-title">Add your accounts</div>
+      <div class="step-desc">Connect each Canvas domain and token. Takes under a minute per campus.</div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="story-step active">
+      <div class="step-dot active">2</div>
+      <div class="step-preview">
+        <div class="preview-merge">
+          <div class="merge-ring">
+            <div class="merge-circle mc1">A</div>
+            <div class="merge-circle mc2">B</div>
+            <div class="merge-circle mc3">C</div>
+          </div>
+          <div class="merge-arrow">↓</div>
+          <div class="merge-result">✦</div>
+          <div class="merge-caption">merging…</div>
+        </div>
+      </div>
+      <div class="step-title">CanvasMerge syncs</div>
+      <div class="step-desc">Tokens are encrypted. Courses and planner items are pulled together automatically.</div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="story-step">
+      <div class="step-dot">3</div>
+      <div class="step-preview">
+        <div class="preview-dashboard">
+          <div class="dash-sidebar">
+            <div class="dash-sidebar-label">All courses</div>
+            <div class="course-item active">
+              <div class="course-dot" style="background:#6366f1"></div>
+              <div>
+                <div class="course-name"></div>
+                <div class="campus-tag" style="margin-top:3px"></div>
+              </div>
+            </div>
+            <div class="course-item">
+              <div class="course-dot" style="background:#8b5cf6"></div>
+              <div>
+                <div class="course-name"></div>
+                <div class="campus-tag" style="margin-top:3px"></div>
+              </div>
+            </div>
+            <div class="course-item">
+              <div class="course-dot" style="background:#06b6d4"></div>
+              <div>
+                <div class="course-name"></div>
+                <div class="campus-tag" style="margin-top:3px"></div>
+              </div>
+            </div>
+            <div class="course-item">
+              <div class="course-dot" style="background:#f59e0b"></div>
+              <div>
+                <div class="course-name"></div>
+                <div class="campus-tag" style="margin-top:3px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="dash-main">
+            <div class="dash-date-label">Due soon</div>
+            <div class="dash-item">
+              <div class="check-circle"></div>
+              <div class="item-text"></div>
+              <div class="item-dot" style="background:#6366f1"></div>
+            </div>
+            <div class="dash-item">
+              <div class="check-circle done"></div>
+              <div class="item-text" style="opacity:0.4"></div>
+              <div class="item-dot" style="background:#8b5cf6"></div>
+            </div>
+            <div class="dash-item">
+              <div class="check-circle"></div>
+              <div class="item-text"></div>
+              <div class="item-dot" style="background:#06b6d4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-title">One readable dashboard</div>
+      <div class="step-desc">All due dates in one place. Campus-aware filters. Light and dark mode.</div>
+    </div>
+  </div>
+
+  <!-- Scroll implementation note -->
+  <div style="max-width:1100px;margin:40px auto 0;padding:0 40px">
+    <div style="background:rgba(99,102,241,0.08);border:1px dashed rgba(99,102,241,0.25);border-radius:10px;padding:14px 20px;font-size:12px;color:rgba(255,255,255,0.45);">
+      <strong style="color:#a5b4fc">In the real page:</strong> This section is sticky — the 3 steps are locked in place while the user scrolls. Each step lights up (active state + scale + fade) as scroll progress crosses its threshold. Powered by Framer Motion <code style="font-size:10px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px">useScroll + useTransform</code>.
+    </div>
+  </div>
+</section>
+
+<div class="section-divider">features section</div>
+
+<!-- ═══ SECTION 3: FEATURE CARDS ═══ -->
+<section class="features-section" style="position:relative">
+  <div class="section-tag">③ Features — staggered scroll-in · each card slides up with delay</div>
+  <div style="max-width:1100px;margin:0 auto;text-align:center">
+    <div class="overline">Less switching, more finishing</div>
+    <h2 class="section-h2">The parts students actually need.</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon fi-cyan">🔗</div>
+      <div class="feature-title">Bring every Canvas account together</div>
+      <div class="feature-desc">Connect school, dual-enrollment, and campus Canvas accounts without juggling tabs or calendars.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon fi-green">📅</div>
+      <div class="feature-title">See the work that needs you next</div>
+      <div class="feature-desc">Assignments, due dates, and completed items land in one dashboard built for quick scanning.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon fi-amber">🔍</div>
+      <div class="feature-title">Filter down to the moment</div>
+      <div class="feature-desc">Move between courses, campuses, and completion states when your week gets loud.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon fi-rose">🔒</div>
+      <div class="feature-title">Keep access tokens protected</div>
+      <div class="feature-desc">Canvas tokens are encrypted at rest while CanvasMerge does the retrieval work for you.</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider">how it works + cta</div>
+
+<!-- ═══ SECTION 4: HOW IT WORKS ═══ -->
+<section class="how-section" style="position:relative">
+  <div class="section-tag">④ How it works — steps stagger in from left on scroll</div>
+  <div style="text-align:center">
+    <div class="overline">From setup to sorted</div>
+    <h2 class="section-h2">Your schoolwork gets one readable lane.</h2>
+  </div>
+  <div class="how-steps">
+    <div class="how-step"><div class="step-num">1</div><div class="step-text">Sign in once.</div></div>
+    <div class="how-step"><div class="step-num">2</div><div class="step-text">Add each Canvas domain and token.</div></div>
+    <div class="how-step"><div class="step-num">3</div><div class="step-text">Open a merged planner that stays readable.</div></div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 5: CTA ═══ -->
+<section class="cta-section" style="position:relative">
+  <div class="section-tag">⑤ CTA — ambient orb glow · buttons fade up</div>
+  <div class="cta-orb"></div>
+  <h2 class="cta-h2">Bring every Canvas deadline into view.</h2>
+  <p class="cta-sub">Start with one account, add the rest when you're ready.</p>
+  <div class="cta-btns">
+    <div class="btn-cta">Start merging →</div>
+    <div class="btn-cta-sec">Sign in</div>
+  </div>
+</section>
+
+<!-- ═══ LIGHT MODE PREVIEW ═══ -->
+<div class="section-divider" style="background:#f0edff;color:#9ca3c8;border-color:#e8e2f8">light mode hero preview ↓</div>
+<div class="light-preview">
+  <div class="light-preview-label">☀ Light mode — hero adapts to soft lavender gradient</div>
+  <div class="light-hero-mini">
+    <div class="light-orb1"></div>
+    <div class="light-orb2"></div>
+    <div class="light-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>
+      Built for students with more than one Canvas world
+    </div>
+    <h1 class="light-h1">Every Canvas.<br><span style="color:#6366f1">One view.</span></h1>
+    <p class="light-sub">One calm command center for every Canvas campus, course, due date, and assignment.</p>
+    <div class="light-cta">
+      <div class="btn-light-primary">Start merging →</div>
+      <div class="btn-light-sec">View dashboard</div>
+    </div>
+  </div>
+</div>
+
+<!-- Annotation bar -->
+<div class="annotation-bar">
+  <div class="ann"><div class="ann-dot ann-dot-anim"></div> Framer Motion: orbs drift + particles float (always on)</div>
+  <div class="ann"><div class="ann-dot ann-dot-scroll"></div> Framer Motion useScroll: sticky story steps activate on scroll progress</div>
+  <div class="ann"><div class="ann-dot ann-dot-mockup"></div> HTML/CSS dashboard mockup — no stale screenshots</div>
+  <div class="ann"><div class="ann-dot ann-dot-framer"></div> Sections ③④⑤ use Framer Motion whileInView for scroll-triggered entrances</div>
+</div>
+
+</body>
+</html>

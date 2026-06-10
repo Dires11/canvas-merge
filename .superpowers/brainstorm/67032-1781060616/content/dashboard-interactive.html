@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanvasMerge — Interactive Dashboard Mockup</title>
+<style>
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── App-accurate CSS variables ─── */
+:root {
+  --bg:          oklch(0.27 0.05 268);
+  --bg-darker:   oklch(0.22 0.05 268);
+  --bg-sidebar:  oklch(0.235 0.05 268);
+  --glass:       rgba(255,255,255,1);
+  --glass-5:     rgba(255,255,255,0.05);
+  --glass-8:     rgba(255,255,255,0.08);
+  --glass-10:    rgba(255,255,255,0.10);
+  --glass-12:    rgba(255,255,255,0.12);
+  --glass-15:    rgba(255,255,255,0.15);
+  --glass-20:    rgba(255,255,255,0.20);
+  --border-t:    rgba(255,255,255,0.15);
+  --border-r:    rgba(255,255,255,0.10);
+  --border-b:    rgba(255,255,255,0.10);
+  --border-l:    rgba(255,255,255,0.15);
+  --fg:          rgba(255,255,255,0.92);
+  --fg-60:       rgba(255,255,255,0.60);
+  --fg-40:       rgba(255,255,255,0.40);
+  --fg-28:       rgba(255,255,255,0.28);
+  --fg-18:       rgba(255,255,255,0.18);
+  --primary:     oklch(54.6% 0.245 262.881);
+  --radius:      0.625rem;
+
+  /* Course palette — OKLch approximate hex */
+  --c1: #6366f1; --c1-l: rgba(99,102,241,0.1);  --c1-icon: rgba(99,102,241,0.5);
+  --c2: #8b5cf6; --c2-l: rgba(139,92,246,0.1);  --c2-icon: rgba(139,92,246,0.5);
+  --c3: #06b6d4; --c3-l: rgba(6,182,212,0.1);   --c3-icon: rgba(6,182,212,0.5);
+  --c4: #f59e0b; --c4-l: rgba(245,158,11,0.1);  --c4-icon: rgba(245,158,11,0.5);
+  --c5: #ec4899; --c5-l: rgba(236,72,153,0.1);  --c5-icon: rgba(236,72,153,0.5);
+  --c6: #22c55e; --c6-l: rgba(34,197,94,0.1);   --c6-icon: rgba(34,197,94,0.5);
+  --c7: #f97316; --c7-l: rgba(249,115,22,0.1);  --c7-icon: rgba(249,115,22,0.5);
+}
+
+/* ─── Body ─── */
+body {
+  font-family: var(--font-geist, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif);
+  background: oklch(0.14 0.04 268);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px;
+}
+
+/* ─── Glass border mixin (matches .glass-border) ─── */
+.glass-border {
+  border-style: solid;
+  border-top-width: 1.7px; border-top-color: var(--border-t);
+  border-right-width: 1.4px; border-right-color: var(--border-r);
+  border-bottom-width: 1.2px; border-bottom-color: var(--border-b);
+  border-left-width: 2px; border-left-color: var(--border-l);
+}
+
+/* ─── Main window ─── */
+.window {
+  width: 960px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 60px 120px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 0 80px rgba(99,102,241,0.15);
+  transform: perspective(1200px) rotateY(-10deg) rotateX(3deg);
+  transform-style: preserve-3d;
+  animation: float 7s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: perspective(1200px) rotateY(-10deg) rotateX(3deg) translateY(0); }
+  50%      { transform: perspective(1200px) rotateY(-10deg) rotateX(3deg) translateY(-8px); }
+}
+
+/* ─── Top bar ─── */
+.topbar {
+  background: var(--bg-darker);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  padding: 11px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.logo {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--fg); font-size: 13px; font-weight: 700;
+  flex-shrink: 0;
+}
+.logo-box {
+  width: 26px; height: 26px; background: #fff; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+}
+.topbar-tabs {
+  display: flex; gap: 2px; margin-left: auto;
+  background: var(--glass-5);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 9px; padding: 3px;
+}
+.topbar-tab {
+  font-size: 11px; font-weight: 600; padding: 5px 14px; border-radius: 7px;
+  color: var(--fg-40); cursor: pointer; transition: all 0.18s ease;
+  user-select: none;
+}
+.topbar-tab:hover { color: var(--fg-60); background: var(--glass-5); }
+.topbar-tab.active {
+  background: var(--glass-12);
+  color: var(--fg);
+}
+.avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+
+/* ─── Body layout ─── */
+.body {
+  background: var(--bg);
+  display: flex; height: 520px;
+}
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width: 216px; flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid rgba(255,255,255,0.07);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-inner {
+  padding: 12px 0;
+  overflow-y: auto;
+  flex: 1;
+  /* thin scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+.sidebar-hdr {
+  padding: 0 14px 9px;
+  font-size: 10px; font-weight: 700; color: var(--fg-28);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 6px;
+}
+/* Course item — glass-border bg-[oklch(var(--c-light)/0.1)] rounded-lg */
+.course-item {
+  display: flex; align-items: stretch;
+  margin: 0 8px 3px; border-radius: 8px;
+  background: var(--glass-5);
+  overflow: hidden;
+  border-style: solid;
+  border-top-width: 1.7px; border-top-color: rgba(255,255,255,0.1);
+  border-right-width: 1.4px; border-right-color: rgba(255,255,255,0.06);
+  border-bottom-width: 1.2px; border-bottom-color: rgba(255,255,255,0.06);
+  border-left-width: 2px; border-left-color: rgba(255,255,255,0.1);
+  cursor: pointer; transition: background 0.15s;
+}
+.course-item:hover { background: var(--glass-8); }
+.course-item.active {
+  background: rgba(99,102,241,0.12);
+  border-top-color: rgba(99,102,241,0.25);
+  border-right-color: rgba(99,102,241,0.15);
+  border-bottom-color: rgba(99,102,241,0.15);
+  border-left-color: rgba(99,102,241,0.25);
+}
+/* The thick left color bar — w-3 = 12px */
+.course-bar {
+  width: 12px; flex-shrink: 0;
+}
+.course-info {
+  padding: 7px 10px; flex: 1; min-width: 0;
+}
+.course-domain {
+  font-size: 9px; color: var(--fg-40); font-weight: 500; line-height: 1.3;
+}
+.course-name {
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.78);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.4;
+}
+.course-item.active .course-name { color: #c7d2fe; }
+
+/* ─── Main area ─── */
+.main {
+  flex: 1; min-width: 0; padding: 12px;
+  display: flex; flex-direction: column; gap: 10px;
+  overflow: hidden;
+}
+
+/* ─── Filter bar — glass-border bg-glass/10 backdrop-blur-lg ─── */
+.filter-bar {
+  background: var(--glass-8);
+  border-style: solid;
+  border-top-width: 1.7px; border-top-color: var(--border-t);
+  border-right-width: 1.4px; border-right-color: var(--border-r);
+  border-bottom-width: 1.2px; border-bottom-color: var(--border-b);
+  border-left-width: 2px; border-left-color: var(--border-l);
+  border-radius: 11px; padding: 9px 11px;
+  display: flex; flex-direction: column; gap: 7px;
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+}
+.filter-row {
+  display: flex; gap: 6px; align-items: center;
+}
+/* Search — border-slate-300/40 bg-white/40 (light) | dark:border-white/10 dark:bg-glass/5 */
+.search {
+  flex: 1; display: flex; align-items: center; gap: 6px;
+  background: var(--glass-5);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 7px; padding: 5px 10px;
+  color: var(--fg-40); font-size: 11px;
+}
+.filter-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--glass-5);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 7px; padding: 5px 10px;
+  font-size: 11px; color: var(--fg-60); font-weight: 600;
+  cursor: pointer;
+}
+.chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.chip {
+  font-size: 10px; font-weight: 600; padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--fg-40); background: var(--glass-5);
+  cursor: pointer; transition: all 0.15s;
+}
+.chip:hover { background: var(--glass-8); color: var(--fg-60); }
+.chip.active {
+  background: rgba(99,102,241,0.18);
+  border-color: rgba(99,102,241,0.38);
+  color: #c7d2fe;
+}
+
+/* ─── Tab panels ─── */
+.tab-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent; }
+.tab-panel { display: none; flex-direction: column; gap: 8px; }
+.tab-panel.active { display: flex; }
+
+/* ─── Date group ─── */
+.date-group { display: flex; flex-direction: column; gap: 4px; }
+.date-label {
+  font-size: 9px; font-weight: 700; color: var(--fg-28);
+  text-transform: uppercase; letter-spacing: 0.07em; padding: 0 2px;
+  margin-bottom: 1px;
+}
+
+/* ─── Assignment card ─── */
+/* glass-border bg-[oklch(var(--c-light)/0.07)] shadow-sm rounded-2xl */
+.acard {
+  display: flex; align-items: stretch;
+  border-radius: 12px; overflow: hidden;
+  border-style: solid;
+  border-top-width: 1.7px; border-top-color: rgba(255,255,255,0.12);
+  border-right-width: 1.4px; border-right-color: rgba(255,255,255,0.07);
+  border-bottom-width: 1.2px; border-bottom-color: rgba(255,255,255,0.07);
+  border-left-width: 2px; border-left-color: rgba(255,255,255,0.12);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  transition: border-color 0.15s;
+}
+.acard:hover { border-top-color: rgba(255,255,255,0.2); }
+.acard.done { opacity: 0.65; }
+/* Left icon — border-r border-glass/10 bg-[oklch(var(--c-light)/0.5)] px-2 md:px-5 */
+.acard-icon {
+  width: 44px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+/* Middle — flex-5 flex-col py-2 md:py-3 */
+.acard-body {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column;
+  padding: 8px 10px;
+}
+.acard-course {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  line-height: 1.3;
+}
+.acard-title {
+  font-size: 11.5px; font-weight: 700; color: rgba(255,255,255,0.88);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  margin-top: 1px;
+}
+.acard.done .acard-title { text-decoration: line-through; color: var(--fg-40); }
+.acard-due {
+  font-size: 9px; color: var(--fg-28); margin-top: 3px;
+  display: flex; align-items: center; gap: 3px;
+}
+.acard-due.overdue { color: rgba(248,113,113,0.75); }
+/* Right — hidden md:flex flex-none flex-col items-end self-center pr-2 */
+.acard-right {
+  display: flex; flex-direction: column; align-items: flex-end;
+  justify-content: center; padding: 8px 12px; gap: 5px; flex-shrink: 0;
+}
+.acard-pts { font-size: 9.5px; font-weight: 600; color: var(--fg-40); }
+.acard-avs { display: flex; }
+.acard-av {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.25);
+  font-size: 8px; font-weight: 700; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  margin-left: -5px;
+}
+.acard-av:first-child { margin-left: 0; }
+
+/* ─── Announcement card ─── */
+.ann-card {
+  display: flex; align-items: stretch;
+  border-radius: 12px; overflow: hidden;
+  border-style: solid;
+  border-top-width: 1.7px; border-top-color: rgba(255,255,255,0.12);
+  border-right-width: 1.4px; border-right-color: rgba(255,255,255,0.07);
+  border-bottom-width: 1.2px; border-bottom-color: rgba(255,255,255,0.07);
+  border-left-width: 2px; border-left-color: rgba(255,255,255,0.12);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer; transition: border-color 0.15s;
+}
+.ann-card:hover { border-top-color: rgba(255,255,255,0.2); }
+.ann-icon {
+  width: 44px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+.ann-body { flex: 1; min-width: 0; padding: 8px 10px; display: flex; flex-direction: column; }
+.ann-course { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.ann-title { font-size: 11.5px; font-weight: 700; color: rgba(255,255,255,0.88); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 1px; }
+.ann-meta { font-size: 9px; color: var(--fg-28); margin-top: 3px; }
+.ann-right { display: flex; align-items: center; padding: 8px 12px; }
+.ann-ext { color: var(--fg-28); }
+
+/* ─── Empty hint for non-active tabs ─── */
+.empty { display: flex; align-items: center; justify-content: center; flex: 1; min-height: 120px; }
+.empty-text { font-size: 12px; color: var(--fg-28); }
+</style>
+</head>
+<body>
+
+<div class="window">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-box">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0f0f13" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      CanvasMerge
+    </div>
+    <div class="topbar-tabs">
+      <div class="topbar-tab active" data-tab="assignments">Assignments</div>
+      <div class="topbar-tab" data-tab="completed">Completed</div>
+      <div class="topbar-tab" data-tab="announcements">Announcements</div>
+    </div>
+    <div class="avatar">DM</div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-hdr">Courses · 7</div>
+
+        <div class="course-item active">
+          <div class="course-bar" style="background:#6366f1"></div>
+          <div class="course-info">
+            <div class="course-domain">state.edu</div>
+            <div class="course-name">Linear Algebra</div>
+          </div>
+        </div>
+
+        <div class="course-item">
+          <div class="course-bar" style="background:#8b5cf6"></div>
+          <div class="course-info">
+            <div class="course-domain">state.edu</div>
+            <div class="course-name">Algorithms II</div>
+          </div>
+        </div>
+
+        <div class="course-item">
+          <div class="course-bar" style="background:#06b6d4"></div>
+          <div class="course-info">
+            <div class="course-domain">cc.edu</div>
+            <div class="course-name">English 101</div>
+          </div>
+        </div>
+
+        <div class="course-item">
+          <div class="course-bar" style="background:#f59e0b"></div>
+          <div class="course-info">
+            <div class="course-domain">cc.edu</div>
+            <div class="course-name">Chemistry</div>
+          </div>
+        </div>
+
+        <div class="course-item">
+          <div class="course-bar" style="background:#ec4899"></div>
+          <div class="course-info">
+            <div class="course-domain">state.edu</div>
+            <div class="course-name">Psych 200</div>
+          </div>
+        </div>
+
+        <div class="course-item">
+          <div class="course-bar" style="background:#22c55e"></div>
+          <div class="course-info">
+            <div class="course-domain">other.edu</div>
+            <div class="course-name">Art Appreciation</div>
+          </div>
+        </div>
+
+        <div class="course-item">
+          <div class="course-bar" style="background:#f97316"></div>
+          <div class="course-info">
+            <div class="course-domain">state.edu</div>
+            <div class="course-name">Physics I</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main">
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="filter-row">
+          <div class="search">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Search assignments…
+          </div>
+          <div class="filter-btn">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filter
+          </div>
+        </div>
+        <div class="chips">
+          <div class="chip active">All</div>
+          <div class="chip">Overdue</div>
+          <div class="chip">Due today</div>
+          <div class="chip">This week</div>
+          <div class="chip">No due date</div>
+        </div>
+      </div>
+
+      <!-- Tab panels -->
+      <div class="tab-content">
+
+        <!-- ASSIGNMENTS -->
+        <div class="tab-panel active" id="panel-assignments">
+
+          <div class="date-group">
+            <div class="date-label">Overdue</div>
+            <div class="acard" style="background: oklch(0.5 0.2 25 / 0.07)">
+              <div class="acard-icon" style="background: oklch(0.5 0.2 25 / 0.5)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(252,165,165,0.9)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(252,165,165,0.7)">Algorithms II</div>
+                <div class="acard-title">Forum Post — Greedy vs Dynamic</div>
+                <div class="acard-due overdue">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                  Overdue · Jun 7 at 11:59 PM
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts">30 pts</div>
+                <div class="acard-avs"><div class="acard-av" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">DM</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="date-group">
+            <div class="date-label">Due today</div>
+
+            <div class="acard" style="background: rgba(99,102,241,0.07)">
+              <div class="acard-icon" style="background: rgba(99,102,241,0.5)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(199,210,254,0.9)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(165,180,252,0.75)">Linear Algebra</div>
+                <div class="acard-title">Problem Set 7 — Eigenvalues &amp; Diagonalization</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Due today at 11:59 PM
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts">50 pts</div>
+                <div class="acard-avs"><div class="acard-av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">DM</div></div>
+              </div>
+            </div>
+
+            <div class="acard" style="background: rgba(6,182,212,0.07)">
+              <div class="acard-icon" style="background: rgba(6,182,212,0.5)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(103,232,249,0.7)">English 101</div>
+                <div class="acard-title">Reading Response — The Great Gatsby Ch. 4</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Due today at 11:59 PM
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts">25 pts</div>
+                <div class="acard-avs"><div class="acard-av" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">DM</div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="date-group">
+            <div class="date-label">Due tomorrow</div>
+
+            <div class="acard" style="background: rgba(245,158,11,0.07)">
+              <div class="acard-icon" style="background: rgba(245,158,11,0.5)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(253,230,138,0.9)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(253,230,138,0.65)">Chemistry</div>
+                <div class="acard-title">Lab Report — Acid-Base Titration</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Due tomorrow at 9:00 AM
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts">100 pts</div>
+                <div class="acard-avs"><div class="acard-av" style="background:linear-gradient(135deg,#f59e0b,#d97706)">DM</div></div>
+              </div>
+            </div>
+
+            <div class="acard" style="background: rgba(34,197,94,0.07)">
+              <div class="acard-icon" style="background: rgba(34,197,94,0.5)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(134,239,172,0.9)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(134,239,172,0.7)">Art Appreciation</div>
+                <div class="acard-title">Being a Successful Student Online Quiz</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Due tomorrow at 11:59 PM
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts">7 pts</div>
+                <div class="acard-avs"><div class="acard-av" style="background:linear-gradient(135deg,#22c55e,#16a34a)">DM</div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="date-group">
+            <div class="date-label">Due in 3 days</div>
+            <div class="acard" style="background: rgba(236,72,153,0.07)">
+              <div class="acard-icon" style="background: rgba(236,72,153,0.5)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(249,168,212,0.9)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(249,168,212,0.7)">Psych 200</div>
+                <div class="acard-title">Reflection Paper — Cognitive Biases</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Due Jun 12 at 11:59 PM
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts">40 pts</div>
+                <div class="acard-avs"><div class="acard-av" style="background:linear-gradient(135deg,#ec4899,#db2777)">DM</div></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- COMPLETED -->
+        <div class="tab-panel" id="panel-completed">
+
+          <div class="date-group">
+            <div class="date-label">Completed recently</div>
+
+            <div class="acard done" style="background: rgba(99,102,241,0.04)">
+              <div class="acard-icon" style="background: rgba(99,102,241,0.25)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(199,210,254,0.6)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(165,180,252,0.5)">Linear Algebra</div>
+                <div class="acard-title">Problem Set 6 — Orthogonality</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Submitted Jun 5 · 50 pts
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts" style="color:rgba(134,239,172,0.6)">50/50</div>
+                <div class="acard-avs"><div class="acard-av" style="background:rgba(99,102,241,0.5)">DM</div></div>
+              </div>
+            </div>
+
+            <div class="acard done" style="background: rgba(245,158,11,0.04)">
+              <div class="acard-icon" style="background: rgba(245,158,11,0.25)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(253,230,138,0.6)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(253,230,138,0.5)">Chemistry</div>
+                <div class="acard-title">Prelab — Equilibrium Constants</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Submitted Jun 4 · 15 pts
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts" style="color:rgba(134,239,172,0.6)">14/15</div>
+                <div class="acard-avs"><div class="acard-av" style="background:rgba(245,158,11,0.5)">DM</div></div>
+              </div>
+            </div>
+
+            <div class="acard done" style="background: rgba(6,182,212,0.04)">
+              <div class="acard-icon" style="background: rgba(6,182,212,0.25)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(103,232,249,0.6)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(103,232,249,0.5)">English 101</div>
+                <div class="acard-title">Essay Draft — Symbolism in Literature</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Submitted Jun 3 · 75 pts
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts" style="color:rgba(134,239,172,0.6)">72/75</div>
+                <div class="acard-avs"><div class="acard-av" style="background:rgba(6,182,212,0.6)">DM</div></div>
+              </div>
+            </div>
+
+            <div class="acard done" style="background: rgba(139,92,246,0.04)">
+              <div class="acard-icon" style="background: rgba(139,92,246,0.25)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(196,181,253,0.6)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="acard-body">
+                <div class="acard-course" style="color:rgba(196,181,253,0.5)">Algorithms II</div>
+                <div class="acard-title">Quiz 3 — Graph Traversal</div>
+                <div class="acard-due">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Submitted Jun 2 · 20 pts
+                </div>
+              </div>
+              <div class="acard-right">
+                <div class="acard-pts" style="color:rgba(134,239,172,0.6)">20/20</div>
+                <div class="acard-avs"><div class="acard-av" style="background:rgba(139,92,246,0.6)">DM</div></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="tab-panel" id="panel-announcements">
+
+          <div class="ann-card" style="background: rgba(99,102,241,0.07)">
+            <div class="ann-icon" style="background: rgba(99,102,241,0.5); width:44px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-right:1px solid rgba(255,255,255,0.08)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(199,210,254,0.9)" stroke-width="2"><path d="M22 8.01c0-6.68-6.25-7.75-10-7.75S2 1.33 2 8.01C2 11.36 3.17 13.6 5 15H3l-1 4h4l1 1h8l1-1h4l-1-4c1.83-1.4 3-3.64 3-6.99z" style="display:none"/><path d="M3 3a11.08 11.08 0 0 1 18 0M6.6 6.6A7.54 7.54 0 0 1 17.4 6.6"/><path d="M10 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0M10 12v6"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(199,210,254,0.9)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="ann-body">
+              <div class="ann-course" style="color:rgba(165,180,252,0.7)">Linear Algebra</div>
+              <div class="ann-title">Midterm exam moved to June 15 — please read</div>
+              <div class="ann-meta">state.edu · posted 2 hours ago</div>
+            </div>
+            <div class="ann-right">
+              <svg class="ann-ext" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <div class="ann-card" style="background: rgba(245,158,11,0.07)">
+            <div class="ann-icon" style="background: rgba(245,158,11,0.5); width:44px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-right:1px solid rgba(255,255,255,0.08)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(253,230,138,0.9)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="ann-body">
+              <div class="ann-course" style="color:rgba(253,230,138,0.65)">Chemistry</div>
+              <div class="ann-title">Lab safety reminder — goggles required this Thursday</div>
+              <div class="ann-meta">cc.edu · posted 5 hours ago</div>
+            </div>
+            <div class="ann-right">
+              <svg class="ann-ext" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <div class="ann-card" style="background: rgba(34,197,94,0.07)">
+            <div class="ann-icon" style="background: rgba(34,197,94,0.5); width:44px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-right:1px solid rgba(255,255,255,0.08)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(134,239,172,0.9)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="ann-body">
+              <div class="ann-course" style="color:rgba(134,239,172,0.7)">Art Appreciation</div>
+              <div class="ann-title">Welcome to the course — syllabus and week 1 materials posted</div>
+              <div class="ann-meta">other.edu · posted yesterday</div>
+            </div>
+            <div class="ann-right">
+              <svg class="ann-ext" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+          <div class="ann-card" style="background: rgba(139,92,246,0.07)">
+            <div class="ann-icon" style="background: rgba(139,92,246,0.5); width:44px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-right:1px solid rgba(255,255,255,0.08)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(196,181,253,0.9)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="ann-body">
+              <div class="ann-course" style="color:rgba(196,181,253,0.65)">Algorithms II</div>
+              <div class="ann-title">Office hours rescheduled — see updated Zoom link below</div>
+              <div class="ann-meta">state.edu · posted 2 days ago</div>
+            </div>
+            <div class="ann-right">
+              <svg class="ann-ext" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!-- /tab-content -->
+    </div><!-- /main -->
+  </div><!-- /body -->
+
+</div><!-- /window -->
+
+<script>
+// Tab switching
+document.querySelectorAll('.topbar-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+
+    // Update tabs
+    document.querySelectorAll('.topbar-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    // Update panels
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + target).classList.add('active');
+  });
+});
+
+// Chip toggling
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
+
+// Course item selection
+document.querySelectorAll('.course-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.course-item').forEach(c => c.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CanvasMerge — Landing v3</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; background: #0a0a0f; color: #f0f0f5; overflow-x: hidden; }
+
+.sec-label { position: absolute; top: 10px; left: 12px; z-index: 200; background: rgba(99,102,241,.18); border: 1px solid rgba(99,102,241,.35); color: #a5b4fc; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
+
+/* ═══ HERO ═══ */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e1040 70%, #0c1445 100%);
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 1fr 1.3fr;
+  align-items: center; padding: 100px 56px 60px; gap: 40px;
+}
+.nav { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 18px 56px; z-index: 20; }
+.logo { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 15px; font-weight: 700; }
+.logo-box { width: 32px; height: 32px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.nav-r { display: flex; gap: 8px; }
+.btn-ghost { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.13); color: rgba(255,255,255,.8); font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 8px; }
+.btn-white { background: #fff; color: #0f0f13; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 8px; }
+
+.stars { position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(1.5px 1.5px at 5% 8%,rgba(255,255,255,.9) 0%,transparent 100%), radial-gradient(1px 1px at 18% 6%,rgba(255,255,255,.65) 0%,transparent 100%), radial-gradient(1px 1px at 38% 14%,rgba(255,255,255,.5) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 62% 4%,rgba(255,255,255,.8) 0%,transparent 100%), radial-gradient(1px 1px at 75% 12%,rgba(255,255,255,.55) 0%,transparent 100%), radial-gradient(1px 1px at 90% 7%,rgba(255,255,255,.7) 0%,transparent 100%), radial-gradient(1px 1px at 12% 38%,rgba(255,255,255,.45) 0%,transparent 100%), radial-gradient(1px 1px at 52% 28%,rgba(255,255,255,.55) 0%,transparent 100%), radial-gradient(1.5px 1.5px at 95% 45%,rgba(255,255,255,.65) 0%,transparent 100%), radial-gradient(1px 1px at 28% 60%,rgba(255,255,255,.4) 0%,transparent 100%), radial-gradient(1px 1px at 68% 55%,rgba(255,255,255,.5) 0%,transparent 100%), radial-gradient(1px 1px at 83% 70%,rgba(255,255,255,.45) 0%,transparent 100%); animation: twinkle 10s ease-in-out infinite alternate; }
+@keyframes twinkle{0%{opacity:.7}100%{opacity:1}}
+.orb { position: absolute; border-radius: 50%; pointer-events: none; }
+.orb-a { width:640px;height:640px;background:radial-gradient(circle,rgba(99,102,241,.38) 0%,transparent 65%);top:-230px;right:-60px;animation:d1 16s ease-in-out infinite; }
+.orb-b { width:440px;height:440px;background:radial-gradient(circle,rgba(139,92,246,.3) 0%,transparent 65%);bottom:-150px;left:-80px;animation:d2 20s ease-in-out infinite; }
+.orb-c { width:300px;height:300px;background:radial-gradient(circle,rgba(6,182,212,.14) 0%,transparent 65%);top:45%;left:36%;animation:d3 24s ease-in-out infinite; }
+@keyframes d1{0%,100%{transform:translate(0,0)}33%{transform:translate(-28px,18px)}66%{transform:translate(12px,-14px)}}
+@keyframes d2{0%,100%{transform:translate(0,0)}50%{transform:translate(28px,-22px)}}
+@keyframes d3{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-28px)}}
+.p{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);pointer-events:none;animation:fu linear infinite;}
+.p1{width:2px;height:2px;left:8%;top:95%;animation-duration:5.2s;animation-delay:0s}
+.p2{width:1.5px;height:1.5px;left:22%;top:90%;animation-duration:6.8s;animation-delay:-1.6s}
+.p3{width:2px;height:2px;left:44%;top:88%;animation-duration:4.8s;animation-delay:-3.1s}
+.p4{width:1px;height:1px;left:60%;top:93%;animation-duration:7.2s;animation-delay:-.9s}
+.p5{width:2px;height:2px;left:78%;top:91%;animation-duration:5.6s;animation-delay:-2.2s}
+.p6{width:1.5px;height:1.5px;left:34%;top:85%;animation-duration:8.3s;animation-delay:-4.4s}
+.p7{width:1px;height:1px;left:70%;top:87%;animation-duration:6.1s;animation-delay:-1.1s}
+.p8{width:1.5px;height:1.5px;left:52%;top:92%;animation-duration:5.9s;animation-delay:-2.7s}
+@keyframes fu{0%{transform:translateY(0) translateX(0);opacity:0}8%{opacity:.7}92%{opacity:.4}100%{transform:translateY(-100vh) translateX(12px);opacity:0}}
+
+.hero-left { position: relative; z-index: 5; }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.72); font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; margin-bottom: 22px; animation: fu2 .9s ease both; }
+.h1 { font-size: clamp(46px,5.5vw,80px); font-weight: 900; line-height: .95; letter-spacing: -.035em; color: #fff; animation: fu2 .9s .1s ease both; }
+.h1 .acc { color: #a5b4fc; }
+.hero-p { margin-top: 18px; font-size: 16px; color: rgba(255,255,255,.58); line-height: 1.65; max-width: 460px; animation: fu2 .9s .22s ease both; }
+.cta { margin-top: 26px; display: flex; gap: 10px; animation: fu2 .9s .34s ease both; }
+.btn-p { background:#fff;color:#0f0f13;font-size:14px;font-weight:700;padding:12px 22px;border-radius:10px;display:inline-flex;align-items:center;gap:6px; }
+.btn-s { background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.8);font-size:14px;font-weight:600;padding:12px 22px;border-radius:10px; }
+@keyframes fu2{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.scroll-hint { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 5px; z-index: 5; animation: bob 2.2s ease-in-out infinite; }
+.sh-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.38); }
+.sh-line { width: 1px; height: 28px; background: linear-gradient(to bottom,rgba(255,255,255,.3),transparent); }
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* ── HERO DASHBOARD MOCKUP (bigger) ── */
+.hero-right { position: relative; z-index: 5; display: flex; align-items: center; justify-content: center; animation: fu2 .9s .18s ease both; }
+.mwrap { width: 100%; perspective: 1200px; }
+.mtilt {
+  transform: rotateY(-10deg) rotateX(3deg);
+  transform-style: preserve-3d;
+  animation: fl 7s ease-in-out infinite;
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 50px 100px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.1), 0 0 80px rgba(99,102,241,.2);
+}
+@keyframes fl{0%,100%{transform:rotateY(-10deg) rotateX(3deg) translateY(0)}50%{transform:rotateY(-10deg) rotateX(3deg) translateY(-10px)}}
+
+.dash { background:#0f111a; display:flex; flex-direction:column; font-size:11px; }
+.d-topbar { background:#0a0c14; border-bottom:1px solid rgba(255,255,255,.07); padding:11px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.d-logo { display:flex; align-items:center; gap:7px; color:rgba(255,255,255,.9); font-size:13px; font-weight:700; }
+.d-logo-box { width:26px; height:26px; background:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center; }
+.d-tabs { display:flex; gap:2px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:8px; padding:3px; }
+.d-tab { font-size:11px; font-weight:600; padding:5px 12px; border-radius:6px; color:rgba(255,255,255,.4); }
+.d-tab.on { background:rgba(255,255,255,.12); color:rgba(255,255,255,.9); }
+.d-av { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; }
+
+.d-body { display:flex; min-height: 440px; }
+.d-sidebar { width:200px; flex-shrink:0; background:rgba(255,255,255,.02); border-right:1px solid rgba(255,255,255,.06); padding:14px 0; }
+.d-sb-hdr { padding:0 14px 10px; font-size:10px; font-weight:700; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:.07em; border-bottom:1px solid rgba(255,255,255,.05); margin-bottom:7px; }
+.ci { display:flex; align-items:stretch; margin:0 7px 3px; border-radius:8px; background:rgba(255,255,255,.03); border:1px solid transparent; overflow:hidden; }
+.ci.on { background:rgba(99,102,241,.12); border-color:rgba(99,102,241,.2); }
+.ci-bar { width:3px; flex-shrink:0; }
+.ci-info { padding:6px 10px; flex:1; min-width:0; }
+.ci-dom { font-size:9px; color:rgba(255,255,255,.32); font-weight:500; }
+.ci-name { font-size:11px; font-weight:600; color:rgba(255,255,255,.78); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ci.on .ci-name { color:#c7d2fe; }
+
+.d-main { flex:1; min-width:0; padding:12px; display:flex; flex-direction:column; gap:9px; }
+.fbar { display:flex; flex-direction:column; gap:6px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:8px 10px; }
+.fr1 { display:flex; gap:6px; align-items:center; }
+.srch { flex:1; display:flex; align-items:center; gap:5px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.09); border-radius:7px; padding:5px 9px; color:rgba(255,255,255,.3); font-size:11px; }
+.filt { display:flex; align-items:center; gap:4px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.09); border-radius:7px; padding:5px 9px; font-size:11px; color:rgba(255,255,255,.5); font-weight:600; }
+.chips { display:flex; gap:4px; flex-wrap:wrap; }
+.chip { font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.42); background:rgba(255,255,255,.04); }
+.chip.on { background:rgba(99,102,241,.18); border-color:rgba(99,102,241,.35); color:#c7d2fe; }
+
+.dg { display:flex; flex-direction:column; gap:4px; }
+.dg-lbl { font-size:9px; font-weight:700; color:rgba(255,255,255,.28); text-transform:uppercase; letter-spacing:.07em; padding:0 2px; }
+.ac { display:flex; align-items:stretch; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:9px; overflow:hidden; }
+.ac-ic { width:36px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.ac-b { flex:1; min-width:0; padding:7px 9px; }
+.ac-cn { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+.ac-t { font-size:11px; font-weight:700; color:rgba(255,255,255,.85); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ac-d { font-size:9px; color:rgba(255,255,255,.3); margin-top:2px; display:flex; align-items:center; gap:3px; }
+.ac-r { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; padding:7px 11px; gap:4px; }
+.ac-pts { font-size:9px; font-weight:600; color:rgba(255,255,255,.32); }
+.av-row { display:flex; }
+.av { width:18px; height:18px; border-radius:50%; border:1.5px solid rgba(0,0,0,.3); font-size:8px; font-weight:700; display:flex; align-items:center; justify-content:center; color:#fff; margin-left:-4px; }
+.av:first-child{margin-left:0}
+
+/* ═══ SECTION 2: STORY ═══ */
+.story { background:#09090e; padding:80px 56px; position:relative; border-top:1px solid rgba(255,255,255,.05); }
+.overline { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#818cf8; margin-bottom:10px; }
+.sec-h2 { font-size:clamp(28px,3.5vw,42px); font-weight:800; color:#fff; line-height:1.1; }
+.sec-sub { font-size:15px; color:rgba(255,255,255,.42); margin-top:8px; }
+
+.story-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; margin-top:48px; position:relative; max-width:1080px; margin-left:auto; margin-right:auto; }
+.story-grid::before { content:''; position:absolute; top:19px; left:calc(16.66% + 16px); right:calc(16.66% + 16px); height:1px; background:linear-gradient(90deg,rgba(99,102,241,.5),rgba(6,182,212,.5)); }
+
+.sc { display:flex; flex-direction:column; align-items:center; padding:0 16px; }
+.snum { width:38px; height:38px; border-radius:50%; border:1.5px solid rgba(99,102,241,.4); background:#09090e; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:rgba(165,180,252,.7); position:relative; z-index:1; margin-bottom:18px; flex-shrink:0; }
+.sc.act .snum { background:#6366f1; border-color:#6366f1; color:#fff; box-shadow:0 0 0 8px rgba(99,102,241,.12); }
+.scard { width:100%; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); margin-bottom:14px; }
+.stitle { font-size:13px; font-weight:700; color:#f0f0f5; margin-bottom:5px; text-align:center; }
+.sdesc { font-size:11px; color:rgba(255,255,255,.38); line-height:1.55; text-align:center; }
+
+/* ── STEP 1: CANVAS NATIVE ── */
+.canvas-ui { background:#fff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; overflow:hidden; }
+.cnav { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #e5e7eb; }
+.cnav-title { font-size:16px; font-weight:700; color:#1a1a1a; }
+.cnav-right { display:flex; align-items:center; gap:6px; }
+.cnav-today { border:1px solid #d1d5db; border-radius:5px; padding:4px 10px; font-size:11px; color:#374151; font-weight:500; background:#fff; }
+.cnav-new { background:#0770D3; color:#fff; border-radius:5px; padding:4px 10px; font-size:11px; font-weight:700; display:flex; align-items:center; gap:4px; }
+.c-nothing { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:14px; text-align:center; border-bottom:1px solid #f3f4f6; position:relative; overflow:hidden; }
+.c-nothing-label { font-size:10px; color:#9ca3af; margin-bottom:6px; }
+.c-illustration { display:flex; align-items:flex-end; gap:4px; margin-bottom:4px; }
+.c-tree { display:flex; flex-direction:column; align-items:center; }
+.c-tri { width:0; height:0; }
+.c-tri-lg { border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:20px solid #4ade80; }
+.c-tri-md { border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:16px solid #4ade80; margin-top:-4px; }
+.c-tri-sm { border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:12px solid #93c5fd; }
+.c-trunk { width:3px; height:5px; background:#92400e; margin-top:-1px; }
+.c-mtn { width:0; height:0; border-left:20px solid transparent; border-right:20px solid transparent; border-bottom:25px solid #d1d5db; }
+.c-ham { width:30px; height:6px; background:#fb923c; border-radius:3px; }
+.c-np-text { font-size:11px; color:#6b7280; }
+.c-birds { display:flex; gap:6px; margin-bottom:3px; }
+.c-bird { font-size:9px; color:#9ca3af; transform:scaleX(1.5); }
+
+.c-date-hdr { padding:8px 14px 4px; font-size:11px; font-weight:700; color:#1a1a1a; border-bottom:1px solid #f3f4f6; }
+.c-items { display:flex; }
+.c-course-img { width:50px; flex-shrink:0; background:linear-gradient(135deg,#1d4ed8,#3b82f6); border-right:3px solid #0770D3; position:relative; overflow:hidden; }
+.c-course-img-inner { width:50px; height:100%; background-image:linear-gradient(rgba(29,78,216,.6),rgba(59,130,246,.6)); display:flex; align-items:flex-start; padding:4px; }
+.c-course-label { font-size:7px; font-weight:700; color:#fff; line-height:1.2; text-align:center; background:rgba(0,0,0,.35); padding:2px 3px; border-radius:2px; }
+.c-items-list { flex:1; }
+.c-item { display:flex; align-items:center; gap:6px; padding:7px 10px; border-bottom:1px solid #f9fafb; }
+.c-cb { width:14px; height:14px; border:1.5px solid #d1d5db; border-radius:2px; flex-shrink:0; }
+.c-item-ico { width:14px; height:14px; flex-shrink:0; color:#6b7280; }
+.c-item-body { flex:1; min-width:0; }
+.c-item-meta { font-size:8px; color:#6b7280; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-transform:uppercase; letter-spacing:.02em; }
+.c-item-title { font-size:10px; font-weight:600; color:#0770D3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.c-item-right { text-align:right; flex-shrink:0; }
+.c-pts { font-size:10px; font-weight:700; color:#374151; }
+.c-due { font-size:8px; color:#6b7280; white-space:nowrap; }
+
+/* ── STEP 2: MERGE ── */
+.merge-preview { padding:22px 14px; display:flex; flex-direction:column; align-items:center; gap:12px; min-height:220px; justify-content:center; background:#0f0f18; }
+.merge-row { display:flex; align-items:center; gap:-6px; }
+.mc { width:34px; height:34px; border-radius:50%; border:2px solid; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; animation:mpulse 2.2s ease-in-out infinite; }
+.mc1 { border-color:#6366f1; color:#6366f1; background:rgba(99,102,241,.1); margin-right:-8px; z-index:1; }
+.mc2 { border-color:#8b5cf6; color:#8b5cf6; background:rgba(139,92,246,.1); z-index:2; animation-delay:.3s; }
+.mc3 { border-color:#06b6d4; color:#06b6d4; background:rgba(6,182,212,.1); margin-left:-8px; z-index:1; animation-delay:.6s; }
+@keyframes mpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.merge-arrow { color:rgba(255,255,255,.25); font-size:18px; animation:apulse 1.6s ease-in-out infinite; }
+@keyframes apulse{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:.7;transform:scale(1.2)}}
+.merge-result { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#8b5cf6); display:flex; align-items:center; justify-content:center; box-shadow:0 0 26px rgba(99,102,241,.5); animation:rglow 2s ease-in-out infinite; }
+@keyframes rglow{0%,100%{box-shadow:0 0 20px rgba(99,102,241,.4)}50%{box-shadow:0 0 36px rgba(99,102,241,.7)}}
+.merge-cap { font-size:9px; color:rgba(255,255,255,.3); letter-spacing:.05em; }
+.merge-domains { display:flex; gap:5px; }
+.mdom { font-size:8px; font-weight:600; padding:2px 8px; border-radius:10px; border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.38); background:rgba(255,255,255,.04); }
+
+/* ── STEP 3: CANVASMERGE (mini accurate) ── */
+.mini-dash { background:#0f111a; font-size:10px; display:flex; flex-direction:column; }
+.m-topbar { background:#0a0c14; border-bottom:1px solid rgba(255,255,255,.07); padding:7px 11px; display:flex; align-items:center; justify-content:space-between; }
+.m-logo { display:flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:rgba(255,255,255,.9); }
+.m-lbox { width:18px; height:18px; background:#fff; border-radius:4px; display:flex; align-items:center; justify-content:center; }
+.m-tabs { display:flex; gap:1px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:6px; padding:2px; }
+.m-tab { font-size:9px; font-weight:600; padding:2px 8px; border-radius:4px; color:rgba(255,255,255,.4); }
+.m-tab.on { background:rgba(255,255,255,.12); color:rgba(255,255,255,.9); }
+
+.m-body { display:flex; min-height:170px; }
+.m-sb { width:100px; border-right:1px solid rgba(255,255,255,.06); padding:8px 0; background:rgba(255,255,255,.02); }
+.m-sb-hdr { padding:0 8px 5px; font-size:7px; font-weight:700; color:rgba(255,255,255,.25); text-transform:uppercase; letter-spacing:.07em; border-bottom:1px solid rgba(255,255,255,.04); margin-bottom:4px; }
+.mci { display:flex; align-items:stretch; margin:0 4px 2px; border-radius:5px; background:rgba(255,255,255,.03); overflow:hidden; border:1px solid transparent; }
+.mci.on { background:rgba(99,102,241,.1); border-color:rgba(99,102,241,.2); }
+.mci-bar { width:2.5px; flex-shrink:0; }
+.mci-t { padding:3px 6px; }
+.mci-d { font-size:7px; color:rgba(255,255,255,.28); }
+.mci-n { font-size:8px; font-weight:600; color:rgba(255,255,255,.72); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mci.on .mci-n { color:#c7d2fe; }
+
+.m-main { flex:1; padding:7px; display:flex; flex-direction:column; gap:5px; overflow:hidden; }
+.m-frow { display:flex; gap:3px; }
+.m-srch { flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:5px; padding:3px 7px; font-size:8px; color:rgba(255,255,255,.28); display:flex; align-items:center; gap:3px; }
+.m-chips { display:flex; gap:2px; }
+.m-chip { font-size:7px; font-weight:600; padding:2px 6px; border-radius:10px; border:1px solid rgba(255,255,255,.08); color:rgba(255,255,255,.32); }
+.m-chip.on { background:rgba(99,102,241,.15); border-color:rgba(99,102,241,.3); color:#c7d2fe; }
+.m-dlbl { font-size:7px; font-weight:700; color:rgba(255,255,255,.25); text-transform:uppercase; letter-spacing:.06em; }
+.mcard { display:flex; align-items:stretch; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:6px; overflow:hidden; }
+.mcard-ic { width:24px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.mcard-b { flex:1; padding:4px 5px; min-width:0; }
+.mcard-cn { font-size:7px; font-weight:600; text-transform:uppercase; }
+.mcard-t { font-size:8px; font-weight:700; color:rgba(255,255,255,.82); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mcard-d { font-size:7px; color:rgba(255,255,255,.28); margin-top:1px; }
+.mcard-r { padding:4px 5px; display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:2px; }
+.mcard-pts { font-size:7px; color:rgba(255,255,255,.3); }
+.mavs { display:flex; }
+.mav { width:12px; height:12px; border-radius:50%; border:1px solid rgba(0,0,0,.3); font-size:6px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center; margin-left:-3px; }
+.mav:first-child{margin-left:0}
+
+/* ═══ FEATURES ═══ */
+.features { padding:80px 56px; background:#0c0c16; border-top:1px solid rgba(255,255,255,.05); position:relative; }
+.features::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(99,102,241,.3),transparent); }
+.feat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; max-width:1080px; margin:40px auto 0; }
+.feat-card { border-radius:14px; border:1px solid rgba(255,255,255,.07); background:rgba(255,255,255,.03); padding:20px; }
+.feat-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+.fi-c{background:rgba(6,182,212,.12);color:#22d3ee} .fi-g{background:rgba(34,197,94,.12);color:#4ade80} .fi-a{background:rgba(251,191,36,.12);color:#fbbf24} .fi-r{background:rgba(244,63,94,.12);color:#fb7185}
+.feat-title{font-size:13px;font-weight:700;color:#f0f0f5;margin-bottom:7px}
+.feat-desc{font-size:11px;color:rgba(255,255,255,.4);line-height:1.6}
+
+/* ═══ HOW ═══ */
+.how { padding:80px 56px; background:#07070f; border-top:1px solid rgba(255,255,255,.04); position:relative; }
+.how-steps { display:flex; flex-direction:column; gap:10px; max-width:500px; margin:36px auto 0; }
+.how-step { display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:14px 18px; }
+.how-num { width:34px; height:34px; border-radius:9px; background:#fff; color:#0f0f13; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.how-txt { font-size:14px; font-weight:600; color:rgba(255,255,255,.8); }
+
+/* ═══ CTA ═══ */
+.cta-sec { padding:90px 56px 110px; background:linear-gradient(180deg,#07070f 0%,#0c0c1e 100%); text-align:center; position:relative; overflow:hidden; }
+.cta-glow { position:absolute; width:500px; height:500px; background:radial-gradient(circle,rgba(99,102,241,.18) 0%,transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); border-radius:50%; }
+.cta-h2 { font-size:clamp(26px,4vw,46px); font-weight:900; color:#fff; position:relative; z-index:1; }
+.cta-sub { font-size:15px; color:rgba(255,255,255,.45); margin-top:10px; position:relative; z-index:1; }
+.cta-btns { display:flex; gap:10px; justify-content:center; margin-top:26px; position:relative; z-index:1; }
+.btn-ca { background:#fff; color:#0f0f13; font-size:14px; font-weight:700; padding:12px 26px; border-radius:10px; }
+.btn-cs { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14); color:rgba(255,255,255,.72); font-size:14px; font-weight:600; padding:12px 26px; border-radius:10px; }
+
+/* ═══ LIGHT HERO ═══ */
+.light-hero { background:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 50%,#ddd6fe 100%); padding:80px 56px 70px; position:relative; overflow:hidden; display:grid; grid-template-columns:1fr 1.3fr; gap:40px; align-items:center; }
+.lh-o1 { position:absolute; width:500px; height:500px; background:radial-gradient(circle,rgba(99,102,241,.18) 0%,transparent 70%); top:-180px; right:-80px; border-radius:50%; }
+.lh-o2 { position:absolute; width:340px; height:340px; background:radial-gradient(circle,rgba(139,92,246,.14) 0%,transparent 70%); bottom:-120px; left:-60px; border-radius:50%; }
+.lh-badge { display:inline-flex; align-items:center; gap:7px; background:rgba(99,102,241,.08); border:1px solid rgba(99,102,241,.18); color:#6366f1; font-size:12px; font-weight:600; padding:5px 13px; border-radius:20px; margin-bottom:20px; position:relative; z-index:1; }
+.lh-h1 { font-size:clamp(38px,4.5vw,66px); font-weight:900; line-height:.95; letter-spacing:-.035em; color:#1e1b4b; position:relative; z-index:1; }
+.lh-h1 .a { color:#6366f1; }
+.lh-p { font-size:15px; color:#4c4891; line-height:1.65; max-width:420px; margin-top:16px; position:relative; z-index:1; }
+.lh-cta { display:flex; gap:10px; margin-top:22px; position:relative; z-index:1; }
+.btn-lp { background:#1e1b4b; color:#fff; font-size:13px; font-weight:700; padding:11px 20px; border-radius:9px; display:inline-flex; align-items:center; gap:5px; }
+.btn-ls { background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.22); color:#6366f1; font-size:13px; font-weight:600; padding:11px 20px; border-radius:9px; }
+
+/* light mockup */
+.lh-right { position:relative; z-index:1; }
+.lh-wrap { perspective:1200px; }
+.lh-tilt { transform:rotateY(-10deg) rotateX(3deg); border-radius:14px; overflow:hidden; box-shadow:0 30px 70px rgba(30,27,75,.2),0 0 0 1px rgba(99,102,241,.15); }
+.lh-dash { background:#fafbff; font-size:11px; display:flex; flex-direction:column; }
+.lh-tb { background:#f0edff; border-bottom:1px solid rgba(99,102,241,.1); padding:10px 14px; display:flex; align-items:center; justify-content:space-between; }
+.lh-logo { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:#1e1b4b; }
+.lh-lbox { width:24px; height:24px; background:#6366f1; border-radius:6px; display:flex; align-items:center; justify-content:center; }
+.lh-tabs { display:flex; gap:1px; background:rgba(99,102,241,.07); border:1px solid rgba(99,102,241,.12); border-radius:7px; padding:2px; }
+.lh-tab { font-size:10px; font-weight:600; padding:3px 10px; border-radius:5px; color:rgba(30,27,75,.38); }
+.lh-tab.on { background:#fff; color:#1e1b4b; box-shadow:0 1px 3px rgba(99,102,241,.1); }
+.lh-av { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:#fff; }
+
+.lh-body { display:flex; min-height:400px; }
+.lh-sb { width:185px; border-right:1px solid rgba(99,102,241,.08); padding:12px 0; background:rgba(99,102,241,.03); }
+.lh-sb-h { padding:0 12px 8px; font-size:9px; font-weight:700; color:rgba(30,27,75,.32); text-transform:uppercase; letter-spacing:.07em; border-bottom:1px solid rgba(99,102,241,.06); margin-bottom:5px; }
+.lh-ci { display:flex; align-items:stretch; margin:0 6px 3px; border-radius:7px; background:rgba(99,102,241,.04); border:1px solid transparent; overflow:hidden; }
+.lh-ci.on { background:rgba(99,102,241,.1); border-color:rgba(99,102,241,.18); }
+.lh-cbar { width:3px; flex-shrink:0; }
+.lh-ci-info { padding:5px 9px; }
+.lh-cdom { font-size:9px; color:rgba(30,27,75,.36); }
+.lh-cname { font-size:11px; font-weight:600; color:rgba(30,27,75,.75); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lh-ci.on .lh-cname { color:#4338ca; }
+
+.lh-main { flex:1; padding:10px; display:flex; flex-direction:column; gap:7px; }
+.lh-fbar { display:flex; flex-direction:column; gap:5px; background:rgba(99,102,241,.04); border:1px solid rgba(99,102,241,.1); border-radius:9px; padding:7px 9px; }
+.lh-fr1 { display:flex; gap:5px; }
+.lh-srch { flex:1; display:flex; align-items:center; gap:4px; background:rgba(255,255,255,.8); border:1px solid rgba(99,102,241,.14); border-radius:6px; padding:4px 8px; font-size:11px; color:rgba(30,27,75,.38); }
+.lh-chips { display:flex; gap:4px; flex-wrap:wrap; }
+.lh-chip { font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; border:1px solid rgba(99,102,241,.14); color:rgba(30,27,75,.4); }
+.lh-chip.on { background:rgba(99,102,241,.1); border-color:rgba(99,102,241,.28); color:#6366f1; }
+.lh-dlbl { font-size:9px; font-weight:700; color:rgba(30,27,75,.32); text-transform:uppercase; letter-spacing:.06em; }
+.lh-card { display:flex; align-items:stretch; background:#fff; border:1px solid rgba(99,102,241,.1); border-radius:9px; overflow:hidden; box-shadow:0 1px 4px rgba(99,102,241,.07); margin-bottom:4px; }
+.lh-cic { width:34px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.lh-cb { flex:1; padding:6px 8px; min-width:0; }
+.lh-cn { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+.lh-ct { font-size:11px; font-weight:700; color:rgba(30,27,75,.85); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lh-cd { font-size:9px; color:rgba(30,27,75,.35); margin-top:2px; }
+.lh-cr { padding:6px 8px; display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:3px; }
+.lh-pts { font-size:9px; color:rgba(30,27,75,.35); }
+.lh-avs { display:flex; }
+.lh-av2 { width:15px; height:15px; border-radius:50%; border:1.5px solid rgba(255,255,255,.9); font-size:7px; font-weight:700; color:#fff; display:flex; align-items:center; justify-content:center; margin-left:-3px; }
+.lh-av2:first-child{margin-left:0}
+
+/* separator */
+.lm-sep { background:#e8e2f8; padding:8px 56px; text-align:center; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9ca3c8; border-top:3px solid rgba(99,102,241,.25); }
+.annots { background:#0a0a0f; border-top:1px solid rgba(255,255,255,.06); padding:16px 56px; display:flex; gap:20px; flex-wrap:wrap; }
+.ann { display:flex; align-items:center; gap:7px; color:rgba(255,255,255,.38); font-size:11px; }
+.ann-dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" style="position:relative">
+  <div class="sec-label">① Hero — bigger tilted dashboard mockup fills right column</div>
+
+  <nav class="nav">
+    <div class="logo">
+      <div class="logo-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0f0f13" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg></div>
+      CanvasMerge
+    </div>
+    <div class="nav-r"><div class="btn-ghost">Sign in</div><div class="btn-white">Get started</div></div>
+  </nav>
+
+  <div class="stars"></div>
+  <div class="orb orb-a"></div><div class="orb orb-b"></div><div class="orb orb-c"></div>
+  <div class="p p1"></div><div class="p p2"></div><div class="p p3"></div><div class="p p4"></div>
+  <div class="p p5"></div><div class="p p6"></div><div class="p p7"></div><div class="p p8"></div>
+
+  <div class="hero-left">
+    <div class="badge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>
+      Built for students with more than one Canvas world
+    </div>
+    <h1 class="h1">Every Canvas.<br><span class="acc">One view.</span></h1>
+    <p class="hero-p">One calm command center for every Canvas campus, course, due date, and assignment competing for your attention.</p>
+    <div class="cta">
+      <div class="btn-p">Start merging <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="btn-s">View dashboard</div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="mwrap">
+      <div class="mtilt">
+        <div class="dash">
+          <div class="d-topbar">
+            <div class="d-logo"><div class="d-logo-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0f0f13" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg></div>CanvasMerge</div>
+            <div class="d-tabs"><div class="d-tab on">Assignments</div><div class="d-tab">Completed</div><div class="d-tab">Announcements</div></div>
+            <div class="d-av">DM</div>
+          </div>
+          <div class="d-body">
+            <div class="d-sidebar">
+              <div class="d-sb-hdr">Courses · 7</div>
+              <div class="ci on"><div class="ci-bar" style="background:#6366f1"></div><div class="ci-info"><div class="ci-dom">state.edu</div><div class="ci-name">Linear Algebra</div></div></div>
+              <div class="ci"><div class="ci-bar" style="background:#8b5cf6"></div><div class="ci-info"><div class="ci-dom">state.edu</div><div class="ci-name">Algorithms II</div></div></div>
+              <div class="ci"><div class="ci-bar" style="background:#06b6d4"></div><div class="ci-info"><div class="ci-dom">cc.edu</div><div class="ci-name">English 101</div></div></div>
+              <div class="ci"><div class="ci-bar" style="background:#f59e0b"></div><div class="ci-info"><div class="ci-dom">cc.edu</div><div class="ci-name">Chemistry</div></div></div>
+              <div class="ci"><div class="ci-bar" style="background:#ec4899"></div><div class="ci-info"><div class="ci-dom">state.edu</div><div class="ci-name">Psych 200</div></div></div>
+              <div class="ci"><div class="ci-bar" style="background:#22c55e"></div><div class="ci-info"><div class="ci-dom">cc.edu</div><div class="ci-name">Stats & Data</div></div></div>
+              <div class="ci"><div class="ci-bar" style="background:#f97316"></div><div class="ci-info"><div class="ci-dom">state.edu</div><div class="ci-name">Physics I</div></div></div>
+            </div>
+            <div class="d-main">
+              <div class="fbar">
+                <div class="fr1">
+                  <div class="srch"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Search assignments…</div>
+                  <div class="filt"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filter</div>
+                </div>
+                <div class="chips">
+                  <div class="chip on">All</div><div class="chip">Overdue</div><div class="chip">Due today</div><div class="chip">This week</div><div class="chip">No due date</div>
+                </div>
+              </div>
+              <div class="dg">
+                <div class="dg-lbl">Due today</div>
+                <div class="ac">
+                  <div class="ac-ic" style="background:rgba(99,102,241,.15)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                  <div class="ac-b"><div class="ac-cn" style="color:rgba(99,102,241,.7)">Linear Algebra</div><div class="ac-t">Problem Set 7 — Eigenvalues</div><div class="ac-d"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Due today · 11:59 PM</div></div>
+                  <div class="ac-r"><div class="ac-pts">50 pts</div><div class="av-row"><div class="av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">DM</div></div></div>
+                </div>
+                <div class="ac">
+                  <div class="ac-ic" style="background:rgba(6,182,212,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+                  <div class="ac-b"><div class="ac-cn" style="color:rgba(6,182,212,.6)">English 101</div><div class="ac-t">Reading Response — Chapter 4</div><div class="ac-d"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Due today · 11:59 PM</div></div>
+                  <div class="ac-r"><div class="ac-pts">25 pts</div><div class="av-row"><div class="av" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">DM</div></div></div>
+                </div>
+              </div>
+              <div class="dg">
+                <div class="dg-lbl">Due tomorrow</div>
+                <div class="ac">
+                  <div class="ac-ic" style="background:rgba(245,158,11,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+                  <div class="ac-b"><div class="ac-cn" style="color:rgba(245,158,11,.65)">Chemistry</div><div class="ac-t">Lab Report — Titration Experiment</div><div class="ac-d"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Due tomorrow · 9:00 AM</div></div>
+                  <div class="ac-r"><div class="ac-pts">100 pts</div><div class="av-row"><div class="av" style="background:linear-gradient(135deg,#f59e0b,#d97706)">DM</div></div></div>
+                </div>
+                <div class="ac">
+                  <div class="ac-ic" style="background:rgba(139,92,246,.12)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                  <div class="ac-b"><div class="ac-cn" style="color:rgba(139,92,246,.65)">Algorithms II</div><div class="ac-t">Forum Post — Week 4 Discussion</div><div class="ac-d"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Due tomorrow · 11:59 PM</div></div>
+                  <div class="ac-r"><div class="ac-pts">20 pts</div><div class="av-row"><div class="av" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">DM</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><div class="sh-dot"></div><div class="sh-line"></div><div class="sh-dot"></div></div>
+</section>
+
+<!-- ═══ STORY ═══ -->
+<section class="story" style="position:relative">
+  <div class="sec-label">② Sticky scroll — 3 steps activate as you scroll · step 1 shows the Canvas "before" · step 3 shows CanvasMerge</div>
+  <div style="max-width:1080px;margin:0 auto;text-align:center">
+    <div class="overline">From chaos to clarity</div>
+    <h2 class="sec-h2">Canvas is scattered. CanvasMerge isn't.</h2>
+    <p class="sec-sub">Three campuses, one place, zero juggling.</p>
+  </div>
+
+  <div class="story-grid">
+
+    <!-- STEP 1: Canvas native (ugly "before") -->
+    <div class="sc">
+      <div class="snum">1</div>
+      <div class="scard">
+        <div class="canvas-ui">
+          <!-- Canvas nav -->
+          <div class="cnav">
+            <div class="cnav-title">Dashboard</div>
+            <div class="cnav-right">
+              <div class="cnav-today">Today</div>
+              <div class="cnav-new">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                NEW ACTIVITY
+              </div>
+            </div>
+          </div>
+          <!-- "Nothing planned" illustration -->
+          <div class="c-nothing">
+            <div class="c-nothing-label">Nothing Planned Yet</div>
+            <div style="display:flex;align-items:flex-end;gap:5px;margin-bottom:4px">
+              <!-- Trees -->
+              <div class="c-tree"><div class="c-tri c-tri-lg"></div><div class="c-trunk"></div></div>
+              <div class="c-tree"><div class="c-tri c-tri-md" style="border-bottom-color:#4ade80"></div><div class="c-trunk"></div></div>
+              <!-- Hammock -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:1px"><div class="c-ham"></div></div>
+              <div class="c-tree"><div class="c-tri c-tri-sm"></div><div class="c-trunk"></div></div>
+              <!-- mountain -->
+              <div class="c-mtn"></div>
+              <div class="c-tree"><div class="c-tri c-tri-lg"></div><div class="c-trunk"></div></div>
+            </div>
+            <div class="c-np-text" style="font-size:10px;color:#6b7280">Nothing Planned Yet</div>
+          </div>
+          <!-- date header -->
+          <div class="c-date-hdr">Friday, June 19</div>
+          <!-- items -->
+          <div class="c-items">
+            <div class="c-course-img">
+              <div style="width:50px;height:100%;background:linear-gradient(135deg,rgba(29,78,216,.85),rgba(59,130,246,.7));display:flex;align-items:flex-start;padding:4px">
+                <div style="font-size:7px;font-weight:700;color:#fff;line-height:1.1;background:rgba(0,0,0,.35);padding:2px 3px;border-radius:2px">ART 103 : ART APPREC...</div>
+              </div>
+            </div>
+            <div class="c-items-list">
+              <div class="c-item">
+                <div class="c-cb"></div>
+                <svg class="c-item-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                <div class="c-item-body">
+                  <div class="c-item-meta">ART 103 : ART APPRECIATION I - MEYER W. - SUMMER 2026 - SECTION# 11782 QUIZ</div>
+                  <div class="c-item-title">Being a Successful Student Online Quiz</div>
+                </div>
+                <div class="c-item-right"><div class="c-pts">7 PTS</div><div class="c-due">DUE: 11:59 PM</div></div>
+              </div>
+              <div class="c-item">
+                <div class="c-cb"></div>
+                <svg class="c-item-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <div class="c-item-body">
+                  <div class="c-item-meta">ART 103 : ART APPRECIATION I - MEYER W. - SUMMER 2026 - SECTION# 11782 DISCUSSION</div>
+                  <div class="c-item-title">INTRODUCE YOURSELF WITH AN APPEALING WORK OF ART!</div>
+                </div>
+                <div class="c-item-right"><div class="c-pts">20 PTS</div><div class="c-due">DUE: 11:59 PM</div></div>
+              </div>
+              <div class="c-item">
+                <div class="c-cb"></div>
+                <svg class="c-item-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <div class="c-item-body">
+                  <div class="c-item-meta">ART 103 : ART APPRECIATION I - MEYER W. - SUMMER 2026 - SECTION# 11782 ASSIGNMENT</div>
+                  <div class="c-item-title">Netiquette Agreement</div>
+                </div>
+                <div class="c-item-right"><div class="c-pts">10 PTS</div><div class="c-due">DUE: 11:59 PM</div></div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:4px 10px;background:#f9fafb;border-top:1px solid #f3f4f6">
+            <div style="font-size:8px;color:#9ca3af;font-style:italic">Only showing 1 of 3 campuses — open another tab for the rest</div>
+          </div>
+        </div>
+      </div>
+      <div class="stitle">Canvas, as-is</div>
+      <div class="sdesc">One campus per tab. Verbose course names. No cross-campus view. No filters.</div>
+    </div>
+
+    <!-- STEP 2: MERGE -->
+    <div class="sc act">
+      <div class="snum">2</div>
+      <div class="scard">
+        <div class="merge-preview">
+          <div class="merge-domains">
+            <div class="mdom">state.edu</div>
+            <div class="mdom">cc.edu</div>
+            <div class="mdom">other.edu</div>
+          </div>
+          <div class="merge-row">
+            <div class="mc mc1">A</div>
+            <div class="mc mc2">B</div>
+            <div class="mc mc3">C</div>
+          </div>
+          <div class="merge-arrow">↓</div>
+          <div class="merge-result">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="merge-cap">tokens encrypted · syncing now</div>
+        </div>
+      </div>
+      <div class="stitle">CanvasMerge syncs</div>
+      <div class="sdesc">Add each Canvas domain and token. Encryption happens automatically.</div>
+    </div>
+
+    <!-- STEP 3: CANVASMERGE -->
+    <div class="sc">
+      <div class="snum">3</div>
+      <div class="scard">
+        <div class="mini-dash">
+          <div class="m-topbar">
+            <div class="m-logo"><div class="m-lbox"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#0f0f13" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg></div>CanvasMerge</div>
+            <div class="m-tabs"><div class="m-tab on">Assignments</div><div class="m-tab">Completed</div></div>
+          </div>
+          <div class="m-body">
+            <div class="m-sb">
+              <div class="m-sb-hdr">Courses · 7</div>
+              <div class="mci on"><div class="mci-bar" style="background:#6366f1"></div><div class="mci-t"><div class="mci-d">state.edu</div><div class="mci-n">Linear Algebra</div></div></div>
+              <div class="mci"><div class="mci-bar" style="background:#8b5cf6"></div><div class="mci-t"><div class="mci-d">state.edu</div><div class="mci-n">Algorithms II</div></div></div>
+              <div class="mci"><div class="mci-bar" style="background:#06b6d4"></div><div class="mci-t"><div class="mci-d">cc.edu</div><div class="mci-n">English 101</div></div></div>
+              <div class="mci"><div class="mci-bar" style="background:#f59e0b"></div><div class="mci-t"><div class="mci-d">cc.edu</div><div class="mci-n">Chemistry</div></div></div>
+              <div class="mci"><div class="mci-bar" style="background:#22c55e"></div><div class="mci-t"><div class="mci-d">cc.edu</div><div class="mci-n">Stats & Data</div></div></div>
+            </div>
+            <div class="m-main">
+              <div class="m-frow">
+                <div class="m-srch"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Search…</div>
+              </div>
+              <div class="m-chips">
+                <div class="m-chip on">All</div><div class="m-chip">Overdue</div><div class="m-chip">Today</div>
+              </div>
+              <div class="m-dlbl">Due today · 2 items</div>
+              <div class="mcard">
+                <div class="mcard-ic" style="background:rgba(99,102,241,.15)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                <div class="mcard-b"><div class="mcard-cn" style="color:rgba(99,102,241,.6)">Linear Algebra</div><div class="mcard-t">Problem Set 7</div><div class="mcard-d">Due today · 11:59 PM</div></div>
+                <div class="mcard-r"><div class="mcard-pts">50 pts</div><div class="mavs"><div class="mav" style="background:#6366f1">D</div></div></div>
+              </div>
+              <div class="mcard">
+                <div class="mcard-ic" style="background:rgba(6,182,212,.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+                <div class="mcard-b"><div class="mcard-cn" style="color:rgba(6,182,212,.6)">English 101</div><div class="mcard-t">Reading Response</div><div class="mcard-d">Due today · 11:59 PM</div></div>
+                <div class="mcard-r"><div class="mcard-pts">25 pts</div><div class="mavs"><div class="mav" style="background:#06b6d4">D</div></div></div>
+              </div>
+              <div class="m-dlbl" style="margin-top:4px">Due tomorrow · 2 items</div>
+              <div class="mcard">
+                <div class="mcard-ic" style="background:rgba(245,158,11,.12)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+                <div class="mcard-b"><div class="mcard-cn" style="color:rgba(245,158,11,.6)">Chemistry</div><div class="mcard-t">Lab Report</div><div class="mcard-d">Due tomorrow · 9:00 AM</div></div>
+                <div class="mcard-r"><div class="mcard-pts">100 pts</div><div class="mavs"><div class="mav" style="background:#f59e0b">D</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stitle">One readable dashboard</div>
+      <div class="sdesc">All campuses merged. Color-coded courses. Clean filters. Light and dark mode.</div>
+    </div>
+  </div>
+
+  <div style="max-width:1080px;margin:28px auto 0">
+    <div style="background:rgba(99,102,241,.07);border:1px dashed rgba(99,102,241,.22);border-radius:10px;padding:12px 18px;font-size:11px;color:rgba(255,255,255,.38)">
+      <strong style="color:#a5b4fc">In the real page:</strong> This section is sticky — the viewport scrolls through 3 panels, each step illuminating as scroll progress crosses its threshold. Framer Motion <code style="font-size:10px;background:rgba(255,255,255,.05);padding:2px 5px;border-radius:3px">useScroll + useTransform</code>.
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="features" style="position:relative">
+  <div class="sec-label">③ Feature cards — staggered scroll-in</div>
+  <div style="max-width:1080px;margin:0 auto;text-align:center">
+    <div class="overline">Less switching, more finishing</div>
+    <h2 class="sec-h2">The parts students actually need.</h2>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card">
+      <div class="feat-icon fi-c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+      <div class="feat-title">Bring every Canvas account together</div>
+      <div class="feat-desc">Connect school, dual-enrollment, and campus accounts without juggling tabs or calendars.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="feat-title">See the work that needs you next</div>
+      <div class="feat-desc">Assignments and due dates land in one dashboard built for quick scanning across all campuses.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
+      <div class="feat-title">Filter down to the moment</div>
+      <div class="feat-desc">Move between courses, campuses, and completion states when your week gets loud.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon fi-r"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div class="feat-title">Keep access tokens protected</div>
+      <div class="feat-desc">Canvas tokens are encrypted at rest while CanvasMerge does the retrieval work for you.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW ═══ -->
+<section class="how" style="position:relative">
+  <div class="sec-label">④ How it works — steps slide in from left</div>
+  <div style="text-align:center">
+    <div class="overline">From setup to sorted</div>
+    <h2 class="sec-h2">Your schoolwork gets one readable lane.</h2>
+  </div>
+  <div class="how-steps">
+    <div class="how-step"><div class="how-num">1</div><div class="how-txt">Sign in once.</div></div>
+    <div class="how-step"><div class="how-num">2</div><div class="how-txt">Add each Canvas domain and token.</div></div>
+    <div class="how-step"><div class="how-num">3</div><div class="how-txt">Open a merged planner that stays readable.</div></div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-sec" style="position:relative">
+  <div class="sec-label">⑤ CTA — ambient glow + fade up</div>
+  <div class="cta-glow"></div>
+  <h2 class="cta-h2">Bring every Canvas deadline into view.</h2>
+  <p class="cta-sub">Start with one account, add the rest when you are ready.</p>
+  <div class="cta-btns">
+    <div class="btn-ca">Start merging →</div>
+    <div class="btn-cs">Sign in</div>
+  </div>
+</section>
+
+<!-- ═══ LIGHT MODE ═══ -->
+<div class="lm-sep">☀ Light mode hero preview</div>
+<section class="light-hero">
+  <div class="lh-o1"></div><div class="lh-o2"></div>
+  <div style="position:relative;z-index:1">
+    <div class="lh-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>Built for students with more than one Canvas world</div>
+    <h1 class="lh-h1">Every Canvas.<br><span class="a">One view.</span></h1>
+    <p class="lh-p">One calm command center for every Canvas campus, course, due date, and assignment.</p>
+    <div class="lh-cta">
+      <div class="btn-lp">Start merging <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="btn-ls">View dashboard</div>
+    </div>
+  </div>
+  <div class="lh-right">
+    <div class="lh-wrap">
+      <div class="lh-tilt">
+        <div class="lh-dash">
+          <div class="lh-tb">
+            <div class="lh-logo"><div class="lh-lbox"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg></div>CanvasMerge</div>
+            <div class="lh-tabs"><div class="lh-tab on">Assignments</div><div class="lh-tab">Completed</div><div class="lh-tab">Announcements</div></div>
+            <div class="lh-av">DM</div>
+          </div>
+          <div class="lh-body">
+            <div class="lh-sb">
+              <div class="lh-sb-h">Courses · 7</div>
+              <div class="lh-ci on"><div class="lh-cbar" style="background:#6366f1"></div><div class="lh-ci-info"><div class="lh-cdom">state.edu</div><div class="lh-cname">Linear Algebra</div></div></div>
+              <div class="lh-ci"><div class="lh-cbar" style="background:#8b5cf6"></div><div class="lh-ci-info"><div class="lh-cdom">state.edu</div><div class="lh-cname">Algorithms II</div></div></div>
+              <div class="lh-ci"><div class="lh-cbar" style="background:#06b6d4"></div><div class="lh-ci-info"><div class="lh-cdom">cc.edu</div><div class="lh-cname">English 101</div></div></div>
+              <div class="lh-ci"><div class="lh-cbar" style="background:#f59e0b"></div><div class="lh-ci-info"><div class="lh-cdom">cc.edu</div><div class="lh-cname">Chemistry</div></div></div>
+              <div class="lh-ci"><div class="lh-cbar" style="background:#22c55e"></div><div class="lh-ci-info"><div class="lh-cdom">cc.edu</div><div class="lh-cname">Stats & Data</div></div></div>
+              <div class="lh-ci"><div class="lh-cbar" style="background:#ec4899"></div><div class="lh-ci-info"><div class="lh-cdom">state.edu</div><div class="lh-cname">Psych 200</div></div></div>
+            </div>
+            <div class="lh-main">
+              <div class="lh-fbar">
+                <div class="lh-fr1">
+                  <div class="lh-srch"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Search assignments…</div>
+                </div>
+                <div class="lh-chips">
+                  <div class="lh-chip on">All</div><div class="lh-chip">Overdue</div><div class="lh-chip">Due today</div><div class="lh-chip">This week</div>
+                </div>
+              </div>
+              <div class="lh-dlbl">Due today</div>
+              <div class="lh-card">
+                <div class="lh-cic" style="background:rgba(99,102,241,.1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                <div class="lh-cb"><div class="lh-cn" style="color:rgba(99,102,241,.6)">Linear Algebra</div><div class="lh-ct">Problem Set 7 — Eigenvalues</div><div class="lh-cd">Due today · 11:59 PM</div></div>
+                <div class="lh-cr"><div class="lh-pts">50 pts</div><div class="lh-avs"><div class="lh-av2" style="background:#6366f1">D</div></div></div>
+              </div>
+              <div class="lh-card">
+                <div class="lh-cic" style="background:rgba(6,182,212,.1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+                <div class="lh-cb"><div class="lh-cn" style="color:rgba(6,182,212,.6)">English 101</div><div class="lh-ct">Reading Response — Chapter 4</div><div class="lh-cd">Due today · 11:59 PM</div></div>
+                <div class="lh-cr"><div class="lh-pts">25 pts</div><div class="lh-avs"><div class="lh-av2" style="background:#06b6d4">D</div></div></div>
+              </div>
+              <div class="lh-dlbl" style="margin-top:4px">Due tomorrow</div>
+              <div class="lh-card">
+                <div class="lh-cic" style="background:rgba(245,158,11,.1)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+                <div class="lh-cb"><div class="lh-cn" style="color:rgba(245,158,11,.6)">Chemistry</div><div class="lh-ct">Lab Report — Titration</div><div class="lh-cd">Due tomorrow · 9:00 AM</div></div>
+                <div class="lh-cr"><div class="lh-pts">100 pts</div><div class="lh-avs"><div class="lh-av2" style="background:#f59e0b">D</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="annots">
+  <div class="ann"><div class="ann-dot" style="background:#6366f1"></div>Hero: larger mockup (grid-template-columns: 1fr 1.3fr)</div>
+  <div class="ann"><div class="ann-dot" style="background:#ef4444"></div>Section 2 step 1: faithful Canvas "before" recreation — cartoonish illustration, verbose ALL-CAPS course names, no multi-campus view</div>
+  <div class="ann"><div class="ann-dot" style="background:#8b5cf6"></div>Step 2: merge animation with domain labels</div>
+  <div class="ann"><div class="ann-dot" style="background:#22c55e"></div>Step 3: accurate CanvasMerge UI — sidebar color bars, filter chips, assignment cards with icons + course + title + due + points + avatar</div>
+</div>
+
+</body>
+</html>
