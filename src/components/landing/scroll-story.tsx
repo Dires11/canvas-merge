@@ -317,44 +317,63 @@ type StepProps = {
   children: React.ReactNode
 }
 
+const REVEAL = "opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1), filter 0.65s cubic-bezier(0.22,1,0.36,1)"
+
 function Step({ num, active, title, desc, children }: StepProps) {
+  const shown = active // once active stays active (caller tracks maxSeen)
+
   return (
-    <div className="flex flex-col items-center px-4">
+    <div className="flex flex-col items-center px-3">
+      {/* Step number dot */}
       <div
-        className="z-10 mb-[18px] flex size-[38px] shrink-0 items-center justify-center rounded-full text-[13px] font-extrabold transition-all duration-500"
+        className="z-10 mb-[18px] flex size-[38px] shrink-0 items-center justify-center rounded-full text-[13px] font-extrabold"
         style={{
-          background: active ? "#6366f1" : "#09090e",
-          border: `1.5px solid ${active ? "#6366f1" : "rgba(99,102,241,0.40)"}`,
-          color: active ? "#fff" : "rgba(165,180,252,0.7)",
-          boxShadow: active ? "0 0 0 8px rgba(99,102,241,0.12)" : "none",
+          background: shown ? "#6366f1" : "#09090e",
+          border: `1.5px solid ${shown ? "#6366f1" : "rgba(99,102,241,0.40)"}`,
+          color: shown ? "#fff" : "rgba(165,180,252,0.7)",
+          boxShadow: shown ? "0 0 0 8px rgba(99,102,241,0.12)" : "none",
+          transition: "all 0.5s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
         {num}
       </div>
 
+      {/* Card */}
       <div
         className="mb-[14px] w-full overflow-hidden rounded-xl"
         style={{
-          height: 300,
+          height: 400,
           border: "1px solid rgba(255,255,255,0.08)",
           background: "rgba(255,255,255,0.03)",
-          opacity: active ? 1 : 0.5,
-          transform: active ? "scale(1)" : "scale(0.97)",
-          transition: "opacity 0.4s ease, transform 0.4s ease",
+          opacity: shown ? 1 : 0,
+          transform: shown ? "translateY(0) scale(1)" : "translateY(36px) scale(0.96)",
+          filter: shown ? "blur(0px)" : "blur(4px)",
+          pointerEvents: shown ? "auto" : "none",
+          transition: REVEAL,
         }}
       >
         {children}
       </div>
 
+      {/* Caption */}
       <div
         className="mb-[5px] text-center text-[13px] font-bold text-white/95"
-        style={{ opacity: active ? 1 : 0.5, transition: "opacity 0.4s" }}
+        style={{
+          opacity: shown ? 1 : 0,
+          transform: shown ? "translateY(0)" : "translateY(12px)",
+          transition: "opacity 0.55s 0.1s cubic-bezier(0.22,1,0.36,1), transform 0.55s 0.1s cubic-bezier(0.22,1,0.36,1)",
+        }}
       >
         {title}
       </div>
       <div
         className="text-center text-[11px] leading-[1.55]"
-        style={{ color: "rgba(255,255,255,0.38)", opacity: active ? 1 : 0.5, transition: "opacity 0.4s" }}
+        style={{
+          color: "rgba(255,255,255,0.38)",
+          opacity: shown ? 1 : 0,
+          transform: shown ? "translateY(0)" : "translateY(12px)",
+          transition: "opacity 0.55s 0.15s cubic-bezier(0.22,1,0.36,1), transform 0.55s 0.15s cubic-bezier(0.22,1,0.36,1)",
+        }}
       >
         {desc}
       </div>
@@ -363,25 +382,43 @@ function Step({ num, active, title, desc, children }: StepProps) {
 }
 
 function StepGrid({ activeStep }: { activeStep: number }) {
+  // Track the furthest step reached — steps stay visible once revealed
+  const [maxStep, setMaxStep] = useState(activeStep)
+  if (activeStep > maxStep) setMaxStep(activeStep)
 
   return (
-    <div className="relative grid w-full max-w-[1080px] grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-0">
-      {/* Connecting line (desktop only) */}
+    <div className="relative grid w-full max-w-[1300px] grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-0">
+      {/* Faint base line */}
       <div
         className="pointer-events-none absolute hidden sm:block"
         style={{
           top: 19,
-          left: "calc(16.66% + 16px)",
-          right: "calc(16.66% + 16px)",
+          left: "calc(16.66% + 19px)",
+          right: "calc(16.66% + 19px)",
           height: 1,
-          background: "linear-gradient(90deg, rgba(99,102,241,0.5), rgba(6,182,212,0.5))",
+          background: "rgba(99,102,241,0.18)",
+        }}
+        aria-hidden="true"
+      />
+      {/* Animated fill line */}
+      <div
+        className="pointer-events-none absolute hidden sm:block"
+        style={{
+          top: 19,
+          left: "calc(16.66% + 19px)",
+          right: "calc(16.66% + 19px)",
+          height: 1,
+          background: "linear-gradient(90deg, #6366f1, #06b6d4)",
+          transformOrigin: "left center",
+          transform: `scaleX(${maxStep === 0 ? 0 : maxStep === 1 ? 0.5 : 1})`,
+          transition: "transform 0.7s cubic-bezier(0.22,1,0.36,1)",
         }}
         aria-hidden="true"
       />
 
       <Step
         num={1}
-        active={activeStep >= 0}
+        active={maxStep >= 0}
         title="Canvas, as-is"
         desc="One campus per tab. Verbose names. No cross-campus view. No filters."
       >
@@ -407,7 +444,7 @@ function StepGrid({ activeStep }: { activeStep: number }) {
 
       <Step
         num={2}
-        active={activeStep >= 1}
+        active={maxStep >= 1}
         title="CanvasMerge syncs"
         desc="Add each Canvas domain and token. Encryption happens automatically."
       >
@@ -416,7 +453,7 @@ function StepGrid({ activeStep }: { activeStep: number }) {
 
       <Step
         num={3}
-        active={activeStep >= 2}
+        active={maxStep >= 2}
         title="One readable dashboard"
         desc="All campuses merged. Color-coded. Clean filters. Light and dark mode."
       >
@@ -455,7 +492,7 @@ export function ScrollStory() {
         className={
           reduce
             ? "px-6 py-20 sm:px-14"
-            : "sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden px-6 py-16 sm:px-14"
+            : "sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden px-4 py-12 sm:px-10"
         }
       >
         <div className="mb-12 text-center">
