@@ -42,7 +42,7 @@ function SyncVis() {
                 className="flex size-7 shrink-0 items-center justify-center rounded-lg"
                 style={{ background: hexRgba(d.color, 0.15) }}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={d.color} strokeWidth="2">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={d.color} strokeWidth="2" aria-hidden="true">
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
               </div>
@@ -362,8 +362,8 @@ function Step({ num, active, title, desc, children }: StepProps) {
   )
 }
 
-function StepGrid({ activeStepValue }: { activeStepValue: MotionValue<number> | undefined }) {
-  const [activeStep, setActiveStep] = useState(0)
+function StepGrid({ activeStepValue, initialStep = 0 }: { activeStepValue: MotionValue<number> | undefined; initialStep?: number }) {
+  const [activeStep, setActiveStep] = useState(initialStep)
 
   useEffect(() => {
     if (!activeStepValue) return
@@ -473,7 +473,7 @@ export function ScrollStory() {
           </p>
         </div>
 
-        <StepGrid activeStepValue={reduce ? undefined : activeStepValue} />
+        <StepGrid activeStepValue={reduce ? undefined : activeStepValue} initialStep={reduce ? 2 : 0} />
       </div>
     </div>
   )
