@@ -3,7 +3,8 @@
 import { useRef, useState } from "react"
 import Image from "next/image"
 import { useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion"
-import { hexRgba, courseById, MOCK_COURSES, MOCK_ASSIGNMENTS } from "./mock-data"
+import { hexRgba } from "./mock-data"
+import { DashboardMockup } from "./dashboard-mockup"
 
 const DOMAINS = [
   { name: "state.edu", courses: 4, color: "#6366f1" },
@@ -145,169 +146,6 @@ function SyncVis() {
   )
 }
 
-function MiniDash() {
-  const miniCourses = MOCK_COURSES.slice(0, 5)
-  const miniItems = MOCK_ASSIGNMENTS.filter(
-    (a) => a.dueGroup === "today" || a.dueGroup === "tomorrow"
-  ).slice(0, 3)
-
-  return (
-    <div
-      className="flex h-full flex-col overflow-hidden"
-      style={{ background: "oklch(0.27 0.05 268)", fontSize: 10 }}
-    >
-      {/* Top bar */}
-      <div
-        className="flex items-center justify-between border-b border-white/[0.07] px-[11px] py-[7px]"
-        style={{ background: "oklch(0.22 0.05 268)" }}
-      >
-        <div className="flex items-center gap-[5px] text-[10px] font-bold text-white/90">
-          <div className="flex size-[18px] items-center justify-center rounded bg-white">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#0f0f13" strokeWidth="2.5" aria-hidden="true">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/>
-            </svg>
-          </div>
-          CanvasMerge
-        </div>
-        <div
-          className="flex gap-[1px] rounded-[6px] p-[2px]"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
-        >
-          {["Assignments", "Completed"].map((t, i) => (
-            <div
-              key={t}
-              className="rounded px-2 py-[2px] text-[9px] font-semibold"
-              style={{
-                background: i === 0 ? "rgba(255,255,255,0.12)" : "transparent",
-                color: i === 0 ? "rgba(255,255,255,.9)" : "rgba(255,255,255,.4)",
-              }}
-            >
-              {t}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <div
-          className="w-[100px] shrink-0 border-r border-white/[0.06] py-2"
-          style={{ background: "rgba(255,255,255,0.02)" }}
-        >
-          <div
-            className="mb-1 border-b border-white/[0.04] px-2 pb-[5px] text-[7px] font-bold uppercase tracking-[.07em]"
-            style={{ color: "rgba(255,255,255,.25)" }}
-          >
-            Courses · {MOCK_COURSES.length}
-          </div>
-          {miniCourses.map((c, i) => (
-            <div
-              key={c.id}
-              className="mx-1 mb-[2px] flex items-stretch overflow-hidden rounded"
-              style={{
-                background: i === 0 ? "rgba(99,102,241,.10)" : "rgba(255,255,255,.03)",
-                border: `1px solid ${i === 0 ? "rgba(99,102,241,.20)" : "rgba(255,255,255,.06)"}`,
-              }}
-            >
-              <div className="w-[2.5px] shrink-0" style={{ background: c.color }} />
-              <div className="min-w-0 px-[6px] py-[3px]">
-                <div className="text-[7px]" style={{ color: "rgba(255,255,255,.28)" }}>{c.domain}</div>
-                <div
-                  className="truncate text-[8px] font-semibold"
-                  style={{ color: i === 0 ? "#c7d2fe" : "rgba(255,255,255,.72)" }}
-                >
-                  {c.name}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Main */}
-        <div className="flex flex-1 flex-col gap-1 overflow-hidden p-[7px]">
-          <div className="flex gap-[3px]">
-            <div
-              className="flex flex-1 items-center gap-[3px] rounded px-[7px] py-[3px] text-[8px]"
-              style={{
-                background: "rgba(255,255,255,.05)",
-                border: "1px solid rgba(255,255,255,.08)",
-                color: "rgba(255,255,255,.28)",
-              }}
-            >
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-              Search…
-            </div>
-          </div>
-          <div className="flex gap-[2px]">
-            {["All", "Overdue", "Today"].map((l, i) => (
-              <div
-                key={l}
-                className="rounded-full px-[6px] py-[2px] text-[7px] font-semibold"
-                style={{
-                  background: i === 0 ? "rgba(99,102,241,.15)" : "rgba(255,255,255,.04)",
-                  border: `1px solid ${i === 0 ? "rgba(99,102,241,.30)" : "rgba(255,255,255,.08)"}`,
-                  color: i === 0 ? "#c7d2fe" : "rgba(255,255,255,.32)",
-                }}
-              >
-                {l}
-              </div>
-            ))}
-          </div>
-
-          {miniItems.map((a) => {
-            const c = courseById(a.courseId)
-            return (
-              <div
-                key={a.id}
-                className="flex items-stretch overflow-hidden rounded-lg"
-                style={{
-                  background: hexRgba(c.color, 0.07),
-                  borderStyle: "solid",
-                  borderTopWidth: "1.7px", borderTopColor: "rgba(255,255,255,.10)",
-                  borderRightWidth: "1.4px", borderRightColor: "rgba(255,255,255,.06)",
-                  borderBottomWidth: "1.2px", borderBottomColor: "rgba(255,255,255,.06)",
-                  borderLeftWidth: "2px", borderLeftColor: "rgba(255,255,255,.10)",
-                }}
-              >
-                <div
-                  className="flex w-6 shrink-0 items-center justify-center"
-                  style={{ background: hexRgba(c.color, 0.5), borderRight: "1px solid rgba(255,255,255,.08)" }}
-                >
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={c.color} strokeWidth="2" aria-hidden="true">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                  </svg>
-                </div>
-                <div className="min-w-0 flex-1 px-[5px] py-[4px]">
-                  <div className="text-[7px] font-bold uppercase" style={{ color: hexRgba(c.color, 0.8) }}>
-                    {c.name}
-                  </div>
-                  <div className="truncate text-[8px] font-bold" style={{ color: "rgba(255,255,255,.82)" }}>
-                    {a.title}
-                  </div>
-                  <div className="mt-[1px] text-[7px]" style={{ color: "rgba(255,255,255,.28)" }}>
-                    {a.dueLabel}
-                  </div>
-                </div>
-                <div className="flex flex-col items-end justify-center gap-[2px] px-[5px]">
-                  <div className="text-[7px]" style={{ color: "rgba(255,255,255,.30)" }}>{a.points} pts</div>
-                  <div
-                    className="flex size-3 items-center justify-center rounded-full text-[6px] font-bold text-white"
-                    style={{ background: c.color }}
-                  >
-                    D
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 type StepProps = {
   num: number
@@ -453,7 +291,11 @@ function StepGrid({ activeStep }: { activeStep: number }) {
         title="One readable dashboard"
         desc="All campuses merged. Color-coded. Clean filters. Light and dark mode."
       >
-        <MiniDash />
+        <div className="relative h-full w-full overflow-hidden">
+          <div style={{ position: "absolute", top: 0, left: 0, width: "200%", transformOrigin: "top left", transform: "scale(0.5)" }}>
+            <DashboardMockup />
+          </div>
+        </div>
       </Step>
     </div>
   )
