@@ -20,7 +20,7 @@ Live site: [canvas-merge.vercel.app](https://canvas-merge.vercel.app/auth/sign-i
 
 ## Features
 
-- Neon Auth sign-in flow for protected pages
+- Clerk sign-in flow for protected pages
 - Multi-account Canvas connection flow
 - Encrypted storage for Canvas personal access tokens
 - Unified dashboard for courses and planner data
@@ -32,7 +32,7 @@ Live site: [canvas-merge.vercel.app](https://canvas-merge.vercel.app/auth/sign-i
 - React 19
 - TypeScript
 - Prisma
-- Neon Auth
+- Clerk
 - Tailwind CSS 4
 
 ## Environment Variables
@@ -42,8 +42,8 @@ Create a `.env` file with the values your environment needs:
 ```bash
 DATABASE_URL=
 DIRECT_URL=
-NEON_AUTH_BASE_URL=
-NEON_AUTH_COOKIE_SECRET=
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
 CANVAS_TOKEN_KEY=
 ```
 
