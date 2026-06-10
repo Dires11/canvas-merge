@@ -49,7 +49,7 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
       style={{ background: heroBg }}
     >
       {/* Stars (dark mode only) */}
-      {!isLight && (
+      {!isLight && !reduce && (
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -65,7 +65,7 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
               "radial-gradient(1.5px 1.5px at 95% 45%, rgba(255,255,255,0.65) 0%, transparent 100%)",
               "radial-gradient(1px   1px   at 28% 60%, rgba(255,255,255,0.40) 0%, transparent 100%)",
             ].join(", "),
-            animation: reduce ? undefined : "twinkle 10s ease-in-out infinite alternate",
+            animation: "twinkle 10s ease-in-out infinite alternate",
           }}
         />
       )}
