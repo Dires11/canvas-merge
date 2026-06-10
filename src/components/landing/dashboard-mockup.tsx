@@ -13,7 +13,7 @@ import {
 } from "./mock-data"
 
 type Tab = "assignments" | "completed" | "announcements"
-type Chip = "all" | "overdue" | "today" | "tomorrow" | "no-due-date"
+type Chip = "all" | "overdue" | "today" | "this-week" | "no-due-date"
 
 const DUE_GROUP_ORDER = ["overdue", "today", "tomorrow", "later"] as const
 
@@ -49,7 +49,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
   const filteredAssignments = MOCK_ASSIGNMENTS.filter((a) => {
     if (activeChip === "overdue") return a.dueGroup === "overdue"
     if (activeChip === "today") return a.dueGroup === "today"
-    if (activeChip === "tomorrow") return a.dueGroup === "tomorrow"
+    if (activeChip === "this-week") return a.dueGroup === "tomorrow" || a.dueGroup === "later"
     if (activeChip === "no-due-date") return false
     return true
   })
@@ -213,7 +213,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
                   ["all", "All"],
                   ["overdue", "Overdue"],
                   ["today", "Due today"],
-                  ["tomorrow", "This week"],
+                  ["this-week", "This week"],
                   ["no-due-date", "No due date"],
                 ] as [Chip, string][]
               ).map(([val, label]) => (
