@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { ChevronDown } from "lucide-react"
+import { useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 const FAQS = [
   {
@@ -22,34 +22,37 @@ const FAQS = [
     a: "That's the whole point. Add as many Canvas domains as you have — each one syncs into the same unified planner, color-coded by course so nothing blurs together.",
   },
   {
-    q: "Does CanvasMerge read my grades or submission content?",
+    q: "Does CanvasMerge read my submission content?",
     a: "No. It only reads assignment names, due dates, and course info — the minimum needed to build your planner.",
   },
-]
+];
 
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export function HowItWorks() {
-  const reduce = useReducedMotion()
-  const [open, setOpen] = useState<number | null>(null)
+  const reduce = useReducedMotion();
+  const [open, setOpen] = useState<number | null>(null);
 
   return (
     <section
       className="px-6 py-20 sm:px-14"
-      style={{ background: "#07070f", borderTop: "1px solid rgba(255,255,255,0.04)" }}
+      style={{
+        background: "#07070f",
+        borderTop: "1px solid rgba(255,255,255,0.04)",
+      }}
     >
       <div className="text-center">
-        <div className="mb-[10px] text-[11px] font-bold uppercase tracking-[.1em] text-indigo-400">
+        <div className="mb-[10px] text-[11px] font-bold tracking-[.1em] text-indigo-400 uppercase">
           Common questions
         </div>
-        <h2 className="text-[clamp(28px,3.5vw,42px)] font-extrabold leading-[1.1] text-white">
+        <h2 className="text-[clamp(28px,3.5vw,42px)] leading-[1.1] font-extrabold text-white">
           Everything you need to know.
         </h2>
       </div>
 
       <div className="mx-auto mt-12 max-w-[720px]">
         {FAQS.map((faq, i) => {
-          const isOpen = open === i
+          const isOpen = open === i;
           return (
             <motion.div
               key={faq.q}
@@ -66,7 +69,9 @@ export function HowItWorks() {
               >
                 <span
                   className="text-[15px] font-semibold transition-colors duration-200"
-                  style={{ color: isOpen ? "#a5b4fc" : "rgba(255,255,255,0.85)" }}
+                  style={{
+                    color: isOpen ? "#a5b4fc" : "rgba(255,255,255,0.85)",
+                  }}
                 >
                   {faq.q}
                 </span>
@@ -90,15 +95,17 @@ export function HowItWorks() {
                     transition={{ duration: 0.26, ease: EASE }}
                     className="overflow-hidden"
                   >
-                    <p className="pb-5 text-[14px] leading-[1.75] text-white/45">{faq.a}</p>
+                    <p className="pb-5 text-[14px] leading-[1.75] text-white/45">
+                      {faq.a}
+                    </p>
                   </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
-          )
+          );
         })}
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }} />
       </div>
     </section>
-  )
+  );
 }

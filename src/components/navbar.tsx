@@ -34,7 +34,8 @@ type ThemeOption = (typeof THEME_OPTIONS)[number]["value"];
 
 export function Navbar() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === "light";
 
   const activeTheme: ThemeOption =
     theme === "light" || theme === "dark" || theme === "system"
@@ -51,26 +52,35 @@ export function Navbar() {
   return (
     <nav className="mx-auto my-4 max-w-7xl px-3 sm:my-8 sm:px-6 lg:px-8">
       <GlassContainer className="flex items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4">
-        <div className="text-foreground/80 flex min-w-0 items-center gap-2 text-sm font-semibold tracking-tight sm:gap-5 sm:text-base lg:text-lg">
-          <Link
-            href="/dashboard"
-            className={clsx(
-              "hover:text-foreground",
-              pathname === "/dashboard" && "text-foreground",
-            )}
-          >
-            Dashboard
+        {/* Logo + nav links — all left-aligned */}
+        <div className="flex min-w-0 items-center gap-3 sm:gap-5">
+          <Link href="/dashboard" className="flex shrink-0 items-center justify-center">
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-lg"
+              style={{ background: isLight ? "#6366f1" : "#fff" }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isLight ? "#fff" : "#0f0f13"} strokeWidth="2.5" aria-hidden="true">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
           </Link>
-          <Link
-            href="/manage-accounts"
-            className={clsx(
-              "hover:text-foreground",
-              pathname === "/manage-accounts" && "text-foreground",
-            )}
-          >
-            <span className="sm:hidden">Accounts</span>
-            <span className="hidden sm:inline">Manage Accounts</span>
-          </Link>
+
+          {/* Nav links */}
+          <div className="text-foreground/80 flex min-w-0 items-center gap-2 text-sm font-semibold tracking-tight sm:gap-5 sm:text-base lg:text-lg">
+            <Link
+              href="/dashboard"
+              className={clsx("hover:text-foreground", pathname === "/dashboard" && "text-foreground")}
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/manage-accounts"
+              className={clsx("hover:text-foreground", pathname === "/manage-accounts" && "text-foreground")}
+            >
+              <span className="sm:hidden">Accounts</span>
+              <span className="hidden sm:inline">Manage Accounts</span>
+            </Link>
+          </div>
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-5">

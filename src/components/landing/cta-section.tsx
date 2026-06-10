@@ -47,17 +47,17 @@ export function CtaSection({ isSignedIn }: { isSignedIn: boolean }) {
         whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
-        className="relative mt-[26px] flex justify-center gap-[10px]"
+        className="relative mt-[26px] flex flex-col items-center gap-[10px] sm:flex-row sm:justify-center"
       >
         <Link
           href={primaryHref}
-          className="rounded-[10px] bg-white px-[26px] py-3 text-[14px] font-bold text-slate-950 hover:bg-white/90 transition-colors"
+          className="w-full whitespace-nowrap rounded-[10px] bg-white px-[26px] py-3 text-center text-[14px] font-bold text-slate-950 hover:bg-white/90 transition-colors sm:w-auto"
         >
           {primaryLabel} →
         </Link>
         <Link
           href="/sign-in"
-          className="rounded-[10px] px-[26px] py-3 text-[14px] font-semibold text-white/72 hover:text-white transition-colors"
+          className="w-full whitespace-nowrap rounded-[10px] px-[26px] py-3 text-center text-[14px] font-semibold text-white/72 hover:text-white transition-colors sm:w-auto"
           style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)" }}
         >
           Sign in
