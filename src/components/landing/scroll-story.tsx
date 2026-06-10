@@ -342,7 +342,7 @@ function Step({ num, active, title, desc, children }: StepProps) {
       <div
         className="mb-[14px] w-full overflow-hidden rounded-xl"
         style={{
-          height: 400,
+          aspectRatio: "16/10",
           border: "1px solid rgba(255,255,255,0.08)",
           background: "rgba(255,255,255,0.03)",
           opacity: shown ? 1 : 0,
@@ -428,7 +428,7 @@ function StepGrid({ activeStep }: { activeStep: number }) {
             alt="Canvas native dashboard showing verbose course names and no cross-campus view"
             fill
             className="object-cover"
-            style={{ objectPosition: "0 35%" }}
+            style={{ objectPosition: "0% 52%" }}
           />
           <div
             className="absolute bottom-0 left-0 right-0 flex items-center gap-[6px] px-[10px] py-[7px]"
