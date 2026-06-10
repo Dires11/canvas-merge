@@ -10,7 +10,7 @@ export default async function Home() {
   const isSignedIn = Boolean(userId)
 
   return (
-    <main className="overflow-x-hidden">
+    <main className="[overflow-x:clip]">
       <Hero         isSignedIn={isSignedIn} />
       <ScrollStory />
       <FeatureCards />
