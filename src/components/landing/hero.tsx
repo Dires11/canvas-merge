@@ -103,12 +103,18 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
         </>
       )}
 
-      {/* Particles (dark mode only) */}
-      {!reduce && !isLight && PARTICLES.map((p) => (
+      {/* Particles */}
+      {!reduce && PARTICLES.map((p) => (
         <motion.div
           key={p.left}
-          className="pointer-events-none absolute rounded-full bg-white/55"
-          style={{ width: p.size, height: p.size, left: p.left, top: "95%" }}
+          className="pointer-events-none absolute rounded-full"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: p.left,
+            top: "95%",
+            background: isLight ? "rgba(79,70,229,0.7)" : "rgba(255,255,255,0.55)",
+          }}
           animate={{ y: [0, "-100vh"], x: [0, 12] }}
           transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: "linear" }}
         />
@@ -125,7 +131,9 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
               className="flex h-8 w-8 items-center justify-center rounded-lg"
               style={{ background: isLight ? "#6366f1" : "#fff" }}
             >
-              <Sparkles className="size-[14px]" style={{ color: isLight ? "#fff" : "#0f0f13" }} />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isLight ? "#fff" : "#0f0f13"} strokeWidth="2.5" aria-hidden="true">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
             </div>
             CanvasMerge
           </div>

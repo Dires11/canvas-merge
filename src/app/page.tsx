@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { Hero }         from "@/components/landing/hero"
 import { ScrollStory }  from "@/components/landing/scroll-story"
@@ -7,15 +8,15 @@ import { CtaSection }   from "@/components/landing/cta-section"
 
 export default async function Home() {
   const { userId } = await auth()
-  const isSignedIn = Boolean(userId)
+  if (userId) redirect("/dashboard")
 
   return (
     <main className="[overflow-x:clip]">
-      <Hero         isSignedIn={isSignedIn} />
+      <Hero         isSignedIn={false} />
       <ScrollStory />
       <FeatureCards />
       <HowItWorks  />
-      <CtaSection   isSignedIn={isSignedIn} />
+      <CtaSection   isSignedIn={false} />
     </main>
   )
 }
