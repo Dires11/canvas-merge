@@ -169,7 +169,7 @@ export default function ManageAccountsClient({
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     placeholder="Search accounts"
-                    className="h-10 py-2 pr-3 pl-9"
+                    className="dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-3 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
                     aria-label="Search linked accounts"
                   />
                 </div>
@@ -183,7 +183,7 @@ export default function ManageAccountsClient({
                   >
                     <Avatar
                       size="lg"
-                      className="size-10 self-center border border-white/20 bg-white/10 dark:border-white/10 sm:size-12"
+                      className="size-10 self-center border border-white/20 bg-white/10 sm:size-12 dark:border-white/10"
                     >
                       <AvatarImage
                         src={account.avatarUrl}

@@ -32,8 +32,8 @@ export function Step({
           ? "border-green-500/80"
           : active
             ? "border-primary/80"
-            : "border-glass",
-        "bg-glass/5 relative flex items-center gap-5 overflow-hidden rounded-2xl border px-2 py-2",
+            : "border-input",
+        "bg-card-foreground/5 dark:bg-input/15 relative flex items-center gap-5 overflow-hidden rounded-2xl border px-2 py-2 shadow-xs backdrop-blur-md",
       )}
       onClick={() => {
         if (completed) {
@@ -54,7 +54,7 @@ export function Step({
             ? "bg-green-500 text-white"
             : active
               ? "bg-primary text-primary-foreground"
-              : "dark:bg-glass/5 bg-glass/40",
+              : "bg-card-foreground/5 text-foreground/70 dark:bg-input/20",
         )}
       >
         {completed ? <Check className="size-5" /> : step}
@@ -70,6 +70,7 @@ export function Step({
         {active && (
           <div className="flex justify-end">
             <Button
+              type="button"
               disabled={disableNext}
               className="bg-primary text-primary-foreground"
               onClick={(e) => {

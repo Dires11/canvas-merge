@@ -179,7 +179,7 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
           <div className="flex gap-2">
             <Link
               href="/sign-in"
-              className="hidden rounded-lg px-4 py-[7px] text-[13px] font-semibold transition-colors sm:block"
+              className="rounded-lg px-4 py-[7px] text-[13px] font-semibold transition-colors"
               style={
                 isLight
                   ? {
@@ -198,7 +198,7 @@ export function Hero({ isSignedIn }: { isSignedIn: boolean }) {
             </Link>
             <Link
               href="/sign-up"
-              className="rounded-lg px-4 py-[7px] text-[13px] font-bold transition-colors"
+              className="hidden rounded-lg px-4 py-[7px] text-[13px] font-bold transition-colors sm:block"
               style={
                 isLight
                   ? { background: "#1e1b4b", color: "#fff" }

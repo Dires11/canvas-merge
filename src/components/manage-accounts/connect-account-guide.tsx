@@ -1,14 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { AddSchema, BaseUrlSchema } from "@/lib/schemas/manage-accounts";
-import { ExternalLink, School, KeyRound } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { GlassContainer } from "../glass-container";
 import Image from "next/image";
-import Link from "next/link";
 import { Step } from "./step";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,10 @@ import {
 
 type AddValues = z.infer<typeof AddSchema>;
 
+const guideInputClassName = "h-11 rounded-xl text-sm sm:text-base";
+const guideLinkButtonClassName =
+  "border-input bg-card-foreground/5 text-card-foreground hover:bg-card-foreground/10 rounded-xl shadow-xs dark:bg-input/30 dark:hover:bg-input/50";
+
 export function ConnectAccountGuide({
   onSubmit: onSubmitProp,
 }: {
@@ -33,7 +37,7 @@ export function ConnectAccountGuide({
   const {
     register,
     handleSubmit,
-    watch,
+    getValues,
     trigger,
     setError,
     formState: { errors, isSubmitting },
@@ -63,7 +67,7 @@ export function ConnectAccountGuide({
     if (currentStep == 1) {
       const valid = await trigger(["domainName", "baseUrl"]);
       if (!valid) return;
-      const parsed = BaseUrlSchema.safeParse(watch("baseUrl"));
+      const parsed = BaseUrlSchema.safeParse(getValues("baseUrl"));
       if (parsed.success) {
         console.log("Derived base URL:", { baseUrl: parsed.data });
         setValidatedBaseUrl(parsed.data);
@@ -84,7 +88,7 @@ export function ConnectAccountGuide({
     <form onSubmit={handleSubmit(onSubmit)}>
       <GlassContainer className="mx-auto max-w-4xl space-y-4">
         <div className="flex items-center gap-2 text-lg tracking-tight">
-          Let's get started by connecting your Canvas account!
+          Let&apos;s get started by connecting your Canvas account!
         </div>
         <div className="space-y-3">
           <Step
@@ -102,7 +106,7 @@ export function ConnectAccountGuide({
                 <Input
                   id="canvas-url"
                   placeholder="e.g. canvas.csun.edu"
-                  className="dark:bg-background bg-background text-foreground placeholder:text-foreground/70"
+                  className={guideInputClassName}
                   {...register("baseUrl")}
                 />
                 {errors?.baseUrl && (
@@ -121,7 +125,7 @@ export function ConnectAccountGuide({
                 <Input
                   id="college-name"
                   placeholder="e.g. CSUN"
-                  className="dark:bg-background bg-background text-foreground placeholder:text-foreground/70"
+                  className={guideInputClassName}
                   {...register("domainName")}
                 />
                 {errors?.domainName && (
@@ -149,10 +153,15 @@ export function ConnectAccountGuide({
                 personal access token from Canvas. Click the button below to
                 navigate to the Canvas settings page.
               </p>
-              <Button variant="outline" className="mt-2">
+              <Button
+                asChild
+                variant="outline"
+                className={cn("mt-2", guideLinkButtonClassName)}
+              >
                 <a
                   href={settingsUrl ?? "#"}
                   target="_blank"
+                  rel="noreferrer"
                   className="inline-flex items-center gap-1"
                 >
                   Navigate to Canvas Settings
@@ -169,35 +178,67 @@ export function ConnectAccountGuide({
             onClick={setCurrentStep}
             onNext={handleNext}
           >
-            <div>
+            <div className="space-y-4">
               <p className="text-sm">
-                Now you should be on the "Approved Integrations" section of your
-                Canvas settings. Click the "+ New Access Token" button to
-                generate a new token. Make sure to copy the token after it's
-                generated, as you won't be able to see it again!
+                Now you should be on the &quot;Approved Integrations&quot;
+                section of your Canvas settings. Click the &quot;+ New Access
+                Token&quot; button to generate a new token. Make sure to copy
+                the token after it&apos;s generated, as you won&apos;t be able
+                to see it again!
               </p>
-              <div className="flex flex-wrap items-center justify-center">
-                <Image
-                  src="/canvas-guide/approved-integrations.png"
-                  alt="Screenshot of the Canvas 'Approved Integrations' page with the '+ New Access Token' button highlighted."
-                  width={500}
-                  height={50}
-                  className="glass-border mt-2 rounded-2xl"
-                />
-                <Image
-                  src="/canvas-guide/generate-token-modal.png"
-                  alt="Screenshot of the modal for generating a new access token in Canvas."
-                  width={500}
-                  height={300}
-                  className="glass-border mt-2 rounded-2xl"
-                />
-                <Image
-                  src="/canvas-guide/generated-token.png"
-                  alt="Screenshot of the modal for generating a new access token in Canvas."
-                  width={500}
-                  height={150}
-                  className="glass-border mt-2 rounded-2xl"
-                />
+              <div className="grid gap-3">
+                <figure className="glass-border bg-glass/5 overflow-hidden rounded-2xl p-2 shadow-sm">
+                  <div className="text-muted-foreground mb-2 flex items-center gap-2 px-1 text-xs font-medium">
+                    <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-[11px]">
+                      1
+                    </span>
+                    Find Approved Integrations
+                  </div>
+                  <Image
+                    src="/canvas-guide/approved-integrations.png"
+                    alt="Screenshot of the Canvas 'Approved Integrations' page with the '+ New Access Token' button highlighted."
+                    width={1702}
+                    height={340}
+                    sizes="(min-width: 768px) 760px, 90vw"
+                    className="rounded-xl border border-white/10 object-cover"
+                  />
+                </figure>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <figure className="glass-border bg-glass/5 overflow-hidden rounded-2xl p-2 shadow-sm">
+                    <div className="text-muted-foreground mb-2 flex items-center gap-2 px-1 text-xs font-medium">
+                      <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-[11px]">
+                        2
+                      </span>
+                      Create the token
+                    </div>
+                    <Image
+                      src="/canvas-guide/generate-token-modal.png"
+                      alt="Screenshot of the modal for generating a new access token in Canvas."
+                      width={1538}
+                      height={954}
+                      sizes="(min-width: 768px) 372px, 90vw"
+                      className="aspect-[16/10] rounded-xl border border-white/10 object-cover object-top"
+                    />
+                  </figure>
+
+                  <figure className="glass-border bg-glass/5 overflow-hidden rounded-2xl p-2 shadow-sm">
+                    <div className="text-muted-foreground mb-2 flex items-center gap-2 px-1 text-xs font-medium">
+                      <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-[11px]">
+                        3
+                      </span>
+                      Copy it once
+                    </div>
+                    <Image
+                      src="/canvas-guide/generated-token.png"
+                      alt="Screenshot of the generated access token in Canvas."
+                      width={1526}
+                      height={1224}
+                      sizes="(min-width: 768px) 372px, 90vw"
+                      className="aspect-[16/10] rounded-xl border border-white/10 object-cover object-top"
+                    />
+                  </figure>
+                </div>
               </div>
             </div>
           </Step>
@@ -224,7 +265,7 @@ export function ConnectAccountGuide({
               <Input
                 id="canvas-token"
                 placeholder="1860~X26VHn2..."
-                className="dark:bg-background bg-background text-foreground placeholder:text-foreground/70"
+                className={guideInputClassName}
                 {...register("token")}
               />
               {errors?.token && (

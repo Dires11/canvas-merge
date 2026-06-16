@@ -15,7 +15,7 @@ import { AddSchema, BaseUrlSchema } from "@/lib/schemas/manage-accounts";
 import type { AddAccountInput } from "@/lib/types/account";
 import { CanvasDomainInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { ExternalLink, Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 type Props = {
@@ -55,6 +55,10 @@ export function AddAccountForm({ onSubmit, domains }: Props) {
   }, [domains]);
 
   const baseUrl = useWatch({ control, name: "baseUrl" });
+  const selectedDomain = useMemo(
+    () => domains.find((domain) => domain.baseUrl === selectedDomainBaseUrl),
+    [domains, selectedDomainBaseUrl],
+  );
 
   const matchedDomainName = useMemo(() => {
     if (!isAddingNewDomain) return null;
@@ -63,12 +67,22 @@ export function AddAccountForm({ onSubmit, domains }: Props) {
     return domainMap.get(parsed.data) ?? null;
   }, [baseUrl, domainMap, isAddingNewDomain]);
 
+  const tokenSettingsUrl = useMemo(() => {
+    const parsedBaseUrl = BaseUrlSchema.safeParse(baseUrl);
+    const selectedBaseUrl = isAddingNewDomain
+      ? parsedBaseUrl.success
+        ? parsedBaseUrl.data
+        : null
+      : selectedDomain?.baseUrl;
+
+    return selectedBaseUrl
+      ? `${selectedBaseUrl}/profile/settings#:~:text=Approved%20Integrations`
+      : null;
+  }, [baseUrl, isAddingNewDomain, selectedDomain]);
+
   useEffect(() => {
     if (isAddingNewDomain) return;
 
-    const selectedDomain = domains.find(
-      (domain) => domain.baseUrl === selectedDomainBaseUrl,
-    );
     if (!selectedDomain) return;
 
     setValue("baseUrl", selectedDomain.baseUrl, {
@@ -80,13 +94,7 @@ export function AddAccountForm({ onSubmit, domains }: Props) {
       shouldDirty: true,
     });
     clearErrors(["baseUrl", "domainName"]);
-  }, [
-    clearErrors,
-    domains,
-    isAddingNewDomain,
-    selectedDomainBaseUrl,
-    setValue,
-  ]);
+  }, [clearErrors, isAddingNewDomain, selectedDomain, setValue]);
 
   useEffect(() => {
     if (!matchedDomainName) return;
@@ -149,7 +157,7 @@ export function AddAccountForm({ onSubmit, domains }: Props) {
                     aria-pressed={isSelected}
                     onClick={() => selectSavedDomain(domain.baseUrl)}
                     className={cn(
-                      "border-input bg-card-foreground/5 text-card-foreground hover:bg-card-foreground/10 flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left text-sm shadow-xs transition-[color,background-color,border-color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                      "border-input bg-card-foreground/5 text-card-foreground hover:bg-card-foreground/10 focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left text-sm shadow-xs transition-[color,background-color,border-color,box-shadow] outline-none focus-visible:ring-[3px]",
                       isSelected &&
                         "border-primary bg-primary/15 text-foreground shadow-sm",
                     )}
@@ -178,7 +186,7 @@ export function AddAccountForm({ onSubmit, domains }: Props) {
                 aria-pressed={isAddingNewDomain}
                 onClick={selectNewDomain}
                 className={cn(
-                  "border-input bg-card-foreground/5 text-card-foreground hover:bg-card-foreground/10 flex min-h-11 w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm font-medium shadow-xs transition-[color,background-color,border-color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                  "border-input bg-card-foreground/5 text-card-foreground hover:bg-card-foreground/10 focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm font-medium shadow-xs transition-[color,background-color,border-color,box-shadow] outline-none focus-visible:ring-[3px]",
                   isAddingNewDomain &&
                     "border-primary bg-primary/15 text-foreground shadow-sm",
                 )}
@@ -250,15 +258,34 @@ export function AddAccountForm({ onSubmit, domains }: Props) {
           <FieldLabel htmlFor="token" className="text-sm font-medium">
             Canvas API Token
           </FieldLabel>
-          <Input
-            id="token"
-            type="password"
-            autoComplete="one-time-code"
-            placeholder="e.g. abc123..."
-            aria-invalid={!!errors.token}
-            className="h-11 rounded-xl text-sm sm:text-base"
-            {...register("token")}
-          />
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Input
+              id="token"
+              type="password"
+              autoComplete="one-time-code"
+              placeholder="e.g. abc123..."
+              aria-invalid={!!errors.token}
+              className="h-11 rounded-xl text-sm sm:flex-1 sm:text-base"
+              {...register("token")}
+            />
+            {tokenSettingsUrl && (
+              <Button
+                asChild
+                variant="outline"
+                className="border-primary/25 bg-primary/15 text-primary hover:bg-primary/20 hover:text-primary dark:border-primary/35 dark:bg-primary/20 dark:text-foreground dark:hover:bg-primary/30 dark:hover:text-foreground h-11 shrink-0 rounded-xl px-3 text-sm font-medium shadow-xs"
+              >
+                <a
+                  href={tokenSettingsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5"
+                >
+                  Token page
+                  <ExternalLink className="size-4" aria-hidden="true" />
+                </a>
+              </Button>
+            )}
+          </div>
           <FieldDescription className="text-xs sm:text-sm">
             Your token is encrypted before it is stored.
           </FieldDescription>
