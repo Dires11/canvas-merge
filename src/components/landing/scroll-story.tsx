@@ -378,7 +378,7 @@ export function ScrollStory() {
             Canvas is scattered. CanvasMerge isn&apos;t.
           </h2>
           <p className="mt-2 text-[15px] text-white/42">
-            Three campuses, one place, zero juggling.
+            All your campuses, one place, zero juggling.
           </p>
         </div>
 

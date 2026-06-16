@@ -59,6 +59,32 @@ export const MOCK_ANNOUNCEMENTS: MockAnnouncement[] = [
   { id: 'n4', courseId: '2', title: 'Office hours rescheduled — see updated Zoom link below',       postedAgo: '2 days ago' },
 ]
 
+/** Distinct campus domains, in display order (state.edu, cc.edu, other.edu) */
+export const MOCK_DOMAINS: string[] = Array.from(new Set(MOCK_COURSES.map((c) => c.domain)))
+
+const DUE_ORDER: Record<MockAssignment["dueGroup"], number> = {
+  overdue: 0,
+  today: 1,
+  tomorrow: 2,
+  later: 3,
+}
+
+/**
+ * Group a (pre-filtered) assignment list by campus domain, mirroring the real
+ * dashboard's per-domain sections. Empty domains are dropped; items within a
+ * domain are ordered by how soon they're due.
+ */
+export function groupByDomain(
+  list: MockAssignment[],
+): { domain: string; items: MockAssignment[] }[] {
+  return MOCK_DOMAINS.map((domain) => ({
+    domain,
+    items: list
+      .filter((a) => courseById(a.courseId).domain === domain)
+      .sort((x, y) => DUE_ORDER[x.dueGroup] - DUE_ORDER[y.dueGroup]),
+  })).filter((g) => g.items.length > 0)
+}
+
 /** Hex → rgba string helper */
 export function hexRgba(hex: string, alpha: number): string {
   const r = parseInt(hex.slice(1, 3), 16)

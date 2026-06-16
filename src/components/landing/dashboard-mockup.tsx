@@ -1,12 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { FileText, CheckSquare, MessageSquare, Search, SlidersHorizontal, ExternalLink } from "lucide-react"
+import { FileText, CheckSquare, MessageSquare, Search, SlidersHorizontal, ExternalLink, ChevronDown } from "lucide-react"
 import {
   MOCK_COURSES,
   MOCK_ASSIGNMENTS,
   MOCK_COMPLETED,
   MOCK_ANNOUNCEMENTS,
+  groupByDomain,
   hexRgba,
   courseById,
   type MockAssignment,
@@ -14,15 +15,6 @@ import {
 
 type Tab = "assignments" | "completed" | "announcements"
 type Chip = "all" | "overdue" | "today" | "this-week" | "no-due-date"
-
-const DUE_GROUP_ORDER = ["overdue", "today", "tomorrow", "later"] as const
-
-const DUE_GROUP_LABEL: Record<string, string> = {
-  overdue: "Overdue",
-  today: "Due today",
-  tomorrow: "Due tomorrow",
-  later: "Due in 3 days",
-}
 
 function AssignmentTypeIcon({ type, color }: { type: MockAssignment["type"]; color: string }) {
   const size = 15
@@ -55,11 +47,9 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
     return true
   })
 
-  const groupedAssignments = DUE_GROUP_ORDER.reduce<Record<string, MockAssignment[]>>((acc, group) => {
-    const items = filteredAssignments.filter((a) => a.dueGroup === group)
-    if (items.length) acc[group] = items
-    return acc
-  }, {})
+  // Group the merged feed by campus domain — the same per-campus sections the
+  // real dashboard renders, so all three campuses are visible at once.
+  const assignmentsByDomain = groupByDomain(filteredAssignments)
 
   return (
     <div
@@ -244,13 +234,16 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
             {/* ASSIGNMENTS */}
             {activeTab === "assignments" && (
               <>
-                {Object.entries(groupedAssignments).map(([group, items]) => (
-                  <div key={group} className="flex flex-col gap-1">
-                    <div
-                      className="px-[2px] text-[9px] font-bold uppercase tracking-[0.07em]"
-                      style={{ color: "rgba(255,255,255,0.28)" }}
-                    >
-                      {DUE_GROUP_LABEL[group]}
+                {assignmentsByDomain.map(({ domain, items }) => (
+                  <div key={domain} className="flex flex-col gap-1">
+                    <div className="flex items-center justify-between px-[2px] pt-[1px]">
+                      <span
+                        className="text-[11px] font-bold tracking-tight"
+                        style={{ color: "rgba(255,255,255,0.82)" }}
+                      >
+                        {domain}
+                      </span>
+                      <ChevronDown size={13} style={{ color: "rgba(255,255,255,0.30)" }} />
                     </div>
                     {items.map((a) => {
                       const course = courseById(a.courseId)
@@ -335,7 +328,7 @@ export function DashboardMockup({ className = "" }: { className?: string }) {
                     })}
                   </div>
                 ))}
-                {Object.keys(groupedAssignments).length === 0 && (
+                {assignmentsByDomain.length === 0 && (
                   <div
                     className="flex flex-1 items-center justify-center text-[12px]"
                     style={{ color: "rgba(255,255,255,0.28)" }}

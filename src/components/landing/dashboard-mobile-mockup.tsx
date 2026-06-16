@@ -13,12 +13,15 @@ import {
   Search,
 } from "lucide-react"
 import { GlassContainer } from "@/components/glass-container"
-import { courseById, MOCK_ASSIGNMENTS, hexRgba } from "./mock-data"
+import { courseById, groupByDomain, MOCK_ASSIGNMENTS, hexRgba } from "./mock-data"
 import type { MockAssignment } from "./mock-data"
 
-const ITEMS = MOCK_ASSIGNMENTS.filter(
-  (a) => a.dueGroup === "today" || a.dueGroup === "tomorrow"
-).slice(0, 3)
+// One section per campus domain, mirroring the merged dashboard's per-domain
+// groups. The first campus shows two items, the rest one, to stay compact.
+const DOMAIN_GROUPS = groupByDomain(MOCK_ASSIGNMENTS).map((g, i) => ({
+  domain: g.domain,
+  items: g.items.slice(0, i === 0 ? 2 : 1),
+}))
 
 const QUICK_FILTERS = ["All", "Overdue", "Due Today", "This Week"]
 
@@ -83,52 +86,52 @@ export function DashboardMobileMockup() {
           </div>
         </GlassContainer>
 
-        {/* Domain group — mirrors GlassContainer + Collapsible */}
-        <GlassContainer className="p-3 flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-semibold tracking-tight">state.edu</span>
-            <ChevronDown className="size-3.5 text-muted-foreground" />
-          </div>
+        {/* One domain group per campus — mirrors GlassContainer + Collapsible */}
+        {DOMAIN_GROUPS.map(({ domain, items }) => (
+          <GlassContainer key={domain} className="p-3 flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] font-semibold tracking-tight">{domain}</span>
+              <ChevronDown className="size-3.5 text-muted-foreground" />
+            </div>
 
-          <p className="text-[10px] tracking-tight text-foreground/60">Due today</p>
-
-          <div className="flex flex-col gap-1.5">
-            {ITEMS.map((a) => {
-              const course = courseById(a.courseId)
-              return (
-                <div
-                  key={a.id}
-                  className="glass-border flex items-stretch overflow-hidden rounded-2xl"
-                  style={{ background: hexRgba(course.color, 0.05) }}
-                >
-                  {/* Left icon strip */}
+            <div className="flex flex-col gap-1.5">
+              {items.map((a) => {
+                const course = courseById(a.courseId)
+                return (
                   <div
-                    className="flex w-9 shrink-0 items-center justify-center border-r border-white/10"
-                    style={{ background: hexRgba(course.color, 0.5), color: course.color }}
+                    key={a.id}
+                    className="glass-border flex items-stretch overflow-hidden rounded-2xl"
+                    style={{ background: hexRgba(course.color, 0.05) }}
                   >
-                    <AssignmentTypeIcon type={a.type} />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex min-w-0 flex-1 flex-col gap-0.5 py-1.5 pl-3 pr-2">
-                    <p
-                      className="truncate text-[10px] font-semibold"
-                      style={{ color: hexRgba(course.color, 0.85) }}
+                    {/* Left icon strip */}
+                    <div
+                      className="flex w-9 shrink-0 items-center justify-center border-r border-white/10"
+                      style={{ background: hexRgba(course.color, 0.5), color: course.color }}
                     >
-                      {course.name}
-                    </p>
-                    <p className="truncate text-[11px] font-bold leading-tight text-card-foreground">
-                      {a.title}
-                    </p>
-                    <p className="text-[9px] text-card-foreground/50">
-                      Due: {a.dueLabel}
-                    </p>
+                      <AssignmentTypeIcon type={a.type} />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex min-w-0 flex-1 flex-col gap-0.5 py-1.5 pl-3 pr-2">
+                      <p
+                        className="truncate text-[10px] font-semibold"
+                        style={{ color: hexRgba(course.color, 0.85) }}
+                      >
+                        {course.name}
+                      </p>
+                      <p className="truncate text-[11px] font-bold leading-tight text-card-foreground">
+                        {a.title}
+                      </p>
+                      <p className="text-[9px] text-card-foreground/50">
+                        Due: {a.dueLabel}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
-        </GlassContainer>
+                )
+              })}
+            </div>
+          </GlassContainer>
+        ))}
       </div>
 
       {/* Floating bottom tab bar — mirrors GlassContainer pill in client.tsx */}
