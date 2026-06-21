@@ -20,6 +20,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useState } from "react";
 import { HoverOrTap } from "./hover-or-tap";
 import {
@@ -119,6 +124,7 @@ function AccountAssignmentPopover({
   mode: "active" | "completed";
 }) {
   const [open, setOpen] = useState(false);
+  const [avatarTooltipOpen, setAvatarTooltipOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [overrideId, setOverrideId] = useState<number | null>(
@@ -222,6 +228,7 @@ function AccountAssignmentPopover({
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen && pending) return;
 
+    if (nextOpen) setAvatarTooltipOpen(false);
     setOpen(nextOpen);
 
     if (!nextOpen && changed) {
@@ -237,21 +244,43 @@ function AccountAssignmentPopover({
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="ring-card-foreground/20 focus-visible:ring-ring my-0.5 ml-0.5 rounded-full ring transition outline-none hover:scale-105 hover:cursor-pointer focus-visible:ring-2"
-          aria-label={`Open options for ${account.name}`}
+      <Tooltip open={avatarTooltipOpen && !open}>
+        <PopoverTrigger asChild>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              className="ring-card-foreground/20 focus-visible:ring-ring my-0.5 ml-0.5 rounded-full ring transition outline-none hover:scale-105 hover:cursor-pointer focus-visible:ring-2"
+              aria-label={`Open options for ${account.name}`}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse") {
+                  setAvatarTooltipOpen(true);
+                }
+              }}
+              onPointerLeave={(event) => {
+                if (event.pointerType === "mouse") {
+                  setAvatarTooltipOpen(false);
+                }
+              }}
+              onClick={() => setAvatarTooltipOpen(false)}
+            >
+              <Avatar>
+                <AvatarImage
+                  src={account.avatarUrl}
+                  alt={`${account.name}'s avatar`}
+                />
+                <AvatarFallback>{getInitials(account.name)}</AvatarFallback>
+              </Avatar>
+            </button>
+          </TooltipTrigger>
+        </PopoverTrigger>
+        <TooltipContent
+          side="top"
+          sideOffset={6}
+          className="max-w-56 px-2.5 py-1.5 text-xs font-medium"
         >
-          <Avatar>
-            <AvatarImage
-              src={account.avatarUrl}
-              alt={`${account.name}'s avatar`}
-            />
-            <AvatarFallback>{getInitials(account.name)}</AvatarFallback>
-          </Avatar>
-        </button>
-      </PopoverTrigger>
+          <span className="block truncate">{account.name}</span>
+        </TooltipContent>
+      </Tooltip>
       <PopoverContent
         align="center"
         side="top"
