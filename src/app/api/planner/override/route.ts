@@ -4,12 +4,14 @@ import { z } from "zod";
 
 import {
   createPlannerOverride,
-  deletePlannerOverride,
+  getPlannerOverrides,
+  type PlannerOverride,
   updatePlannerOverride,
 } from "@/lib/canvas";
 import { getUserCanvasAccountsWithTokens } from "@/lib/data/canvas-account";
 import { decryptToken } from "@/lib/server/crypto";
 import { validateJson } from "@/lib/server/validate-json";
+import { invalidateDedupeWithPrefix } from "@/lib/utils/dedupe";
 
 const OverrideSchema = z.discriminatedUnion("action", [
   z.object({
@@ -20,16 +22,34 @@ const OverrideSchema = z.discriminatedUnion("action", [
     overrideId: z.number().int().positive().nullable(),
   }),
   z.object({
-    action: z.literal("undo_update"),
-    accountId: z.string().min(1),
-    overrideId: z.number().int().positive(),
-  }),
-  z.object({
-    action: z.literal("undo_create"),
+    action: z.literal("mark_incomplete"),
     accountId: z.string().min(1),
     overrideId: z.number().int().positive(),
   }),
 ]);
+
+function normalizePlannableType(value: string) {
+  return value.toLowerCase().replaceAll(/[^a-z0-9]/g, "");
+}
+
+function isMatchingPlannerOverride(
+  override: PlannerOverride,
+  plannableType: string,
+  plannableId: number,
+) {
+  return (
+    (override.plannable_id === plannableId &&
+      normalizePlannableType(override.plannable_type) ===
+        normalizePlannableType(plannableType)) ||
+    override.assignment_id === plannableId
+  );
+}
+
+function getUserFacingError(action: z.infer<typeof OverrideSchema>["action"]) {
+  return action === "mark_complete"
+    ? "Canvas could not mark this assignment complete. Please refresh and try again."
+    : "Canvas could not undo this completion. Please refresh and try again.";
+}
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -74,38 +94,62 @@ export async function POST(req: NextRequest) {
   const domain = account.canvasDomain.baseUrl;
   const token = decryptToken(account.accessToken);
 
-  const result =
-    parsed.data.action === "mark_complete"
-      ? parsed.data.overrideId
-        ? await updatePlannerOverride(domain, token, parsed.data.overrideId, true)
-        : await createPlannerOverride(
-            domain,
-            token,
-            parsed.data.plannableType,
-            parsed.data.plannableId,
-            true,
-          )
-      : parsed.data.action === "undo_update"
-        ? await updatePlannerOverride(domain, token, parsed.data.overrideId, false)
-        : await deletePlannerOverride(domain, token, parsed.data.overrideId);
+  let result = await (parsed.data.action === "mark_complete"
+    ? parsed.data.overrideId
+      ? updatePlannerOverride(domain, token, parsed.data.overrideId, true)
+      : createPlannerOverride(
+          domain,
+          token,
+          parsed.data.plannableType,
+          parsed.data.plannableId,
+          true,
+        )
+    : updatePlannerOverride(domain, token, parsed.data.overrideId, false));
+
+  if (
+    parsed.data.action === "mark_complete" &&
+    !parsed.data.overrideId &&
+    !result.ok
+  ) {
+    const { plannableId, plannableType } = parsed.data;
+    const overrides = await getPlannerOverrides(domain, token);
+
+    if (overrides.ok) {
+      const matchingOverride = overrides.data.find((override) =>
+        isMatchingPlannerOverride(override, plannableType, plannableId),
+      );
+
+      if (matchingOverride) {
+        result = await updatePlannerOverride(
+          domain,
+          token,
+          matchingOverride.id,
+          true,
+        );
+      }
+    }
+  }
 
   if (!result.ok) {
     return NextResponse.json(
       {
         ok: false,
-        error:
-          result.error.message ??
-          "Canvas could not update this planner override.",
+        error: getUserFacingError(parsed.data.action),
       },
       { status: result.status || 400 },
     );
   }
 
+  invalidateDedupeWithPrefix(`weekly-assignments|user=${userId}|`);
+
   return NextResponse.json({
     ok: true,
     data: {
       overrideId: result.data.id,
-      markedComplete: result.data.marked_complete,
+      markedComplete:
+        parsed.data.action === "mark_complete"
+          ? result.data.marked_complete
+          : false,
     },
   });
 }

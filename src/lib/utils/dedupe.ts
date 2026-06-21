@@ -6,7 +6,15 @@ type Entry<T> = {
   ts?: number;
 };
 
-const store = new Map<string, Entry<any>>();
+const store = new Map<string, Entry<unknown>>();
+
+export function invalidateDedupeWithPrefix(prefix: string) {
+  for (const key of store.keys()) {
+    if (key.startsWith(prefix)) {
+      store.delete(key);
+    }
+  }
+}
 
 export async function dedupeWithTtl<T>(
   key: string,
@@ -14,7 +22,7 @@ export async function dedupeWithTtl<T>(
   fn: () => Promise<T>,
 ): Promise<{ hit: "cache" | "inflight" | "miss"; data: T }> {
   const now = Date.now();
-  const entry = store.get(key) ?? {};
+  const entry = (store.get(key) as Entry<T> | undefined) ?? {};
   store.set(key, entry);
 
   // Fresh cached value

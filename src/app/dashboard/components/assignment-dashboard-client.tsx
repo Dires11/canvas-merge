@@ -1,6 +1,6 @@
 "use client";
 
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
 import type {
@@ -33,6 +33,7 @@ import type { CanvasDomainInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { updatePlannerOverride } from "./planner-override";
 
 const EMPTY_ACCOUNTS: AccountSafeInfo[] = [];
 const EMPTY_ACCOUNT_ERRORS: string[] = [];
@@ -204,7 +205,9 @@ function matchesQuickFilter(
   }
 
   if (quickFilter === "graded") {
-    return assignment.accountsSubmitted.some((account) => account.submission.graded);
+    return assignment.accountsSubmitted.some(
+      (account) => account.submission.graded,
+    );
   }
 
   if (quickFilter === "pending_grade") {
@@ -243,7 +246,8 @@ function groupAssignmentsByDueDateLocal(
       if (assignment.accountsSubmitted.length === 0) continue;
     }
 
-    const label = mode === "completed" ? "completed" : getDueLabelLocal(assignment.due_at);
+    const label =
+      mode === "completed" ? "completed" : getDueLabelLocal(assignment.due_at);
     (groups[label] ??= []).push(assignment);
   }
 
@@ -273,6 +277,211 @@ type Props = {
 };
 
 type DomainMap = Record<string, CanvasDomainInfo>;
+
+type AssignmentCacheTarget = {
+  item: MergedAssignment;
+  accountId: string;
+  mode: AssignmentViewMode;
+};
+
+type AssignmentAccount =
+  | MergedAssignment["accountsSubmitted"][number]
+  | MergedAssignment["accountsMissingSubmission"][number]
+  | MergedAssignment["accountsNotSubmitted"][number];
+
+type AssignmentBucket =
+  | "accountsSubmitted"
+  | "accountsMissingSubmission"
+  | "accountsNotSubmitted";
+
+type AssignmentAccountViewTarget = AssignmentCacheTarget & {
+  completed: boolean;
+  overrideId: number | null;
+};
+
+function isSameAssignment(a: MergedAssignment, b: MergedAssignment) {
+  return (
+    a.id === b.id &&
+    a.course_id === b.course_id &&
+    a.domainSlug === b.domainSlug &&
+    a.type === b.type
+  );
+}
+
+function removeAccountFromCurrentView(
+  planner: UserPlanner,
+  target: AssignmentCacheTarget,
+) {
+  if (!planner?.merged) return planner;
+
+  const domainItems = planner.merged[target.item.domainSlug];
+  if (!domainItems) return planner;
+
+  let changed = false;
+  const assignments = domainItems.assignments.flatMap((assignment) => {
+    if (!isSameAssignment(assignment, target.item)) return [assignment];
+
+    const accountsSubmitted = assignment.accountsSubmitted.filter(
+      (account) => account.accountId !== target.accountId,
+    );
+    const accountsMissingSubmission =
+      assignment.accountsMissingSubmission.filter(
+        (account) => account.accountId !== target.accountId,
+      );
+    const accountsNotSubmitted = assignment.accountsNotSubmitted.filter(
+      (account) => account.accountId !== target.accountId,
+    );
+
+    const assignmentChanged =
+      accountsSubmitted.length !== assignment.accountsSubmitted.length ||
+      accountsMissingSubmission.length !==
+        assignment.accountsMissingSubmission.length ||
+      accountsNotSubmitted.length !== assignment.accountsNotSubmitted.length;
+
+    if (!assignmentChanged) return [assignment];
+
+    changed = true;
+
+    const hasVisibleAccounts =
+      target.mode === "completed"
+        ? accountsSubmitted.length > 0
+        : accountsMissingSubmission.length > 0 ||
+          accountsNotSubmitted.length > 0;
+
+    if (!hasVisibleAccounts) return [];
+
+    return [
+      {
+        ...assignment,
+        accountsSubmitted,
+        accountsMissingSubmission,
+        accountsNotSubmitted,
+      },
+    ];
+  });
+
+  if (!changed) return planner;
+
+  return {
+    ...planner,
+    merged: {
+      ...planner.merged,
+      [target.item.domainSlug]: {
+        ...domainItems,
+        assignments,
+      },
+    },
+  };
+}
+
+function findAssignmentAccount(
+  assignment: MergedAssignment,
+  accountId: string,
+) {
+  return [
+    ...assignment.accountsSubmitted,
+    ...assignment.accountsMissingSubmission,
+    ...assignment.accountsNotSubmitted,
+  ].find((account) => account.accountId === accountId);
+}
+
+function getVisibleAssignmentBucket(
+  account: AssignmentAccount,
+  mode: AssignmentViewMode,
+): AssignmentBucket | null {
+  if (mode === "completed") {
+    return account.submission.submitted || account.plannerMarkedComplete
+      ? "accountsSubmitted"
+      : null;
+  }
+
+  if (account.submission.submitted || account.plannerMarkedComplete) {
+    return null;
+  }
+
+  return account.submission.missing
+    ? "accountsMissingSubmission"
+    : "accountsNotSubmitted";
+}
+
+function emptyAssignmentBuckets() {
+  return {
+    accountsSubmitted: [],
+    accountsMissingSubmission: [],
+    accountsNotSubmitted: [],
+  } satisfies Pick<
+    MergedAssignment,
+    "accountsSubmitted" | "accountsMissingSubmission" | "accountsNotSubmitted"
+  >;
+}
+
+function upsertAccountInPlannerView(
+  planner: UserPlanner,
+  target: AssignmentAccountViewTarget,
+) {
+  const sourceAccount = findAssignmentAccount(target.item, target.accountId);
+  if (!sourceAccount) return planner;
+
+  const account = {
+    ...sourceAccount,
+    plannerOverrideId: target.overrideId,
+    plannerMarkedComplete: target.completed,
+  };
+  const bucket = getVisibleAssignmentBucket(account, target.mode);
+
+  if (!bucket) {
+    return removeAccountFromCurrentView(planner, target);
+  }
+
+  const domainItems = planner.merged?.[target.item.domainSlug] ?? {
+    assignments: [],
+    announcements: [],
+    other: [],
+  };
+
+  let found = false;
+  const assignments = domainItems.assignments.map((assignment) => {
+    if (!isSameAssignment(assignment, target.item)) return assignment;
+
+    found = true;
+    const nextAssignment = {
+      ...assignment,
+      accountsSubmitted: assignment.accountsSubmitted.filter(
+        (current) => current.accountId !== target.accountId,
+      ),
+      accountsMissingSubmission: assignment.accountsMissingSubmission.filter(
+        (current) => current.accountId !== target.accountId,
+      ),
+      accountsNotSubmitted: assignment.accountsNotSubmitted.filter(
+        (current) => current.accountId !== target.accountId,
+      ),
+    };
+
+    return {
+      ...nextAssignment,
+      [bucket]: [...nextAssignment[bucket], account],
+    };
+  });
+
+  if (!found) {
+    assignments.push({
+      ...target.item,
+      ...emptyAssignmentBuckets(),
+      [bucket]: [account],
+    });
+  }
+
+  return {
+    ...planner,
+    merged: {
+      ...(planner.merged ?? {}),
+      [target.item.domainSlug]: {
+        ...domainItems,
+        assignments,
+      },
+    },
+  };
+}
 
 function filtersFromSearchParams(
   searchParams: ReadonlyURLSearchParams,
@@ -324,6 +533,10 @@ export function AssignmentDashboardClient({
     dedupingInterval: 10_000,
     keepPreviousData: false,
   });
+  const { mutate: mutatePlannerCache } = useSWRConfig();
+  const oppositePlannerFilter =
+    mode === "completed" ? "incomplete_items" : "complete_items";
+  const oppositeKey = `/api/planner/user-planner?merge=true&filter=${oppositePlannerFilter}`;
 
   const dayKey = useDayKey();
   const accounts = data?.accountsSafeInfo ?? EMPTY_ACCOUNTS;
@@ -426,6 +639,91 @@ export function AssignmentDashboardClient({
       account: [accountId],
       course: [],
     });
+  }
+
+  function markAssignmentComplete({
+    item,
+    accountId,
+    overrideId,
+  }: {
+    item: MergedAssignment;
+    accountId: string;
+    overrideId: number | null;
+  }) {
+    return updatePlannerOverride({
+      action: "mark_complete",
+      accountId,
+      plannableType: item.type,
+      plannableId: item.id,
+      overrideId,
+    });
+  }
+
+  function undoAssignmentCompletion({
+    accountId,
+    overrideId,
+  }: {
+    item: MergedAssignment;
+    accountId: string;
+    overrideId: number;
+  }) {
+    return updatePlannerOverride({
+      action: "mark_incomplete",
+      accountId,
+      overrideId,
+    });
+  }
+
+  async function handlePlannerChanged({
+    item,
+    accountId,
+    completed,
+    overrideId,
+  }: {
+    item: MergedAssignment;
+    accountId: string;
+    completed: boolean;
+    overrideId: number | null;
+  }) {
+    await Promise.all([
+      mutatePlannerCache<UserPlanner | undefined>(
+        key,
+        (current) =>
+          current
+            ? upsertAccountInPlannerView(current, {
+                item,
+                accountId,
+                mode,
+                completed,
+                overrideId,
+              })
+            : current,
+        {
+          populateCache: true,
+          revalidate: false,
+        },
+      ),
+      mutatePlannerCache<UserPlanner | undefined>(
+        oppositeKey,
+        (current) =>
+          current
+            ? upsertAccountInPlannerView(current, {
+                item,
+                accountId,
+                mode: mode === "completed" ? "active" : "completed",
+                completed,
+                overrideId,
+              })
+            : current,
+        {
+          populateCache: true,
+          revalidate: false,
+        },
+      ),
+    ]);
+
+    void mutatePlannerCache(key);
+    void mutatePlannerCache(oppositeKey);
   }
 
   const accountMap = useMemo<Record<string, AccountSafeInfo>>(() => {
@@ -569,7 +867,7 @@ export function AssignmentDashboardClient({
           <button
             disabled={isValidating}
             className="rounded-md border px-3 py-1 disabled:opacity-50"
-            onClick={() => mutate(undefined, { revalidate: true })}
+            onClick={() => void mutate()}
           >
             Retry
           </button>
@@ -592,7 +890,7 @@ export function AssignmentDashboardClient({
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search"
-              className="h-8 rounded-md border-slate-300/40 bg-white/40 pr-8 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:bg-input/10 dark:shadow-none"
+              className="dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-8 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
             />
             {searchQuery && (
               <button
@@ -620,8 +918,8 @@ export function AssignmentDashboardClient({
             type="button"
             aria-label="Refresh assignments"
             disabled={isValidating}
-            className="group flex size-8 shrink-0 items-center justify-center rounded-md border border-slate-300/40 bg-white/40 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] transition hover:bg-white/60 hover:cursor-pointer disabled:opacity-50 dark:border-white/10 dark:bg-glass/5 dark:shadow-none dark:hover:bg-glass/15 sm:w-auto sm:px-2"
-            onClick={() => mutate(undefined, { revalidate: true })}
+            className="group dark:bg-glass/5 dark:hover:bg-glass/15 flex size-8 shrink-0 items-center justify-center rounded-md border border-slate-300/40 bg-white/40 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] transition hover:cursor-pointer hover:bg-white/60 disabled:opacity-50 sm:w-auto sm:px-2 dark:border-white/10 dark:shadow-none"
+            onClick={() => void mutate()}
           >
             <RotateCw
               className={cn(
@@ -643,7 +941,7 @@ export function AssignmentDashboardClient({
               className={cn(
                 "h-7 w-full rounded-md px-2 text-xs sm:w-auto sm:px-2.5",
                 quickFilter !== filter.value &&
-                  "border-slate-300/35 bg-white/35 shadow-[0_1px_2px_rgb(15_23_42_/_0.06)] hover:bg-white/55 dark:border-white/10 dark:bg-glass/5 dark:shadow-none dark:hover:bg-glass/15",
+                  "dark:bg-glass/5 dark:hover:bg-glass/15 border-slate-300/35 bg-white/35 shadow-[0_1px_2px_rgb(15_23_42_/_0.06)] hover:bg-white/55 dark:border-white/10 dark:shadow-none",
               )}
               onClick={() => setQuickFilter(filter.value)}
             >
@@ -658,7 +956,7 @@ export function AssignmentDashboardClient({
               <button
                 key={`domain-${domainSlug}`}
                 type="button"
-                className="bg-background/35 hover:bg-background/55 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs dark:bg-glass/5 dark:hover:bg-glass/15"
+                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => onFilterChange("domain", domainSlug, false)}
               >
                 {domainMap[domainSlug]?.name ?? domainSlug}
@@ -670,7 +968,7 @@ export function AssignmentDashboardClient({
               <button
                 key={`account-${accountId}`}
                 type="button"
-                className="bg-background/35 hover:bg-background/55 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs dark:bg-glass/5 dark:hover:bg-glass/15"
+                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => onFilterChange("account", accountId, false)}
               >
                 {accountMap[accountId]?.name ?? accountId}
@@ -682,7 +980,7 @@ export function AssignmentDashboardClient({
               <button
                 key={`course-${courseValue}`}
                 type="button"
-                className="bg-background/35 hover:bg-background/55 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs dark:bg-glass/5 dark:hover:bg-glass/15"
+                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => onFilterChange("course", courseValue, false)}
               >
                 {courseFilterMap.get(courseValue)?.course_code ?? courseValue}
@@ -693,7 +991,7 @@ export function AssignmentDashboardClient({
             {searchQuery.trim() && (
               <button
                 type="button"
-                className="bg-background/35 hover:bg-background/55 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs dark:bg-glass/5 dark:hover:bg-glass/15"
+                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => setSearchQuery("")}
               >
                 Search: {searchQuery.trim()}
@@ -704,7 +1002,7 @@ export function AssignmentDashboardClient({
             {quickFilter !== "all" && activeQuickFilterLabel && (
               <button
                 type="button"
-                className="bg-background/35 hover:bg-background/55 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs dark:bg-glass/5 dark:hover:bg-glass/15"
+                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => setQuickFilter("all")}
               >
                 {activeQuickFilterLabel}
@@ -806,9 +1104,9 @@ export function AssignmentDashboardClient({
                               )?.color ?? { l: 0.7, c: 0.1, h: 250 }
                             }
                             accountMap={accountMap}
-                            onPlannerChanged={() =>
-                              mutate(undefined, { revalidate: true })
-                            }
+                            onMarkComplete={markAssignmentComplete}
+                            onUndoComplete={undoAssignmentCompletion}
+                            onPlannerChanged={handlePlannerChanged}
                             onToggleAccountFilter={toggleAccountFilter}
                             filteredAccountId={filteredAccountId}
                             mode={mode}

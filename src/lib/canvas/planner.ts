@@ -85,6 +85,22 @@ export async function getAssignmentSubmission(
   );
 }
 
+export async function getPlannerOverrides(
+  domain: string,
+  token: string,
+): Promise<CanvasResult<PlannerOverride[]>> {
+  return canvasFetchJson<PlannerOverride[]>(
+    domain,
+    "/api/v1/planner/overrides",
+    {
+      token,
+      searchParams: {
+        per_page: 100,
+      },
+    },
+  );
+}
+
 export async function markPlannerItem(
   domain: string,
   token: string,
@@ -115,6 +131,7 @@ export async function createPlannerOverride(
       plannable_type,
       plannable_id,
       marked_complete,
+      dismissed: false,
     },
   });
 }
@@ -133,6 +150,7 @@ export async function updatePlannerOverride(
       token,
       body: {
         marked_complete,
+        dismissed: false,
       },
     },
   );

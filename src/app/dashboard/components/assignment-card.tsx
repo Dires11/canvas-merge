@@ -22,6 +22,10 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 import { HoverOrTap } from "./hover-or-tap";
+import {
+  updatePlannerOverride,
+  type PlannerOverrideResult,
+} from "./planner-override";
 
 function getInitials(name: string) {
   return name
@@ -70,39 +74,31 @@ type AssignmentAccount =
   | MergedAssignment["accountsMissingSubmission"][number]
   | MergedAssignment["accountsSubmitted"][number];
 
-type OverrideResponse = {
-  ok: boolean;
-  data?: {
-    overrideId: number;
-    markedComplete: boolean;
-  };
-  error?: string;
+type MarkCompletePayload = {
+  item: MergedAssignment;
+  accountId: string;
+  overrideId: number | null;
 };
 
-async function updatePlannerOverride(body: Record<string, unknown>) {
-  const response = await fetch("/api/planner/override", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify(body),
-  });
-  const json = (await response.json().catch(() => null)) as
-    | OverrideResponse
-    | null;
+type UndoCompletePayload = {
+  item: MergedAssignment;
+  accountId: string;
+  overrideId: number;
+};
 
-  if (!response.ok || !json?.ok || !json.data) {
-    throw new Error(json?.error ?? "Failed to update assignment status.");
-  }
-
-  return json.data;
-}
+type PlannerChangedPayload = {
+  item: MergedAssignment;
+  accountId: string;
+  completed: boolean;
+  overrideId: number | null;
+};
 
 function AccountAssignmentPopover({
   item,
   account,
   assignmentAccount,
+  onMarkComplete,
+  onUndoComplete,
   onPlannerChanged,
   onToggleAccountFilter,
   filteredAccountId,
@@ -111,7 +107,13 @@ function AccountAssignmentPopover({
   item: MergedAssignment;
   account: AccountSafeInfo;
   assignmentAccount: AssignmentAccount;
-  onPlannerChanged?: () => void;
+  onMarkComplete?: (
+    payload: MarkCompletePayload,
+  ) => Promise<PlannerOverrideResult>;
+  onUndoComplete?: (
+    payload: UndoCompletePayload,
+  ) => Promise<PlannerOverrideResult>;
+  onPlannerChanged?: (payload: PlannerChangedPayload) => void;
   onToggleAccountFilter?: (accountId: string) => void;
   filteredAccountId?: string | null;
   mode: "active" | "completed";
@@ -119,14 +121,15 @@ function AccountAssignmentPopover({
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [completeOverrideId, setCompleteOverrideId] = useState<number | null>(
-    null,
+  const [overrideId, setOverrideId] = useState<number | null>(
+    assignmentAccount.plannerOverrideId,
+  );
+  const [markedComplete, setMarkedComplete] = useState(
+    assignmentAccount.plannerMarkedComplete,
   );
   const [changed, setChanged] = useState(false);
 
-  const wasCreated = assignmentAccount.plannerOverrideId === null;
-  const isMarkedComplete =
-    completeOverrideId !== null || assignmentAccount.plannerMarkedComplete;
+  const isMarkedComplete = markedComplete;
   const isFilteredToAccount = filteredAccountId === account.id;
   const firstName = getFirstName(account.name);
   const postedGrade =
@@ -159,19 +162,28 @@ function AccountAssignmentPopover({
     setError(null);
 
     try {
-      const result = await updatePlannerOverride({
-        action: "mark_complete",
-        accountId: account.id,
-        plannableType: item.type,
-        plannableId: item.id,
-        overrideId: assignmentAccount.plannerOverrideId,
-      });
+      const result = onMarkComplete
+        ? await onMarkComplete({
+            item,
+            accountId: account.id,
+            overrideId,
+          })
+        : await updatePlannerOverride({
+            action: "mark_complete",
+            accountId: account.id,
+            plannableType: item.type,
+            plannableId: item.id,
+            overrideId,
+          });
 
-      setCompleteOverrideId(result.overrideId);
+      setOverrideId(result.overrideId);
+      setMarkedComplete(result.markedComplete);
       setChanged(true);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to mark assignment complete.",
+        err instanceof Error
+          ? err.message
+          : "Failed to mark assignment complete.",
       );
     } finally {
       setPending(false);
@@ -179,20 +191,26 @@ function AccountAssignmentPopover({
   }
 
   async function undo() {
-    const overrideId = completeOverrideId ?? assignmentAccount.plannerOverrideId;
     if (!overrideId) return;
 
     setPending(true);
     setError(null);
 
     try {
-      await updatePlannerOverride({
-        action: wasCreated ? "undo_create" : "undo_update",
-        accountId: account.id,
-        overrideId,
-      });
+      await (onUndoComplete
+        ? onUndoComplete({
+            item,
+            accountId: account.id,
+            overrideId,
+          })
+        : updatePlannerOverride({
+            action: "mark_incomplete",
+            accountId: account.id,
+            overrideId,
+          }));
 
-      setCompleteOverrideId(null);
+      setOverrideId(overrideId);
+      setMarkedComplete(false);
       setChanged(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to undo change.");
@@ -202,10 +220,18 @@ function AccountAssignmentPopover({
   }
 
   function handleOpenChange(nextOpen: boolean) {
+    if (!nextOpen && pending) return;
+
     setOpen(nextOpen);
 
     if (!nextOpen && changed) {
-      onPlannerChanged?.();
+      onPlannerChanged?.({
+        item,
+        accountId: account.id,
+        completed: markedComplete,
+        overrideId,
+      });
+      setChanged(false);
     }
   }
 
@@ -214,7 +240,7 @@ function AccountAssignmentPopover({
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="ring-card-foreground/20 my-0.5 ml-0.5 rounded-full ring outline-none transition hover:scale-105 hover:cursor-pointer focus-visible:ring-2 focus-visible:ring-ring"
+          className="ring-card-foreground/20 focus-visible:ring-ring my-0.5 ml-0.5 rounded-full ring transition outline-none hover:scale-105 hover:cursor-pointer focus-visible:ring-2"
           aria-label={`Open options for ${account.name}`}
         >
           <Avatar>
@@ -230,7 +256,7 @@ function AccountAssignmentPopover({
         align="center"
         side="top"
         sideOffset={8}
-        className="glass-border w-[min(26rem,calc(100vw-2rem))] rounded-xl bg-glass/25 p-3 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.45),0_18px_50px_rgb(15_23_42_/_0.18)] backdrop-blur-xl dark:bg-background/55 dark:shadow-xl"
+        className="glass-border bg-glass/25 dark:bg-background/55 w-[min(26rem,calc(100vw-2rem))] rounded-xl p-3 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.45),0_18px_50px_rgb(15_23_42_/_0.18)] backdrop-blur-xl dark:shadow-xl"
       >
         <div className="flex min-w-0 items-start gap-3">
           <Avatar size="lg" className="ring-card-foreground/15 mt-0.5 ring">
@@ -268,21 +294,21 @@ function AccountAssignmentPopover({
         </div>
 
         {error && (
-          <p className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+          <p className="border-destructive/30 bg-destructive/10 text-destructive mt-3 rounded-md border px-3 py-2 text-xs">
             {error}
           </p>
         )}
 
         {mode === "completed" && (
-          <div className="glass-border mt-3 rounded-lg bg-background/25 px-3 py-2 dark:bg-glass/5">
-            <p className="text-xs font-medium text-muted-foreground">
+          <div className="glass-border bg-background/25 dark:bg-glass/5 mt-3 rounded-lg px-3 py-2">
+            <p className="text-muted-foreground text-xs font-medium">
               Teacher comments
             </p>
             {comments.length > 0 ? (
               <div className="mt-2 flex max-h-32 flex-col gap-2 overflow-y-auto pr-1">
                 {comments.map((comment) => (
                   <div key={comment.id} className="text-xs">
-                    <div className="flex items-center justify-between gap-2 text-muted-foreground">
+                    <div className="text-muted-foreground flex items-center justify-between gap-2">
                       <span className="truncate">
                         {comment.author_name ?? "Teacher"}
                       </span>
@@ -290,14 +316,14 @@ function AccountAssignmentPopover({
                         {formatDateTime(comment.created_at)}
                       </span>
                     </div>
-                    <p className="mt-1 whitespace-pre-wrap text-foreground/90">
+                    <p className="text-foreground/90 mt-1 whitespace-pre-wrap">
                       {comment.comment}
                     </p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="text-muted-foreground mt-1 text-xs">
                 No comments yet.
               </p>
             )}
@@ -316,9 +342,7 @@ function AccountAssignmentPopover({
           >
             {isFilteredToAccount ? <RotateCcw /> : <ListFilter />}
             <span className="truncate">
-              {isFilteredToAccount
-                ? "Show All"
-                : `${firstName}'s Only`}
+              {isFilteredToAccount ? "Show All" : `${firstName}'s Only`}
             </span>
           </Button>
 
@@ -383,6 +407,8 @@ export function AssignmentCard({
   item,
   accountMap,
   color,
+  onMarkComplete,
+  onUndoComplete,
   onPlannerChanged,
   onToggleAccountFilter,
   filteredAccountId,
@@ -391,7 +417,13 @@ export function AssignmentCard({
   item: MergedAssignment;
   accountMap: Record<string, AccountSafeInfo>;
   color: { l: number; c: number; h: number };
-  onPlannerChanged?: () => void;
+  onMarkComplete?: (
+    payload: MarkCompletePayload,
+  ) => Promise<PlannerOverrideResult>;
+  onUndoComplete?: (
+    payload: UndoCompletePayload,
+  ) => Promise<PlannerOverrideResult>;
+  onPlannerChanged?: (payload: PlannerChangedPayload) => void;
   onToggleAccountFilter?: (accountId: string) => void;
   filteredAccountId?: string | null;
   mode?: "active" | "completed";
@@ -472,6 +504,8 @@ export function AssignmentCard({
                 item={item}
                 account={account}
                 assignmentAccount={acc}
+                onMarkComplete={onMarkComplete}
+                onUndoComplete={onUndoComplete}
                 onPlannerChanged={onPlannerChanged}
                 onToggleAccountFilter={onToggleAccountFilter}
                 filteredAccountId={filteredAccountId}
