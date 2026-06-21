@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import {
   BookMarked,
   BrushCleaning,
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 type Props = {
   plannerData: UserPlanner | null;
@@ -57,7 +59,9 @@ function getAnnouncements(
   plannerData: UserPlanner | null,
   domains: CanvasDomainInfo[],
 ) {
-  const domainMap = new Map(domains.map((domain) => [domain.slug, domain.name]));
+  const domainMap = new Map(
+    domains.map((domain) => [domain.slug, domain.name]),
+  );
   const announcements: AnnouncementWithDomain[] = [];
 
   for (const [domainSlug, items] of Object.entries(plannerData?.merged ?? {})) {
@@ -87,6 +91,10 @@ function getCourseValue(domainSlug: string, courseId: string | number) {
   return `${domainSlug}|${courseId}`;
 }
 
+function getAnnouncementKey(announcement: AnnouncementWithDomain) {
+  return `${announcement.domainSlug}:${announcement.course_id}:${announcement.id}`;
+}
+
 export function AnnouncementsDashboard({
   plannerData,
   domains,
@@ -94,6 +102,12 @@ export function AnnouncementsDashboard({
 }: Props) {
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedAnnouncementKey, setExpandedAnnouncementKey] = useState<
+    string | null
+  >(null);
+  const [hoveredAnnouncementKey, setHoveredAnnouncementKey] = useState<
+    string | null
+  >(null);
   const announcements = useMemo(
     () => getAnnouncements(plannerData, domains),
     [plannerData, domains],
@@ -138,6 +152,7 @@ export function AnnouncementsDashboard({
 
           return [
             announcement.title,
+            announcement.bodyText ?? "",
             announcement.course_name,
             announcement.domainLabel,
             announcement.domainSlug,
@@ -148,7 +163,9 @@ export function AnnouncementsDashboard({
   function toggleCourse(courseValue: string, pressed: boolean) {
     setSelectedCourses((current) => {
       if (pressed) {
-        return current.includes(courseValue) ? current : [...current, courseValue];
+        return current.includes(courseValue)
+          ? current
+          : [...current, courseValue];
       }
 
       return current.filter((value) => value !== courseValue);
@@ -175,7 +192,7 @@ export function AnnouncementsDashboard({
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search announcements"
-              className="h-8 rounded-md border-slate-300/40 bg-white/40 pr-8 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:bg-input/10 dark:shadow-none"
+              className="dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-8 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
             />
             {searchQuery && (
               <button
@@ -191,7 +208,7 @@ export function AnnouncementsDashboard({
 
           <Menubar className="h-auto w-auto shrink-0 flex-nowrap gap-1 rounded-lg border-transparent bg-transparent p-0 shadow-none">
             <MenubarMenu>
-              <MenubarTrigger className="size-8 justify-center rounded-md border border-slate-300/40 bg-white/40 p-0 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] hover:bg-white/60 sm:size-auto sm:h-8 sm:px-2 sm:py-0 dark:border-white/10 dark:bg-glass/5 dark:shadow-none dark:hover:bg-glass/15">
+              <MenubarTrigger className="dark:bg-glass/5 dark:hover:bg-glass/15 size-8 justify-center rounded-md border border-slate-300/40 bg-white/40 p-0 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] hover:bg-white/60 sm:size-auto sm:h-8 sm:px-2 sm:py-0 dark:border-white/10 dark:shadow-none">
                 <BookMarked className="size-4 sm:mr-2" strokeWidth={1.8} />
                 <span className="hidden sm:inline">Courses</span>
               </MenubarTrigger>
@@ -206,7 +223,10 @@ export function AnnouncementsDashboard({
                 <MenubarSeparator />
 
                 {availableCourses.map((course) => {
-                  const courseValue = getCourseValue(course.domainSlug, course.id);
+                  const courseValue = getCourseValue(
+                    course.domainSlug,
+                    course.id,
+                  );
                   const dark = convertToDark(course.color);
 
                   return (
@@ -260,7 +280,7 @@ export function AnnouncementsDashboard({
                 <button
                   key={courseValue}
                   type="button"
-                  className="bg-background/35 hover:bg-background/55 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs dark:bg-glass/5 dark:hover:bg-glass/15"
+                  className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                   onClick={() => toggleCourse(courseValue, false)}
                 >
                   {course?.course_code ?? courseValue}
@@ -272,7 +292,7 @@ export function AnnouncementsDashboard({
             {searchQuery.trim().length > 0 && (
               <button
                 type="button"
-                className="bg-background/35 hover:bg-background/55 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs dark:bg-glass/5 dark:hover:bg-glass/15"
+                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => setSearchQuery("")}
               >
                 Search: {searchQuery.trim()}
@@ -293,31 +313,76 @@ export function AnnouncementsDashboard({
         <GlassContainer className="w-full">
           <div className="flex flex-col gap-2">
             {filteredAnnouncements.map((announcement) => {
-              const color =
-                courseMap.get(
-                  getCourseValue(
-                    announcement.domainSlug,
-                    announcement.course_id,
-                  ),
-                )?.color ?? { l: 0.7, c: 0.1, h: 250 };
+              const color = courseMap.get(
+                getCourseValue(announcement.domainSlug, announcement.course_id),
+              )?.color ?? { l: 0.7, c: 0.1, h: 250 };
               const dark = convertToDark(color);
+              const announcementKey = getAnnouncementKey(announcement);
+              const bodyText = announcement.bodyText;
+              const isExpandableBody = Boolean(
+                bodyText &&
+                (bodyText.length > 180 || bodyText.split("\n").length > 3),
+              );
+              const showFullBody =
+                !isExpandableBody ||
+                hoveredAnnouncementKey === announcementKey ||
+                expandedAnnouncementKey === announcementKey;
 
               return (
-                <a
-                  key={`${announcement.domainSlug}:${announcement.course_id}:${announcement.id}`}
-                  href={announcement.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="glass-border group flex items-stretch overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.08)] shadow-sm transition hover:bg-[oklch(var(--c-light)/0.13)] hover:shadow-md dark:bg-[oklch(var(--c-dark)/0.08)] dark:hover:bg-[oklch(var(--c-dark)/0.13)]"
+                <div
+                  key={announcementKey}
+                  aria-expanded={isExpandableBody ? showFullBody : undefined}
+                  tabIndex={isExpandableBody ? 0 : undefined}
+                  className={cn(
+                    "glass-border group focus-visible:ring-ring flex items-stretch overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.08)] shadow-sm transition hover:bg-[oklch(var(--c-light)/0.13)] hover:shadow-md focus-visible:ring-2 focus-visible:ring-inset dark:bg-[oklch(var(--c-dark)/0.08)] dark:hover:bg-[oklch(var(--c-dark)/0.13)]",
+                    isExpandableBody && "cursor-pointer outline-none",
+                  )}
                   style={
                     {
                       "--c-light": `${color.l} ${color.c} ${color.h}`,
                       "--c-dark": `${dark.l} ${dark.c} ${dark.h}`,
                     } as React.CSSProperties
                   }
+                  onPointerEnter={(event) => {
+                    if (isExpandableBody && event.pointerType === "mouse") {
+                      setHoveredAnnouncementKey(announcementKey);
+                    }
+                  }}
+                  onPointerLeave={(event) => {
+                    if (event.pointerType !== "mouse") return;
+
+                    setHoveredAnnouncementKey((current) =>
+                      current === announcementKey ? null : current,
+                    );
+                  }}
+                  onBlur={(event) => {
+                    if (
+                      !event.currentTarget.contains(event.relatedTarget as Node)
+                    ) {
+                      setHoveredAnnouncementKey((current) =>
+                        current === announcementKey ? null : current,
+                      );
+                    }
+                  }}
+                  onClick={() => {
+                    if (!isExpandableBody) return;
+
+                    setExpandedAnnouncementKey((current) =>
+                      current === announcementKey ? null : announcementKey,
+                    );
+                  }}
+                  onKeyDown={(event) => {
+                    if (!isExpandableBody) return;
+                    if (event.key !== "Enter" && event.key !== " ") return;
+
+                    event.preventDefault();
+                    setExpandedAnnouncementKey((current) =>
+                      current === announcementKey ? null : announcementKey,
+                    );
+                  }}
                 >
                   <span className="flex w-12 shrink-0 items-center justify-center bg-[oklch(var(--c-light)/0.48)] dark:bg-[oklch(var(--c-dark)/0.48)]">
-                    <Megaphone className="size-5 text-foreground/80" />
+                    <Megaphone className="text-foreground/80 size-5" />
                   </span>
 
                   <span className="flex min-w-0 flex-1 items-start gap-3 p-3">
@@ -325,9 +390,31 @@ export function AnnouncementsDashboard({
                       <span className="text-muted-foreground block truncate text-xs font-semibold">
                         {announcement.course_name}
                       </span>
-                      <span className="block text-base leading-snug font-semibold tracking-tight">
-                        {announcement.title}
-                      </span>
+                      <a
+                        href={announcement.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-foreground hover:text-foreground/80 focus-visible:ring-ring inline-flex max-w-full items-center gap-1.5 rounded-sm text-base leading-snug font-semibold tracking-tight transition outline-none hover:underline focus-visible:ring-2"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <span className="truncate">{announcement.title}</span>
+                        <ExternalLink className="size-3.5 shrink-0 opacity-65" />
+                      </a>
+                      {bodyText && (
+                        <motion.span
+                          initial={false}
+                          animate={{
+                            height: showFullBody ? "auto" : "4.35rem",
+                          }}
+                          transition={{
+                            duration: 0.24,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
+                          className="text-card-foreground/75 mt-1 block overflow-hidden text-sm leading-relaxed whitespace-pre-line"
+                        >
+                          {bodyText}
+                        </motion.span>
+                      )}
                       <span className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
                         <span>{announcement.domainLabel}</span>
                         <span aria-hidden="true">/</span>
@@ -336,10 +423,8 @@ export function AnnouncementsDashboard({
                         </span>
                       </span>
                     </span>
-
-                    <ExternalLink className="text-muted-foreground mt-1 size-4 shrink-0 opacity-70 transition group-hover:text-foreground group-hover:opacity-100" />
                   </span>
-                </a>
+                </div>
               );
             })}
           </div>

@@ -9,6 +9,7 @@ import { decryptToken } from "@/lib/server/crypto";
 import {
   getAccountInfo,
   getAssignmentSubmission,
+  getDiscussionTopic,
   getPlannerItems,
   type PlannerItemFilter,
 } from "@/lib/canvas";
@@ -68,11 +69,78 @@ function getUTCWeekRange(timezone: string, baseDate: Date = new Date()) {
 
 const ASSIGNMENT_TYPE = new Set(["assignment", "discussion_topic", "quiz"]);
 
+function decodeHtmlEntities(value: string) {
+  return value
+    .replaceAll(/&nbsp;/gi, " ")
+    .replaceAll(/&amp;/gi, "&")
+    .replaceAll(/&lt;/gi, "<")
+    .replaceAll(/&gt;/gi, ">")
+    .replaceAll(/&quot;/gi, '"')
+    .replaceAll(/&#39;/gi, "'")
+    .replaceAll(/&#(\d+);/g, (_, code: string) =>
+      String.fromCodePoint(Number(code)),
+    )
+    .replaceAll(/&#x([\da-f]+);/gi, (_, code: string) =>
+      String.fromCodePoint(parseInt(code, 16)),
+    );
+}
+
+function htmlToPlainText(value: string | null | undefined) {
+  if (!value) return null;
+
+  const text = decodeHtmlEntities(
+    value
+      .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, " ")
+      .replaceAll(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, " ")
+      .replaceAll(/<(br|\/p|\/div|\/li)\b[^>]*>/gi, "\n")
+      .replaceAll(/<li\b[^>]*>/gi, "\n- ")
+      .replaceAll(/<[^>]+>/g, " "),
+  )
+    .replaceAll(/\r/g, "")
+    .replaceAll(/[ \t]+\n/g, "\n")
+    .replaceAll(/\n[ \t]+/g, "\n")
+    .replaceAll(/[ \t]{2,}/g, " ")
+    .replaceAll(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return text || null;
+}
+
 function getSubmissionAssignmentId(item: RawPlannerItem) {
   return (
     item.planner_override?.assignment_id ??
     item.plannable?.assignment_id ??
     (item.plannable_type === "assignment" ? item.plannable_id : null)
+  );
+}
+
+async function enrichAnnouncements(
+  baseUrl: string,
+  token: string,
+  items: RawPlannerItem[],
+) {
+  return Promise.all(
+    items.map(async (item) => {
+      if (item.plannable_type !== "announcement") return item;
+      if (item.plannable?.message != null) return item;
+
+      const topic = await getDiscussionTopic(
+        baseUrl,
+        token,
+        item.course_id,
+        item.plannable_id,
+      );
+
+      if (!topic.ok) return item;
+
+      return {
+        ...item,
+        plannable: {
+          ...item.plannable,
+          message: topic.data.message ?? null,
+        },
+      };
+    }),
   );
 }
 
@@ -113,7 +181,9 @@ async function enrichMissingGrades(
           grade: submission.data.grade ?? submission.data.entered_grade ?? null,
           score: submission.data.score ?? submission.data.entered_score ?? null,
           submitted_at:
-            item.submissions.submitted_at ?? submission.data.submitted_at ?? null,
+            item.submissions.submitted_at ??
+            submission.data.submitted_at ??
+            null,
           submission_comments: submission.data.submission_comments ?? [],
         },
       };
@@ -155,6 +225,7 @@ function normalize(
       const announcement: Announcement = {
         ...baseItem,
         posted_at: item.plannable_date ?? "",
+        bodyText: htmlToPlainText(item.plannable?.message),
       };
       itemsByType.announcements.push(announcement);
       continue;
@@ -378,7 +449,7 @@ export async function getUserPlanner(
       };
     }
 
-    const plannerItems =
+    const gradedPlannerItems =
       filter === "complete_items"
         ? await enrichMissingGrades(
             currentAccount.canvasDomain.baseUrl,
@@ -386,6 +457,11 @@ export async function getUserPlanner(
             raw.data,
           )
         : raw.data;
+    const plannerItems = await enrichAnnouncements(
+      currentAccount.canvasDomain.baseUrl,
+      token,
+      gradedPlannerItems,
+    );
 
     const normalized = normalize(
       currentAccount.id,

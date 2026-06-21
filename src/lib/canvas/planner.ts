@@ -32,6 +32,12 @@ export type CanvasSubmission = {
   graded_at?: string | null;
 };
 
+export type CanvasDiscussionTopic = {
+  id: number;
+  title: string;
+  message?: string | null;
+};
+
 /**
  * Fetches planner items from Canvas API within the specified date range
  * @param domain The Canvas domain (e.g., "https://canvas.instructure.com")
@@ -81,6 +87,21 @@ export async function getAssignmentSubmission(
       searchParams: {
         "include[]": "submission_comments",
       },
+    },
+  );
+}
+
+export async function getDiscussionTopic(
+  domain: string,
+  token: string,
+  courseId: number,
+  topicId: number,
+): Promise<CanvasResult<CanvasDiscussionTopic>> {
+  return canvasFetchJson<CanvasDiscussionTopic>(
+    domain,
+    `/api/v1/courses/${courseId}/discussion_topics/${topicId}`,
+    {
+      token,
     },
   );
 }

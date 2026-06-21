@@ -21,6 +21,7 @@ export type RawPlannerItem = {
   html_url: string;
   plannable?: {
     title?: string;
+    message?: string | null;
     due_at?: string | null;
     points_possible?: number | null;
     assignment_id?: number | null;
@@ -82,6 +83,7 @@ export type Assignment = ItemBase & {
 };
 export type Announcement = ItemBase & {
   posted_at: string;
+  bodyText: string | null;
 };
 
 export type ItemsByType = {
