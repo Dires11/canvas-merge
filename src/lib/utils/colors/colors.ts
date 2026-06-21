@@ -5,10 +5,17 @@ type Oklch = {
   c: number;
   h: number;
 };
+
+type CourseColorMetadata = {
+  l: number;
+  c: number;
+  h: number;
+};
+
 export function resolveCourseColor(
   courseId: number,
   domainSlug: string,
-  meta?: any,
+  meta?: CourseColorMetadata | null,
 ): Oklch {
   if (meta) {
     return { l: meta.l, c: meta.c, h: meta.h };

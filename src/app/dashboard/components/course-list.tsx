@@ -16,7 +16,11 @@ export function CourseList({
   onColorChange,
 }: {
   courses: UserCourse[];
-  onColorChange: (courseId: number, domainSlug: string, newColor: any) => void;
+  onColorChange: (
+    courseId: number,
+    domainSlug: string,
+    newColor: UserCourse["color"],
+  ) => void;
 }) {
   return (
     <ul>

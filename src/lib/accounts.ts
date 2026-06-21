@@ -8,7 +8,7 @@ export async function loadAccounts() {
       return { ok: false, error: json.error };
     }
     return { ok: true, accounts: json.accounts };
-  } catch (e) {
+  } catch {
     return { ok: false, error: "Network error loading accounts." };
   }
 }

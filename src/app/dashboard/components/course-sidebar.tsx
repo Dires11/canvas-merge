@@ -1,5 +1,4 @@
 "use client";
-import { Suspense } from "react";
 import type { UserCourse } from "@/lib/types";
 import { GlassContainer } from "@/components/glass-container";
 import { CourseList } from "./course-list";
@@ -9,7 +8,11 @@ export function CourseSidebar({
   onColorChange,
 }: {
   courses: UserCourse[];
-  onColorChange: (courseId: number, domainSlug: string, newColor: any) => void;
+  onColorChange: (
+    courseId: number,
+    domainSlug: string,
+    newColor: UserCourse["color"],
+  ) => void;
 }) {
   return (
     <aside className="sticky top-6 h-fit w-[320px] shrink-0">

@@ -9,14 +9,17 @@ import { addCanvasAccountForUser } from "@/lib/services/manage-accounts";
 export async function GET() {
   const { userId } = await auth();
   if (!userId) {
-    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    return NextResponse.json(
+      { error: "User not authenticated" },
+      { status: 401 },
+    );
   }
 
   try {
     const accounts = await getUserCanvasAccounts(userId);
     return NextResponse.json({ accounts }, { status: 200 });
-  } catch (e: any) {
-    console.error("Failed to load Canvas accounts:", e);
+  } catch (error) {
+    console.error("Failed to load Canvas accounts:", error);
     return NextResponse.json(
       { error: "Failed to load Canvas accounts." },
       { status: 500 },
@@ -27,7 +30,10 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) {
-    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    return NextResponse.json(
+      { error: "User not authenticated" },
+      { status: 401 },
+    );
   }
 
   const parsed = await validateJson(req, AddSchema);

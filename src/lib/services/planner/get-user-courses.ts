@@ -84,7 +84,7 @@ export async function getUserCourses(userId: string, accountIds?: string[]) {
   }
 
   // Convert to array and sort
-  const courses = Array.from(seen.values()).sort((a: any, b: any) => {
+  const courses = Array.from(seen.values()).sort((a, b) => {
     // favor course name
     const an = a.name.toLowerCase();
     const bn = b.name.toLowerCase();

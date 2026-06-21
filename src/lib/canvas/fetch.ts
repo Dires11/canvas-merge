@@ -17,6 +17,19 @@ type CanvasFetchOptions = {
 
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
+function isTimeoutError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "isTimeout" in error &&
+    error.isTimeout === true
+  );
+}
+
+function getThrownMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
 async function fetchWithRetry(
   url: string,
   init: RequestInit,
@@ -54,14 +67,14 @@ async function fetchWithRetry(
       }
 
       return res;
-    } catch (e: any) {
+    } catch (error) {
       const isTimeout = controller.signal.aborted && !init.signal?.aborted;
       const isLastAttempt = i === attempts - 1;
 
       if (isLastAttempt) {
         throw isTimeout
           ? Object.assign(new Error("Request timed out"), { isTimeout: true })
-          : e;
+          : error;
       }
 
       await sleep(baseDelayMs * 2 ** i);
@@ -108,9 +121,15 @@ export async function canvasFetchJson<T>(
       opts.retry?.attempts ?? 3,
       opts.retry?.baseDelayMs ?? 300,
     );
-  } catch (e: any) {
-    const message = e?.isTimeout ? "Request timed out" : "Network error";
-    return { ok: false, status: 0, error: { raw: e?.message, message } };
+  } catch (error) {
+    const message = isTimeoutError(error)
+      ? "Request timed out"
+      : "Network error";
+    return {
+      ok: false,
+      status: 0,
+      error: { raw: getThrownMessage(error), message },
+    };
   }
 
   if (!res.ok) {
