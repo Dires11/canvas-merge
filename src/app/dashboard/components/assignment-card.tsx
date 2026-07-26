@@ -108,6 +108,7 @@ function AccountAssignmentPopover({
   onToggleAccountFilter,
   filteredAccountId,
   mode,
+  readOnly,
 }: {
   item: MergedAssignment;
   account: AccountSafeInfo;
@@ -122,6 +123,7 @@ function AccountAssignmentPopover({
   onToggleAccountFilter?: (accountId: string) => void;
   filteredAccountId?: string | null;
   mode: "active" | "completed";
+  readOnly: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [avatarTooltipOpen, setAvatarTooltipOpen] = useState(false);
@@ -375,26 +377,28 @@ function AccountAssignmentPopover({
             </span>
           </Button>
 
-          <Button
-            type="button"
-            size="sm"
-            variant={isMarkedComplete ? "outline" : "default"}
-            className={cn(
-              "w-9 px-0 min-[420px]:w-auto min-[420px]:px-3",
-              isMarkedComplete && "bg-glass/5 hover:bg-glass/15",
-            )}
-            disabled={pending || !canToggleCompletion}
-            onClick={isMarkedComplete ? undo : markComplete}
-          >
-            {isMarkedComplete ? <RotateCcw /> : <CheckCircle2 />}
-            <span className="hidden truncate min-[420px]:inline">
-              {isMarkedComplete
-                ? "Undo"
-                : mode === "completed"
-                  ? "Completed"
-                  : "Mark Complete"}
-            </span>
-          </Button>
+          {!readOnly && (
+            <Button
+              type="button"
+              size="sm"
+              variant={isMarkedComplete ? "outline" : "default"}
+              className={cn(
+                "w-9 px-0 min-[420px]:w-auto min-[420px]:px-3",
+                isMarkedComplete && "bg-glass/5 hover:bg-glass/15",
+              )}
+              disabled={pending || !canToggleCompletion}
+              onClick={isMarkedComplete ? undo : markComplete}
+            >
+              {isMarkedComplete ? <RotateCcw /> : <CheckCircle2 />}
+              <span className="hidden truncate min-[420px]:inline">
+                {isMarkedComplete
+                  ? "Undo"
+                  : mode === "completed"
+                    ? "Completed"
+                    : "Mark Complete"}
+              </span>
+            </Button>
+          )}
         </div>
       </PopoverContent>
     </Popover>
@@ -442,6 +446,7 @@ export function AssignmentCard({
   onToggleAccountFilter,
   filteredAccountId,
   mode = "active",
+  readOnly = false,
 }: {
   item: MergedAssignment;
   accountMap: Record<string, AccountSafeInfo>;
@@ -456,6 +461,7 @@ export function AssignmentCard({
   onToggleAccountFilter?: (accountId: string) => void;
   filteredAccountId?: string | null;
   mode?: "active" | "completed";
+  readOnly?: boolean;
 }) {
   const IconMap: Record<string, LucideIcon> = {
     assignment: NotebookPen,
@@ -539,6 +545,7 @@ export function AssignmentCard({
                 onToggleAccountFilter={onToggleAccountFilter}
                 filteredAccountId={filteredAccountId}
                 mode={mode}
+                readOnly={readOnly}
               />
             );
           })}

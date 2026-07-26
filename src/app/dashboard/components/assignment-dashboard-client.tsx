@@ -274,6 +274,8 @@ type Props = {
   courses: UserCourse[];
   domains: CanvasDomainInfo[];
   mode?: AssignmentViewMode;
+  dataEndpoint?: string;
+  readOnly?: boolean;
 };
 
 type DomainMap = Record<string, CanvasDomainInfo>;
@@ -520,10 +522,14 @@ export function AssignmentDashboardClient({
   courses,
   domains,
   mode = "active",
+  dataEndpoint,
+  readOnly = false,
 }: Props) {
   const plannerFilter =
     mode === "completed" ? "complete_items" : "incomplete_items";
-  const key = `/api/planner/user-planner?merge=true&filter=${plannerFilter}`;
+  const key =
+    dataEndpoint ??
+    `/api/planner/user-planner?merge=true&filter=${plannerFilter}`;
 
   const { data, error, isValidating, mutate } = useSWR(key, fetcher, {
     fallbackData: initialData ?? undefined,
@@ -1051,12 +1057,18 @@ export function AssignmentDashboardClient({
             })}
           </ul>
 
-          <Link
-            className="bg-destructive/70 text-destructive-foreground hover:bg-destructive/80 rounded-xl border border-white/10 px-4 py-2 font-semibold tracking-tight shadow-md transition"
-            href="/manage-accounts"
-          >
-            Manage Accounts
-          </Link>
+          {readOnly ? (
+            <span className="max-w-48 text-right text-sm">
+              The user needs to reconnect these accounts.
+            </span>
+          ) : (
+            <Link
+              className="bg-destructive/70 text-destructive-foreground hover:bg-destructive/80 rounded-xl border border-white/10 px-4 py-2 font-semibold tracking-tight shadow-md transition"
+              href="/manage-accounts"
+            >
+              Manage Accounts
+            </Link>
+          )}
         </div>
       )}
 
@@ -1104,12 +1116,19 @@ export function AssignmentDashboardClient({
                               )?.color ?? { l: 0.7, c: 0.1, h: 250 }
                             }
                             accountMap={accountMap}
-                            onMarkComplete={markAssignmentComplete}
-                            onUndoComplete={undoAssignmentCompletion}
-                            onPlannerChanged={handlePlannerChanged}
+                            onMarkComplete={
+                              readOnly ? undefined : markAssignmentComplete
+                            }
+                            onUndoComplete={
+                              readOnly ? undefined : undoAssignmentCompletion
+                            }
+                            onPlannerChanged={
+                              readOnly ? undefined : handlePlannerChanged
+                            }
                             onToggleAccountFilter={toggleAccountFilter}
                             filteredAccountId={filteredAccountId}
                             mode={mode}
+                            readOnly={readOnly}
                           />
                         ))}
                       </div>
