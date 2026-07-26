@@ -408,10 +408,12 @@ function AccountAssignmentPopover({
 function DueLabel({
   dueDate,
   isDueAtMidnight,
+  pointsLabel,
   className,
 }: {
   dueDate: string | null;
   isDueAtMidnight: boolean;
+  pointsLabel?: string | null;
   className?: string;
 }) {
   return (
@@ -421,7 +423,10 @@ function DueLabel({
         className,
       )}
     >
-      <span>Due: {dueDate}</span>
+      <span>
+        Due: {dueDate}
+        {pointsLabel && <> · {pointsLabel}</>}
+      </span>
 
       {!isDueAtMidnight && (
         <HoverOrTap
@@ -493,6 +498,10 @@ export function AssignmentCard({
   }
 
   const dark = convertToDark(color);
+  const pointsLabel =
+    item.points_possible != null
+      ? `${formatPoints(item.points_possible)} pts`
+      : null;
 
   return (
     <div
@@ -527,6 +536,7 @@ export function AssignmentCard({
         <DueLabel
           dueDate={dueDate}
           isDueAtMidnight={isDueAtMidnight}
+          pointsLabel={pointsLabel}
           className="md:hidden"
         />
         <div className="scrollbar-hide mt-2 flex min-w-0 gap-1.5 overflow-x-auto">
@@ -553,7 +563,7 @@ export function AssignmentCard({
       </div>
       <div className="hidden flex-none flex-col items-end self-center pr-2 md:flex">
         <p className="text-card-foreground/60 text-base font-medium lg:text-lg">
-          {item.points_possible ? ` ${item.points_possible} pts` : ""}
+          {pointsLabel}
         </p>
         <DueLabel dueDate={dueDate} isDueAtMidnight={isDueAtMidnight} />
       </div>
