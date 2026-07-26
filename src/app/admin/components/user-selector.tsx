@@ -42,7 +42,7 @@ export function UserSelector({
   }, [query, users]);
 
   return (
-    <GlassContainer className="flex min-h-0 flex-col lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)]">
+    <GlassContainer className="flex max-h-[min(24rem,50vh)] min-h-0 flex-col lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)]">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Users className="size-5" />

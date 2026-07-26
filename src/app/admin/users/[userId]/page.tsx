@@ -79,6 +79,32 @@ export default async function AdminUserTodosPage({
     plannerResult.status === "fulfilled" ? plannerResult.value : null;
   const domainsData: CanvasDomainInfo[] =
     domainsResult.status === "fulfilled" ? domainsResult.value : [];
+  const accountNames = new Map(
+    accounts.map((account) => [account.id, account.name]),
+  );
+  const supportingDataWarnings: string[] = [];
+
+  if (coursesResult.status === "rejected") {
+    supportingDataWarnings.push(
+      "Course details could not be loaded, so course filters and colors may be unavailable.",
+    );
+  } else if (coursesResult.value.failures.length > 0) {
+    const failedAccounts = coursesResult.value.failures
+      .map(
+        (failure) =>
+          accountNames.get(failure.accountId) ?? "an unknown account",
+      )
+      .join(", ");
+    supportingDataWarnings.push(
+      `Course details could not be refreshed for ${failedAccounts}.`,
+    );
+  }
+
+  if (domainsResult.status === "rejected") {
+    supportingDataWarnings.push(
+      "Canvas campus details could not be loaded, so fallback campus names may appear.",
+    );
+  }
 
   return (
     <AdminShell users={users} selectedUserId={userId}>
@@ -88,6 +114,30 @@ export default async function AdminUserTodosPage({
         imageUrl={selectedUser.imageUrl}
         accountCount={accounts.length}
       />
+
+      {supportingDataWarnings.length > 0 && (
+        <GlassContainer className="mb-4 border-amber-500/30 bg-amber-500/10">
+          <div className="flex items-start gap-3 text-amber-900 dark:text-amber-200">
+            <TriangleAlert className="mt-0.5 size-5 shrink-0" />
+            <div>
+              <h2 className="font-semibold tracking-tight">
+                Some Canvas details could not be synchronized
+              </h2>
+              <ul className="mt-1 list-disc space-y-1 pl-4 text-sm">
+                {supportingDataWarnings.map((warning) => (
+                  <li key={warning}>{warning}</li>
+                ))}
+              </ul>
+              {plannerResult.status === "fulfilled" && (
+                <p className="mt-2 text-sm">
+                  The assignments below still include data from accounts that
+                  loaded successfully. Refresh the page to try again.
+                </p>
+              )}
+            </div>
+          </div>
+        </GlassContainer>
+      )}
 
       {plannerResult.status === "rejected" ? (
         <GlassContainer className="border-destructive/30 bg-destructive/10">
