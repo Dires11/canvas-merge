@@ -13,31 +13,39 @@ import type { CanvasDomainInfo } from "@/lib/types";
 import { AnnouncementsDashboard } from "./announcements-dashboard";
 import { cn } from "@/lib/utils";
 import {
-  BookMarked,
+  GraduationCap,
   CheckCircle2,
+  BookMarked,
   ClipboardList,
   Megaphone,
 } from "lucide-react";
+import { GradesDashboard } from "./grades-dashboard";
 type CourseColor = UserCourse["color"];
 type MobileDashboardTab =
+  | "completed"
+  | "grades"
   | "courses"
   | "assignments"
-  | "completed"
   | "announcements";
 
 const MOBILE_TAB_LABELS: Record<MobileDashboardTab, string> = {
+  completed: "Completed",
+  grades: "Grades",
   courses: "Courses",
   assignments: "Assignments",
-  completed: "Completed",
   announcements: "Announcements",
 };
 
 const MOBILE_TAB_ICONS = {
+  completed: CheckCircle2,
+  grades: GraduationCap,
   courses: BookMarked,
   assignments: ClipboardList,
-  completed: CheckCircle2,
   announcements: Megaphone,
-} satisfies Record<MobileDashboardTab, React.ComponentType<{ className?: string }>>;
+} satisfies Record<
+  MobileDashboardTab,
+  React.ComponentType<{ className?: string }>
+>;
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "";
@@ -56,8 +64,7 @@ export function DashboardClient({
 }) {
   const [courses, setCourses] = useState<UserCourse[]>(initialCourses);
   const [mobileTabsCompact, setMobileTabsCompact] = useState(false);
-  const [mobileTab, setMobileTab] =
-    useState<MobileDashboardTab>("assignments");
+  const [mobileTab, setMobileTab] = useState<MobileDashboardTab>("assignments");
   const mobileTabsListRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
@@ -156,6 +163,9 @@ export function DashboardClient({
           }}
           className="w-full"
         >
+          <TabsContent value="grades" className="min-w-0">
+            <GradesDashboard courses={courses} domains={domainsData} />
+          </TabsContent>
           <TabsContent value="courses" className="min-w-0">
             <CourseTab courses={courses} onColorChange={handleColorChange} />
           </TabsContent>
@@ -193,7 +203,7 @@ export function DashboardClient({
               className={cn(
                 "mx-auto transition-all duration-300 ease-out",
                 mobileTabsCompact
-                  ? "flex size-7.5 items-center justify-center rounded-full bg-glass/25 p-0 shadow-[0_8px_28px_rgb(15_23_42_/_0.18)] backdrop-blur-lg dark:shadow-[0_8px_28px_rgb(0_0_0_/_0.24)]"
+                  ? "bg-glass/25 flex size-7.5 items-center justify-center rounded-full p-0 shadow-[0_8px_28px_rgb(15_23_42_/_0.18)] backdrop-blur-lg dark:shadow-[0_8px_28px_rgb(0_0_0_/_0.24)]"
                   : "w-full max-w-xl p-1.5",
               )}
             >
@@ -210,7 +220,7 @@ export function DashboardClient({
                 {mobileTabsCompact ? (
                   <button
                     type="button"
-                    className="flex size-7.5 min-w-0 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground shadow-none transition-all duration-300 ease-out hover:cursor-pointer"
+                    className="text-foreground flex size-7.5 min-w-0 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 shadow-none transition-all duration-300 ease-out hover:cursor-pointer"
                     aria-label={MOBILE_TAB_LABELS[mobileTab]}
                     onClick={(event) => {
                       event.stopPropagation();
@@ -221,6 +231,14 @@ export function DashboardClient({
                   </button>
                 ) : (
                   <>
+                    <TabsTrigger
+                      value="grades"
+                      data-value="grades"
+                      className={mobileTabClassName}
+                    >
+                      <GraduationCap className="size-4" />
+                      Grades
+                    </TabsTrigger>
                     <TabsTrigger
                       value="courses"
                       data-value="courses"
@@ -269,6 +287,10 @@ export function DashboardClient({
             <Tabs defaultValue="assignments" className="w-full">
               <GlassContainer className="mb-4 w-full p-0">
                 <TabsList className="w-full bg-inherit">
+                  <TabsTrigger value="grades" className="flex-1 border-0">
+                    <GraduationCap className="size-4" />
+                    Grades
+                  </TabsTrigger>
                   <TabsTrigger value="assignments" className="flex-1 border-0">
                     <ClipboardList className="size-4" />
                     Assignments
@@ -286,6 +308,9 @@ export function DashboardClient({
                   </TabsTrigger>
                 </TabsList>
               </GlassContainer>
+              <TabsContent value="grades" className="min-w-0">
+                <GradesDashboard courses={courses} domains={domainsData} />
+              </TabsContent>
               <TabsContent value="assignments" className="min-w-0">
                 <AssignmentDashboardClient
                   initialData={plannerData}

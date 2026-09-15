@@ -10,7 +10,7 @@ import type {
   Filters,
   FilterType,
 } from "@/lib/types";
-import { TriangleAlert, ChevronDown, RotateCw } from "lucide-react";
+import { ChevronDown, RotateCw } from "lucide-react";
 import {
   type ReadonlyURLSearchParams,
   usePathname,
@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/collapsible";
 
 import type { UserPlanner } from "@/lib/types";
-import Link from "next/link";
+import { AccountAttentionCard } from "./account-attention-card";
 import { GlassContainer } from "@/components/glass-container";
 import { AssignmentDashboardControls } from "./dashboard-controls";
 import type { CanvasDomainInfo } from "@/lib/types";
@@ -1029,48 +1029,14 @@ export function AssignmentDashboardClient({
         )}
       </div>
 
-      {accountsWithErrors.length > 0 && (
-        <div className="bg-destructive/20 text-destructive flex items-center justify-between rounded-2xl border border-white/20 px-4 py-2 shadow-lg hover:shadow-xl">
-          <ul>
-            <div className="flex items-center gap-1.5 font-bold">
-              <TriangleAlert className="h-5 w-5" />
-              <span>Accounts needing attention</span>
-            </div>
-
-            {accountsWithErrors.map((accountId) => {
-              const account = accountMap[accountId];
-
-              const expiredLabel = account?.expiredAt
-                ? new Date(account.expiredAt).toLocaleString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })
-                : null;
-
-              return (
-                <li key={accountId}>
-                  {account?.name ?? accountId}
-                  {expiredLabel ? ` - expired ${expiredLabel}` : ""}
-                </li>
-              );
-            })}
-          </ul>
-
-          {readOnly ? (
-            <span className="max-w-48 text-right text-sm">
-              The user needs to reconnect these accounts.
-            </span>
-          ) : (
-            <Link
-              className="bg-destructive/70 text-destructive-foreground hover:bg-destructive/80 rounded-xl border border-white/10 px-4 py-2 font-semibold tracking-tight shadow-md transition"
-              href="/manage-accounts"
-            >
-              Manage Accounts
-            </Link>
-          )}
-        </div>
-      )}
+      <AccountAttentionCard
+        accounts={accountsWithErrors.map((id) => ({
+          id,
+          name: accountMap[id]?.name ?? id,
+          expiredAt: accountMap[id]?.expiredAt,
+        }))}
+        readOnly={readOnly}
+      />
 
       {!hasAssignments && (
         <GlassContainer className="w-full">
