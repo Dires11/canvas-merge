@@ -43,7 +43,7 @@ export function GradesSettings() {
   const { showSupportSpaces, setShowSupportSpaces } = useSupportSpaces();
   return (
     <section aria-labelledby="grades-settings-heading" className="border-foreground/10 mt-2 border-t pt-5">
-      <h2 id="grades-settings-heading" className="text-base font-semibold">Grades</h2>
+      <h2 id="grades-settings-heading" className="text-base font-semibold">Courses</h2>
       <div className="mt-4 flex items-start justify-between gap-6">
         <div>
           <label htmlFor="show-support-spaces" className="cursor-pointer font-medium">

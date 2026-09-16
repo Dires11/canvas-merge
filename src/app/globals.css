@@ -446,34 +446,24 @@
     inset: 0;
     pointer-events: none;
     border-radius: inherit;
-    /* Moving edge reflections with a faint wash across the colored pane. */
+    /* Narrow, soft rim lighting leaves the face of the glass clear. */
     background:
       radial-gradient(
-        ellipse 6px 35% at 0% var(--glass-light-y, 50%),
-        rgb(255 255 255 / 0.38),
+        ellipse 3px 50% at 0% 50%,
+        rgb(255 255 255 / 0.2),
         transparent 85%
       ),
       radial-gradient(
-        ellipse 4px 30% at 100% calc(100% - var(--glass-light-y, 50%)),
-        rgb(255 255 255 / 0.26),
+        ellipse 2px 45% at 100% calc(100% - 50%),
+        rgb(255 255 255 / 0.14),
         transparent 85%
-      ),
-      radial-gradient(
-        ellipse 100% 30% at 15% var(--glass-light-y, 50%),
-        rgb(255 255 255 / 0.07),
-        transparent 100%
       );
   }
 
   .dark .liquid-glass-accent::before {
-    opacity: 0.9;
+    opacity: 0.7;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .liquid-glass-accent {
-      --glass-light-y: 50%;
-    }
-  }
 }
 
 @layer utilities {

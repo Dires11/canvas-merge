@@ -13,13 +13,8 @@ const themes = [
 
 export function AppearanceSettings() {
   const { theme, setTheme } = useTheme();
-  const {
-    scrollReflections,
-    reducedMotion,
-    setScrollReflections,
-    pointerReflections,
-    setPointerReflections,
-  } = useAppearance();
+  const { reducedMotion, pointerReflections, setPointerReflections } =
+    useAppearance();
 
   return (
     <section aria-labelledby="appearance-heading">
@@ -40,7 +35,11 @@ export function AppearanceSettings() {
               variant={theme === value ? "default" : "ghost"}
               aria-pressed={theme === value}
               data-glass-pointer=""
-              className={theme === value ? "glass-primary relative rounded-full" : "relative rounded-full"}
+              className={
+                theme === value
+                  ? "glass-primary relative rounded-full"
+                  : "relative rounded-full"
+              }
               onClick={() => setTheme(value)}
             >
               <Icon aria-hidden="true" />
@@ -48,40 +47,6 @@ export function AppearanceSettings() {
             </Button>
           ))}
         </div>
-      </div>
-      <div className="border-foreground/10 mt-5 flex items-start justify-between gap-6 border-t pt-5">
-        <div>
-          <label
-            htmlFor="scroll-reflections"
-            className="cursor-pointer font-medium"
-          >
-            Reflections on scroll
-          </label>
-          <p
-            id="reflections-description"
-            className="text-muted-foreground mt-1 text-sm"
-          >
-            Gently shift the highlights on colored glass panels as you scroll.
-          </p>
-          {reducedMotion && (
-            <p className="text-muted-foreground mt-2 text-sm">
-              Motion is paused by your device’s reduced-motion preference.
-            </p>
-          )}
-        </div>
-        <button
-          id="scroll-reflections"
-          type="button"
-          role="switch"
-          aria-checked={scrollReflections}
-          aria-describedby="reflections-description"
-          onClick={() => setScrollReflections(!scrollReflections)}
-          className={`focus-visible:ring-ring relative mt-0.5 h-7 w-12 shrink-0 cursor-pointer rounded-full focus-visible:ring-2 focus-visible:ring-offset-2 ${scrollReflections ? "bg-primary" : "bg-foreground/20"}`}
-        >
-          <span
-            className={`absolute top-1 left-1 size-5 rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none ${scrollReflections ? "translate-x-5" : "translate-x-0"}`}
-          />
-        </button>
       </div>
       <div className="border-foreground/10 mt-5 flex items-start justify-between gap-6 border-t pt-5">
         <div>

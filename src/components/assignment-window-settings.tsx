@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { ChevronDown } from "lucide-react";
 import {
   ASSIGNMENT_WINDOWS,
   isAssignmentWindow,
@@ -59,21 +60,27 @@ export function AssignmentWindowSettings() {
       >
         Default date range
       </label>
-      <select
-        id="default-assignment-window"
-        value={defaultWindow}
-        onChange={(event) => {
-          if (isAssignmentWindow(event.target.value))
-            setDefaultWindow(event.target.value);
-        }}
-        className="glass-control mt-2 w-full px-3 py-2 text-sm outline-none"
-      >
-        {ASSIGNMENT_WINDOWS.map(({ value, label }) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
-      </select>
+      <div className="relative mt-2">
+        <select
+          id="default-assignment-window"
+          value={defaultWindow}
+          onChange={(event) => {
+            if (isAssignmentWindow(event.target.value))
+              setDefaultWindow(event.target.value);
+          }}
+          className="glass-control w-full appearance-none py-2 pr-10 pl-3 text-sm outline-none"
+        >
+          {ASSIGNMENT_WINDOWS.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+        <ChevronDown
+          aria-hidden="true"
+          className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2"
+        />
+      </div>
       <p className="text-muted-foreground mt-2 text-sm">
         Moving ranges start today. Fixed ranges start Monday; two-week blocks
         stay anchored to the calendar. Saved in this browser.
