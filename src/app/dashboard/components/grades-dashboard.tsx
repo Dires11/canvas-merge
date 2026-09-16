@@ -350,9 +350,9 @@ function GradeRow({
       className={`glass-border relative overflow-hidden rounded-2xl shadow-sm backdrop-blur-lg ${by === "student" ? "bg-[oklch(var(--c-light)/0.07)] pl-2 dark:bg-[oklch(var(--c-dark)/0.06)] dark:backdrop-blur-sm" : "bg-glass/5 dark:bg-white/[0.015] dark:backdrop-blur-sm"}`}
     >
       {by === "student" && <CourseGlassEdge />}
-      <div className="flex items-center gap-2 pr-3">
+      <div className="hover:bg-glass/[0.03] flex items-center gap-2 pr-3 transition-colors duration-200 dark:hover:bg-white/[0.02]">
         <button
-          className="hover:bg-glass/[0.03] focus-visible:outline-primary flex min-w-0 flex-1 items-center gap-3 p-4 text-left transition-colors duration-200 focus-visible:outline-2 sm:p-5 dark:hover:bg-white/[0.02]"
+          className="focus-visible:outline-primary flex min-w-0 flex-1 items-center gap-3 p-4 text-left focus-visible:outline-2 sm:p-5"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
         >
