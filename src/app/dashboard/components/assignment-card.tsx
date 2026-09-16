@@ -6,6 +6,7 @@ import {
   CopyCheck,
   MessageSquareMore,
   ListTodo,
+  UsersRound,
   CheckCircle2,
   ListFilter,
   RotateCcw,
@@ -450,6 +451,7 @@ export function AssignmentCard({
   accountMap,
   color,
   onMarkComplete,
+  onMarkAllComplete,
   onUndoComplete,
   onPlannerChanged,
   onToggleAccountFilter,
@@ -463,6 +465,7 @@ export function AssignmentCard({
   onMarkComplete?: (
     payload: MarkCompletePayload,
   ) => Promise<PlannerOverrideResult>;
+  onMarkAllComplete?: (item: MergedAssignment) => Promise<void>;
   onUndoComplete?: (
     payload: UndoCompletePayload,
   ) => Promise<PlannerOverrideResult>;
@@ -472,6 +475,22 @@ export function AssignmentCard({
   mode?: "active" | "completed";
   readOnly?: boolean;
 }) {
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkPending, setBulkPending] = useState(false);
+  const [bulkError, setBulkError] = useState<string | null>(null);
+  async function markAllDone() {
+    if (!onMarkAllComplete || bulkPending) return;
+    setBulkPending(true);
+    setBulkError(null);
+    try {
+      await onMarkAllComplete(item);
+      setBulkOpen(false);
+    } catch (error) {
+      setBulkError(error instanceof Error ? error.message : "Could not mark all students done. Try again.");
+    } finally {
+      setBulkPending(false);
+    }
+  }
   const IconMap: Record<string, LucideIcon> = {
     assignment: NotebookPen,
     quiz: CopyCheck,
@@ -530,7 +549,8 @@ export function AssignmentCard({
           pointsLabel={pointsLabel}
           className="md:hidden"
         />
-        <div className="scrollbar-hide mt-2 flex min-w-0 gap-1.5 overflow-x-auto">
+        <div className="mt-2 flex min-w-0 items-center gap-2">
+        <div className="scrollbar-hide flex min-w-0 gap-1.5 overflow-x-auto">
           {visibleAccounts.map((acc) => {
             const account = accountMap[acc.accountId];
             if (!account) return;
@@ -550,6 +570,45 @@ export function AssignmentCard({
               />
             );
           })}
+        </div>
+        {!readOnly && mode === "active" && onMarkAllComplete && (
+          <Popover open={bulkOpen} onOpenChange={setBulkOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label={`Options for all students assigned to ${item.title}`}
+                title="All students"
+                data-glass-pointer=""
+                className="glass-control group relative flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-foreground/70 transition duration-300 hover:bg-background/30 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-glass/15"
+              >
+                <UsersRound className="size-4 transition-transform duration-300 group-hover:scale-110 motion-reduce:transform-none" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="center"
+              side="top"
+              sideOffset={8}
+              aria-label="All assigned students"
+              data-glass-pointer=""
+              className="glass-border bg-glass/25 dark:bg-background/55 relative w-[min(26rem,calc(100vw-2rem))] rounded-xl p-3 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.45),0_18px_50px_rgb(15_23_42_/_0.18)] backdrop-blur-xl dark:shadow-xl"
+            >
+              <div className="flex items-start gap-3">
+                <div className="glass-control flex size-10 shrink-0 items-center justify-center rounded-full"><UsersRound className="size-5" /></div>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold">All assigned students</h3>
+                  <p className="text-muted-foreground mt-0.5 truncate text-xs">{item.title}</p>
+                </div>
+              </div>
+              <div className="mt-3 flex justify-end">
+                <Button type="button" size="sm" className="glass-primary text-white" disabled={bulkPending} onClick={() => void markAllDone()}>
+                  <CheckCircle2 className="size-4" />
+                  {bulkPending ? "Marking all done…" : "Mark all done"}
+                </Button>
+              </div>
+              {bulkError && <p role="alert" className="text-destructive mt-2 text-xs">{bulkError}</p>}
+            </PopoverContent>
+          </Popover>
+        )}
         </div>
       </div>
       <div className="hidden flex-none flex-col items-end self-center pr-2 md:flex">

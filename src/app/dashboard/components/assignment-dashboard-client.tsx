@@ -586,6 +586,7 @@ export function AssignmentDashboardClient({
   const urlFilters = filtersFromSearchParams(searchParams);
   const [filters, setFilters] = useState<Filters>(urlFilters);
   const [searchQuery, setSearchQuery] = useState("");
+  const [bulkCompletionError, setBulkCompletionError] = useState<string | null>(null);
   const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
 
   function updateUrl(nextFilters: Filters) {
@@ -650,11 +651,7 @@ export function AssignmentDashboardClient({
   }
 
   const filteredAccountId =
-    filters.domain.length === 0 &&
-    filters.course.length === 0 &&
-    filters.account.length === 1
-      ? filters.account[0]
-      : null;
+    filters.account.length === 1 ? filters.account[0] : null;
 
   function clearEveryFilter() {
     setSearchQuery("");
@@ -663,19 +660,9 @@ export function AssignmentDashboardClient({
   }
 
   function toggleAccountFilter(accountId: string) {
-    if (filteredAccountId === accountId) {
-      applyFilters({
-        domain: [],
-        account: [],
-        course: [],
-      });
-      return;
-    }
-
     applyFilters({
-      domain: [],
-      account: [accountId],
-      course: [],
+      ...filters,
+      account: filteredAccountId === accountId ? [] : [accountId],
     });
   }
 
@@ -717,11 +704,13 @@ export function AssignmentDashboardClient({
     accountId,
     completed,
     overrideId,
+    revalidate = true,
   }: {
     item: MergedAssignment;
     accountId: string;
     completed: boolean;
     overrideId: number | null;
+    revalidate?: boolean;
   }) {
     await Promise.all([
       mutatePlannerCache<UserPlanner | undefined>(
@@ -760,6 +749,7 @@ export function AssignmentDashboardClient({
       ),
     ]);
 
+    if (!revalidate) return;
     void mutatePlannerCache(key);
     void mutatePlannerCache(oppositeKey);
     // Other date windows may also contain this assignment after a status change.
@@ -770,6 +760,51 @@ export function AssignmentDashboardClient({
         cacheKey !== key &&
         cacheKey !== oppositeKey,
     );
+  }
+
+  function hasMultipleAssignedStudents(item: MergedAssignment) {
+    const original = data?.merged?.[item.domainSlug]?.assignments.find(
+      (assignment) => assignment.id === item.id && assignment.type === item.type && assignment.course_id === item.course_id,
+    );
+    if (!original) return false;
+    return new Set([
+      ...original.accountsSubmitted,
+      ...original.accountsNotSubmitted,
+      ...original.accountsMissingSubmission,
+    ].map((account) => account.accountId)).size > 1;
+  }
+
+  async function markAllAssignedComplete(item: MergedAssignment) {
+    setBulkCompletionError(null);
+    // Use the original assignment so a student filter cannot hide recipients.
+    const original = data?.merged?.[item.domainSlug]?.assignments.find(
+      (assignment) => assignment.id === item.id && assignment.type === item.type && assignment.course_id === item.course_id,
+    );
+    if (!original) throw new Error("Assignment changed. Refresh and try again.");
+    const pending = [...new Map(
+      [...original.accountsNotSubmitted, ...original.accountsMissingSubmission]
+        .filter((account) => !account.plannerMarkedComplete)
+        .map((account) => [account.accountId, account]),
+    ).values()];
+    const results = [];
+    let failed = 0;
+    for (const account of pending) {
+      try {
+        const result = await markAssignmentComplete({ item: original, accountId: account.accountId, overrideId: account.plannerOverrideId });
+        results.push({ item: original, accountId: account.accountId, completed: result.markedComplete, overrideId: result.overrideId });
+      } catch {
+        failed += 1;
+      }
+    }
+    for (const result of results) {
+      await handlePlannerChanged({ ...result, revalidate: false });
+    }
+    void mutatePlannerCache((cacheKey) => typeof cacheKey === "string" && cacheKey.startsWith("/api/planner/user-planner?"));
+    if (failed) {
+      const message = `Could not mark ${failed} student${failed === 1 ? "" : "s"} done for “${item.title}”. Successful changes were saved; show all students to retry those remaining.`;
+      setBulkCompletionError(message);
+      throw new Error(message);
+    }
   }
 
   const accountMap = useMemo<Record<string, AccountSafeInfo>>(() => {
@@ -916,6 +951,7 @@ export function AssignmentDashboardClient({
 
   return (
     <div className="text-foreground flex flex-col gap-4">
+      {bulkCompletionError && <p role="alert" className="text-destructive text-sm">{bulkCompletionError}</p>}
       <div
         data-glass-pointer=""
         className="glass-border bg-glass/10 relative flex flex-col gap-2 rounded-xl p-2 backdrop-blur-lg"
@@ -972,6 +1008,7 @@ export function AssignmentDashboardClient({
           {usesWindow && (
             <AssignmentDatePicker
               value={range}
+              onReset={() => setChosenRange(null)}
               today={new Date(`${dayKey}T00:00:00`)}
               onChange={(next) => {
                 setChosenRange({ defaultView: defaultWindow, range: next });
@@ -1185,6 +1222,11 @@ export function AssignmentDashboardClient({
                             accountMap={accountMap}
                             onMarkComplete={
                               readOnly ? undefined : markAssignmentComplete
+                            }
+                            onMarkAllComplete={
+                              !readOnly && !filteredAccountId && hasMultipleAssignedStudents(assignment)
+                                ? markAllAssignedComplete
+                                : undefined
                             }
                             onUndoComplete={
                               readOnly ? undefined : undoAssignmentCompletion

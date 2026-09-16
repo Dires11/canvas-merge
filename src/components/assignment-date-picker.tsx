@@ -39,10 +39,12 @@ const dateKey = (date: Date) =>
 export function AssignmentDatePicker({
   value,
   onChange,
+  onReset,
   today,
 }: {
   value: AssignmentDateRange;
   onChange: (value: AssignmentDateRange) => void;
+  onReset: () => void;
   today: Date;
 }) {
   const [open, setOpen] = useState(false);
@@ -83,9 +85,11 @@ export function AssignmentDatePicker({
         active={selected}
         size="xs"
         aria-pressed={selected}
+        title={selected ? "Restore your default date range" : text}
         data-glass-pointer=""
         onClick={() => {
-          onChange(week);
+          if (selected) onReset();
+          else onChange(week);
           setOpen(false);
         }}
       >
