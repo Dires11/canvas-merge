@@ -105,7 +105,7 @@ export function AppearanceProvider({
     const root = document.documentElement;
     let frame = 0;
     let lastTime = 0;
-    const readTarget = () => 50 + Math.sin(window.scrollY / 450) * 22;
+    const readTarget = () => 50 + Math.sin(window.scrollY / 320) * 35;
     let target = readTarget();
     let current = target;
     const paint = () =>

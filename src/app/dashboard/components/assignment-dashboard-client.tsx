@@ -9,7 +9,7 @@ import {
   AssignmentDatePicker,
   type AssignmentDateRange,
 } from "@/components/assignment-date-picker";
-import { Skeleton } from "@/components/ui/skeleton";
+import { AssignmentListSkeleton } from "./assignment-skeleton";
 import useSWR, { useSWRConfig } from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
@@ -1161,19 +1161,7 @@ export function AssignmentDashboardClient({
           className="space-y-3"
         >
           <span className="sr-only">Loading assignments</span>
-          {[0, 1, 2].map((item) => (
-            <GlassContainer
-              key={item}
-              aria-hidden="true"
-              className="flex items-center gap-4"
-            >
-              <Skeleton className="size-12 motion-reduce:animate-none" />
-              <div className="flex-1 space-y-3">
-                <Skeleton className="h-4 w-2/3 motion-reduce:animate-none" />
-                <Skeleton className="h-3 w-1/3 motion-reduce:animate-none" />
-              </div>
-            </GlassContainer>
-          ))}
+          <AssignmentListSkeleton showDateGroups={mode === "active"} />
         </div>
       )}
       {!isLoading && !error && !hasAssignments && (

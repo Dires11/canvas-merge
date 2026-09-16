@@ -1,6 +1,5 @@
-import { GlassContainer } from "@/components/glass-container";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AssignmentSkeleton } from "./assignment-skeleton";
+import { AssignmentListSkeleton } from "./assignment-skeleton";
 
 export function AssignmentDashboardSkeleton() {
   return (
@@ -28,18 +27,7 @@ export function AssignmentDashboardSkeleton() {
           </div>
         </div>
       </div>
-      <GlassContainer className="flex w-full flex-col gap-2 rounded-2xl">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-5 w-20" />
-          <Skeleton className="size-4 rounded-full" />
-        </div>
-        <div className="mt-2">
-          <Skeleton className="mb-2 h-5 w-24" />
-          <div className="flex flex-col gap-1.5">
-            {Array.from({ length: 4 }, (_, index) => <AssignmentSkeleton key={index} />)}
-          </div>
-        </div>
-      </GlassContainer>
+      <AssignmentListSkeleton />
     </div>
   );
 }

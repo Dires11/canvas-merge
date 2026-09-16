@@ -498,6 +498,8 @@ export function GradesDashboard({
               aria-label="Grade view"
             >
               <GlassPill
+                size="sm"
+                className="size-8 gap-1.5 p-0 text-sm has-[>svg]:px-0 sm:w-auto sm:px-2 sm:has-[>svg]:px-2"
                 active={by === "course"}
                 aria-label="By course"
                 aria-pressed={by === "course"}
@@ -505,10 +507,12 @@ export function GradesDashboard({
                   setBy("course");
                 }}
               >
-                <BookOpen />
+                <BookOpen className="size-4" />
                 <span className="hidden sm:inline">By course</span>
               </GlassPill>
               <GlassPill
+                size="sm"
+                className="size-8 gap-1.5 p-0 text-sm has-[>svg]:px-0 sm:w-auto sm:px-2 sm:has-[>svg]:px-2"
                 active={by === "student"}
                 aria-label="By student"
                 aria-pressed={by === "student"}
@@ -516,7 +520,7 @@ export function GradesDashboard({
                   setBy("student");
                 }}
               >
-                <Users />
+                <Users className="size-4" />
                 <span className="hidden sm:inline">By student</span>
               </GlassPill>
             </div>
@@ -526,7 +530,7 @@ export function GradesDashboard({
               aria-label="Refresh courses"
               disabled={isValidating}
               onClick={() => void mutate()}
-              className="dark:bg-glass/5 dark:hover:bg-glass/15 h-8 border-slate-300/40 bg-white/40 shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] hover:bg-white/60 dark:border-white/10 dark:shadow-none"
+              className="dark:bg-glass/5 dark:hover:bg-glass/15 size-8 gap-1.5 p-0 text-sm font-normal has-[>svg]:px-0 sm:w-auto sm:px-2 sm:has-[>svg]:px-2 border-slate-300/40 bg-white/40 shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] hover:bg-white/60 dark:border-white/10 dark:shadow-none"
             >
               <RefreshCw className={isValidating ? "animate-spin" : ""} />
               <span className="hidden sm:inline">Refresh</span>
@@ -534,11 +538,11 @@ export function GradesDashboard({
           </div>
         }
         <div
-          className="flex flex-wrap items-center gap-2 px-1"
+          className="flex min-w-0 flex-wrap items-center gap-2 px-1 py-1"
           aria-label="Grade sorting"
         >
           <div
-            className="flex items-center gap-1.5"
+            className="flex min-w-0 items-center gap-1 sm:gap-1.5"
             role="group"
             aria-label="Sort grades"
           >
@@ -552,6 +556,7 @@ export function GradesDashboard({
               <GlassPill
                 key={filter.value}
                 active={sort === filter.value}
+                className="h-7 shrink-0 px-2 text-[11px] sm:px-2.5 sm:text-xs"
                 aria-pressed={sort === filter.value}
                 onClick={() => setSort(filter.value)}
               >
