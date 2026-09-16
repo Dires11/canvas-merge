@@ -13,7 +13,8 @@ export function AccountAttentionCard({
   return (
     <div
       role="alert"
-      className="bg-destructive/20 text-destructive flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/20 px-4 py-2 shadow-lg hover:shadow-xl"
+      data-glass-pointer=""
+      className="bg-destructive/20 text-destructive relative flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/20 px-4 py-2 shadow-lg hover:shadow-xl"
     >
       <div>
         <div className="flex items-center gap-1.5 font-bold">
@@ -44,7 +45,7 @@ export function AccountAttentionCard({
         </span>
       ) : (
         <Link
-          className="bg-destructive/70 text-destructive-foreground hover:bg-destructive/80 shrink-0 rounded-xl border border-white/10 px-4 py-2 font-semibold tracking-tight shadow-md transition"
+          className="glass-control bg-destructive/70 text-destructive-foreground hover:bg-destructive/80 shrink-0 rounded-xl border border-white/10 px-4 py-2 font-semibold tracking-tight shadow-md transition"
           href="/manage-accounts"
         >
           Manage Accounts

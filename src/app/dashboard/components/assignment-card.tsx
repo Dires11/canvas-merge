@@ -1,6 +1,6 @@
 import type { MergedAssignment } from "@/lib/types";
 import type { AccountSafeInfo } from "@/lib/types";
-import { convertToDark } from "@/lib/utils/colors/colors";
+import { AssignmentCardFrame } from "./assignment-card-frame";
 import {
   NotebookPen,
   CopyCheck,
@@ -287,7 +287,8 @@ function AccountAssignmentPopover({
         align="center"
         side="top"
         sideOffset={8}
-        className="glass-border bg-glass/25 dark:bg-background/55 w-[min(26rem,calc(100vw-2rem))] rounded-xl p-3 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.45),0_18px_50px_rgb(15_23_42_/_0.18)] backdrop-blur-xl dark:shadow-xl"
+        data-glass-pointer=""
+        className="glass-border bg-glass/25 dark:bg-background/55 relative w-[min(26rem,calc(100vw-2rem))] rounded-xl p-3 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.45),0_18px_50px_rgb(15_23_42_/_0.18)] backdrop-blur-xl dark:shadow-xl"
       >
         <div className="flex min-w-0 items-start gap-3">
           <Avatar size="lg" className="ring-card-foreground/15 mt-0.5 ring">
@@ -331,7 +332,10 @@ function AccountAssignmentPopover({
         )}
 
         {mode === "completed" && (
-          <div className="glass-border bg-background/25 dark:bg-glass/5 mt-3 rounded-lg px-3 py-2">
+          <div
+            data-glass-pointer=""
+            className="glass-border bg-background/25 dark:bg-glass/5 relative mt-3 rounded-lg px-3 py-2"
+          >
             <p className="text-muted-foreground text-xs font-medium">
               Teacher comments
             </p>
@@ -497,30 +501,17 @@ export function AssignmentCard({
     isDueAtMidnight = date.getHours() === 23 && date.getMinutes() === 59;
   }
 
-  const dark = convertToDark(color);
   const pointsLabel =
     item.points_possible != null
       ? `${formatPoints(item.points_possible)} pts`
       : null;
 
   return (
-    <div
-      className="glass-border flex items-stretch gap-4 overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.07)] shadow-sm dark:bg-[oklch(var(--c-dark)/0.05)]"
-      style={
-        {
-          "--c-light": `${color.l} ${color.c} ${color.h}`,
-          "--c-dark": `${dark.l} ${dark.c} ${dark.h}`,
-        } as React.CSSProperties
-      }
+    <AssignmentCardFrame
+      color={color}
+      icon={IconComponent}
+      iconLabel={`Assignment type: ${item.type}`}
     >
-      <div className="border-glass/10 flex flex-none items-center justify-center border-r bg-[oklch(var(--c-light)/0.5)] px-2 md:px-5 dark:bg-[oklch(var(--c-dark)/0.5)]">
-        <IconComponent
-          className="size-9 opacity-80 lg:size-10"
-          strokeWidth={1.5}
-          aria-label={`Assignment type: ${item.type}`}
-        />
-      </div>
-
       <div className="flex min-w-0 flex-5 flex-col py-2 md:py-3">
         <p className="text-card-foreground/40 block truncate text-xs font-semibold">
           {item.course_name}
@@ -567,6 +558,6 @@ export function AssignmentCard({
         </p>
         <DueLabel dueDate={dueDate} isDueAtMidnight={isDueAtMidnight} />
       </div>
-    </div>
+    </AssignmentCardFrame>
   );
 }

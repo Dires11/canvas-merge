@@ -8,8 +8,9 @@ export function GlassContainer({
 }) {
   return (
     <div
+      data-glass-pointer=""
       className={cn(
-        "glass-border bg-glass/5 rounded-2xl p-4 shadow-sm backdrop-blur-lg",
+        "glass-border bg-glass/5 relative rounded-2xl p-4 shadow-sm backdrop-blur-lg",
         className,
       )}
     >

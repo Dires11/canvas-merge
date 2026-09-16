@@ -8,6 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClerkProvider, Show } from "@clerk/nextjs";
 import { shadcn } from "@clerk/ui/themes";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AppearanceProvider } from "@/components/appearance-provider";
 
 const ENABLE_VERCEL_OBSERVABILITY = process.env.NODE_ENV === "production";
 
@@ -38,25 +39,30 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-          <ClerkProvider
-            appearance={{
-              theme: [shadcn],
-              cssLayerName: "clerk",
-            }}
-          >
-            {/* Background with blurred circles */}
-            <div className="fixed inset-0 -z-10 bg-linear-to-br from-slate-50 via-sky-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
-            <div className="fixed inset-0 -z-10 overflow-hidden">
-              <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-purple-400/40 blur-[120px]" />
-              <div className="absolute top-[40%] -right-40 h-[500px] w-[500px] rounded-full bg-sky-400/30 blur-[120px]" />
-              <div className="absolute bottom-[-200px] left-[30%] h-[500px] w-[500px] rounded-full bg-indigo-400/40 blur-[120px]" />
-            </div>
-            <Show when="signed-in">
-              <Navbar />
-            </Show>
-            {children}
-            <SyncTimezone />
-          </ClerkProvider>
+          <AppearanceProvider>
+            <ClerkProvider
+              appearance={{
+                theme: [shadcn],
+                cssLayerName: "clerk",
+              }}
+            >
+              {/* Background with blurred circles */}
+              <div className="fixed inset-0 -z-10 bg-linear-to-br from-slate-50 via-sky-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+              >
+                <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-purple-400/40 blur-[120px]" />
+                <div className="absolute top-[40%] -right-40 h-[500px] w-[500px] rounded-full bg-sky-400/30 blur-[120px]" />
+                <div className="absolute bottom-[-200px] left-[30%] h-[500px] w-[500px] rounded-full bg-indigo-400/40 blur-[120px]" />
+              </div>
+              <Show when="signed-in">
+                <Navbar />
+              </Show>
+              {children}
+              <SyncTimezone />
+            </ClerkProvider>
+          </AppearanceProvider>
         </ThemeProvider>
         {ENABLE_VERCEL_OBSERVABILITY && (
           <>

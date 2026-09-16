@@ -888,7 +888,10 @@ export function AssignmentDashboardClient({
 
   return (
     <div className="text-foreground flex flex-col gap-4">
-      <div className="glass-border bg-glass/10 flex flex-col gap-2 rounded-xl p-2 backdrop-blur-lg">
+      <div
+        data-glass-pointer=""
+        className="glass-border bg-glass/10 relative flex flex-col gap-2 rounded-xl p-2 backdrop-blur-lg"
+      >
         <div className="flex items-center gap-2">
           <div className="relative min-w-0 flex-1">
             <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
@@ -896,7 +899,7 @@ export function AssignmentDashboardClient({
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search"
-              className="dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-8 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
+              className="glass-control dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-8 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
             />
             {searchQuery && (
               <button
@@ -924,7 +927,7 @@ export function AssignmentDashboardClient({
             type="button"
             aria-label="Refresh assignments"
             disabled={isValidating}
-            className="group dark:bg-glass/5 dark:hover:bg-glass/15 flex size-8 shrink-0 items-center justify-center rounded-md border border-slate-300/40 bg-white/40 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] transition hover:cursor-pointer hover:bg-white/60 disabled:opacity-50 sm:w-auto sm:px-2 dark:border-white/10 dark:shadow-none"
+            className="glass-control group dark:bg-glass/5 dark:hover:bg-glass/15 flex size-8 shrink-0 items-center justify-center rounded-md border border-slate-300/40 bg-white/40 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] transition hover:cursor-pointer hover:bg-white/60 disabled:opacity-50 sm:w-auto sm:px-2 dark:border-white/10 dark:shadow-none"
             onClick={() => void mutate()}
           >
             <RotateCw
@@ -962,7 +965,7 @@ export function AssignmentDashboardClient({
               <button
                 key={`domain-${domainSlug}`}
                 type="button"
-                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
+                className="glass-control bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => onFilterChange("domain", domainSlug, false)}
               >
                 {domainMap[domainSlug]?.name ?? domainSlug}
@@ -974,7 +977,7 @@ export function AssignmentDashboardClient({
               <button
                 key={`account-${accountId}`}
                 type="button"
-                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
+                className="glass-control bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => onFilterChange("account", accountId, false)}
               >
                 {accountMap[accountId]?.name ?? accountId}
@@ -986,7 +989,7 @@ export function AssignmentDashboardClient({
               <button
                 key={`course-${courseValue}`}
                 type="button"
-                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
+                className="glass-control bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => onFilterChange("course", courseValue, false)}
               >
                 {courseFilterMap.get(courseValue)?.course_code ?? courseValue}
@@ -997,7 +1000,7 @@ export function AssignmentDashboardClient({
             {searchQuery.trim() && (
               <button
                 type="button"
-                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
+                className="glass-control bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => setSearchQuery("")}
               >
                 Search: {searchQuery.trim()}
@@ -1008,7 +1011,7 @@ export function AssignmentDashboardClient({
             {quickFilter !== "all" && activeQuickFilterLabel && (
               <button
                 type="button"
-                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
+                className="glass-control bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => setQuickFilter("all")}
               >
                 {activeQuickFilterLabel}

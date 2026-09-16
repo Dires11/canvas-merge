@@ -5,6 +5,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import {
   BookOpen,
+  NotebookPen,
   TriangleAlert,
   ArrowUpRight,
   ChevronDown,
@@ -17,6 +18,7 @@ import {
 import { GlassContainer } from "@/components/glass-container";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import type {
   CourseGrade,
@@ -26,10 +28,24 @@ import type {
 
 import type { UserCourse, CanvasDomainInfo } from "@/lib/types";
 import { convertToDark, resolveCourseColor } from "@/lib/utils/colors/colors";
+import { AssignmentCardFrame } from "./assignment-card-frame";
 import { AccountAttentionCard } from "./account-attention-card";
 
 function viewButtonClass(active: boolean) {
   return `h-7 rounded-md px-2.5 text-xs ${active ? "" : "border-slate-300/35 bg-white/35 shadow-[0_1px_2px_rgb(15_23_42_/_0.06)] hover:bg-white/55 dark:border-white/10 dark:bg-glass/5 dark:hover:bg-glass/15 dark:shadow-none"}`;
+}
+
+function CourseGlassEdge() {
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-y-0 left-0 w-1.5 bg-[oklch(var(--c-light)/0.65)] dark:bg-[oklch(var(--c-dark)/0.5)]"
+      style={{
+        backgroundImage:
+          "linear-gradient(90deg, rgb(255 255 255 / 0.12), transparent)",
+      }}
+    />
+  );
 }
 
 function StudentAvatar({ row }: { row: CourseGrade }) {
@@ -70,7 +86,8 @@ function GradeNotice({
   return (
     <div
       role="alert"
-      className="rounded-2xl border border-amber-500/20 bg-amber-50/50 p-4 shadow-sm sm:p-5 dark:bg-amber-950/20"
+      data-glass-pointer=""
+      className="relative rounded-2xl border border-amber-500/20 bg-amber-50/50 p-4 shadow-sm sm:p-5 dark:bg-amber-950/20"
     >
       <div className="flex items-start gap-3">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300">
@@ -125,7 +142,13 @@ function dateLabel(value: string | null) {
     : "No due date";
 }
 
-function Assignments({ row }: { row: CourseGrade }) {
+function Assignments({
+  row,
+  color,
+}: {
+  row: CourseGrade;
+  color: UserCourse["color"];
+}) {
   const [filter, setFilter] = useState("recent");
   const { data, error, isLoading, mutate, isValidating } = useSWR<
     GradeAssignment[]
@@ -146,13 +169,13 @@ function Assignments({ row }: { row: CourseGrade }) {
     });
   const visible = filter === "all" ? assignments : assignments.slice(0, 5);
   return (
-    <div className="border-border bg-background/30 border-t px-4 py-4 sm:px-5">
+    <div className="border-glass-border/15 bg-glass/5 border-t px-4 py-4 sm:px-5 dark:bg-transparent">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h4 className="text-sm font-semibold">Assignments & grades</h4>
         <div className="flex items-center gap-2">
           <select
             aria-label="Assignment view"
-            className="border-border bg-background rounded-md border px-2 py-1 text-xs"
+            className="border-glass-border/20 bg-glass/10 rounded-md border px-2 py-1 text-xs shadow-sm backdrop-blur-lg dark:bg-white/5"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           >
@@ -172,9 +195,34 @@ function Assignments({ row }: { row: CourseGrade }) {
         </div>
       </div>
       {isLoading && (
-        <p role="status" className="text-muted-foreground text-sm">
-          Loading assignments…
-        </p>
+        <div
+          role="status"
+          aria-label="Loading assignments"
+          className="flex flex-col gap-3"
+        >
+          <span className="sr-only">Loading assignments</span>
+          {[0, 1, 2].map((index) => (
+            <div
+              key={index}
+              aria-hidden="true"
+              className="glass-border glass-card-rim flex min-h-28 overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.07)] shadow-sm backdrop-blur-lg dark:bg-[oklch(var(--c-dark)/0.06)] dark:backdrop-blur-sm"
+            >
+              <div className="liquid-glass-accent flex shrink-0 items-center px-2 md:px-5">
+                <Skeleton className="bg-foreground/10 relative z-10 size-9" />
+              </div>
+              <div className="flex min-w-0 flex-1 items-center gap-3 p-3">
+                <div className="flex flex-1 flex-col gap-2">
+                  <Skeleton
+                    className={`${index === 1 ? "w-3/4" : "w-full"} bg-foreground/10 h-4 max-w-80`}
+                  />
+                  <Skeleton className="bg-foreground/10 h-3 w-28" />
+                  <Skeleton className="bg-foreground/10 h-5 w-20 rounded-full" />
+                </div>
+                <Skeleton className="bg-foreground/10 h-5 w-12 shrink-0" />
+              </div>
+            </div>
+          ))}
+        </div>
       )}
       {error && (
         <p role="alert" className="text-destructive text-sm">
@@ -191,39 +239,45 @@ function Assignments({ row }: { row: CourseGrade }) {
             : "No assignments available."}
         </p>
       )}
-      <div className="divide-border divide-y">
+      <div className="flex flex-col gap-3">
         {visible.map((a) => (
-          <div
+          <AssignmentCardFrame
             key={a.id}
-            className="flex items-start justify-between gap-3 py-3"
+            color={color}
+            icon={NotebookPen}
+            iconLabel="Assignment"
           >
-            <div className="min-w-0">
-              <a
-                href={`${row.baseUrl}/courses/${row.courseId}/assignments/${a.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium hover:underline"
-              >
-                {a.name}
-                <ExternalLink className="ml-1 inline size-3" />
-              </a>
-              <p className="text-muted-foreground mt-1 text-xs">
-                {a.gradedAt
-                  ? `Graded ${dateLabel(a.gradedAt)}`
-                  : a.dueAt
-                    ? `Due ${dateLabel(a.dueAt)}`
-                    : "No due date"}{" "}
-                · {a.status}
-              </p>
+            <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-x-3 gap-y-2 py-3 pr-3">
+              <div className="min-w-0 flex-1 basis-40">
+                <a
+                  href={`${row.baseUrl}/courses/${row.courseId}/assignments/${a.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-card-foreground text-sm font-bold hover:underline"
+                >
+                  {a.name}
+                  <ExternalLink className="ml-1 inline size-3" />
+                </a>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  {a.gradedAt
+                    ? `Graded ${dateLabel(a.gradedAt)}`
+                    : a.dueAt
+                      ? `Due ${dateLabel(a.dueAt)}`
+                      : "No due date"}{" "}
+                </p>
+                <span className="bg-background/45 text-muted-foreground mt-2 inline-flex rounded-full px-2 py-0.5 text-xs">
+                  {a.status}
+                </span>
+              </div>
+              <span className="shrink-0 text-right text-sm font-semibold tabular-nums">
+                {a.status === "Excused"
+                  ? "Excused"
+                  : a.score != null
+                    ? `${a.score} / ${a.pointsPossible ?? "—"}`
+                    : (a.grade ?? "—")}
+              </span>
             </div>
-            <span className="shrink-0 text-right text-sm font-semibold tabular-nums">
-              {a.status === "Excused"
-                ? "Excused"
-                : a.score != null
-                  ? `${a.score} / ${a.pointsPossible ?? "—"}`
-                  : (a.grade ?? "—")}
-            </span>
-          </div>
+          </AssignmentCardFrame>
         ))}
       </div>
       {data && assignments.length > visible.length && (
@@ -234,6 +288,38 @@ function Assignments({ row }: { row: CourseGrade }) {
     </div>
   );
 }
+function GradesSkeleton() {
+  return (
+    <div role="status" aria-label="Loading course grades" className="space-y-4">
+      <span className="sr-only">Loading course grades</span>
+      {[0, 1, 2].map((group) => (
+        <GlassContainer key={group} aria-hidden="true" className="space-y-3">
+          <div className="flex items-start justify-between gap-4 px-1">
+            <div className="flex-1 space-y-2 py-1">
+              <Skeleton className="bg-foreground/10 h-5 w-3/4 motion-reduce:animate-none" />
+              <Skeleton className="bg-foreground/10 h-3 w-16 motion-reduce:animate-none" />
+            </div>
+            <Skeleton className="bg-foreground/10 h-6 w-20 rounded-full motion-reduce:animate-none" />
+          </div>
+          {[0, 1].map((row) => (
+            <div key={row} className="glass-border flex items-center gap-3 rounded-2xl bg-glass/5 p-4 sm:p-5">
+              <Skeleton className="bg-foreground/10 size-9 shrink-0 rounded-full motion-reduce:animate-none" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="bg-foreground/10 h-4 w-2/5 motion-reduce:animate-none" />
+                <Skeleton className="bg-foreground/10 h-3 w-3/5 motion-reduce:animate-none" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="bg-foreground/10 ml-auto h-5 w-12 motion-reduce:animate-none" />
+                <Skeleton className="bg-foreground/10 h-3 w-20 motion-reduce:animate-none" />
+              </div>
+            </div>
+          ))}
+        </GlassContainer>
+      ))}
+    </div>
+  );
+}
+
 function GradeRow({
   row,
   by,
@@ -247,10 +333,12 @@ function GradeRow({
   return (
     <div
       style={courseStyle(color)}
-      className={`border-border overflow-hidden rounded-xl border ${by === "student" ? "border-l-8 border-l-[oklch(var(--c-light))] bg-[oklch(var(--c-light)/0.1)] dark:border-l-[oklch(var(--c-dark))] dark:bg-[oklch(var(--c-dark)/0.1)]" : "bg-background/40"}`}
+      data-glass-pointer=""
+      className={`glass-border relative overflow-hidden rounded-2xl shadow-sm backdrop-blur-lg ${by === "student" ? "bg-[oklch(var(--c-light)/0.07)] pl-2 dark:bg-[oklch(var(--c-dark)/0.06)] dark:backdrop-blur-sm" : "bg-glass/5 dark:bg-white/[0.015] dark:backdrop-blur-sm"}`}
     >
+      {by === "student" && <CourseGlassEdge />}
       <button
-        className="hover:bg-glass/10 focus-visible:outline-primary flex w-full items-center gap-3 p-4 text-left transition focus-visible:outline-2 sm:p-5"
+        className="hover:bg-glass/[0.03] dark:hover:bg-white/[0.02] focus-visible:outline-primary flex w-full items-center gap-3 p-4 text-left transition-colors duration-200 focus-visible:outline-2 sm:p-5"
         onClick={() => setOpen(!open)}
         aria-expanded={open}
       >
@@ -281,7 +369,7 @@ function GradeRow({
           className={`text-muted-foreground size-4 shrink-0 transition ${open ? "rotate-180" : ""}`}
         />
       </button>
-      {open && <Assignments row={row} />}
+      {open && <Assignments row={row} color={color} />}
     </div>
   );
 }
@@ -342,7 +430,10 @@ export function GradesDashboard({
   }
   return (
     <div className="space-y-4">
-      <div className="glass-border bg-glass/10 flex flex-col gap-2 rounded-xl p-2 backdrop-blur-lg">
+      <div
+        data-glass-pointer=""
+        className="glass-border bg-glass/10 relative flex flex-col gap-2 rounded-xl p-2 backdrop-blur-lg"
+      >
         {
           <div className="flex items-center gap-2">
             <div className="relative min-w-0 flex-1">
@@ -352,7 +443,7 @@ export function GradesDashboard({
                 placeholder="Search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
+                className="glass-control dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
               />
             </div>
             <Button
@@ -415,16 +506,7 @@ export function GradesDashboard({
       </div>
       {
         <>
-          {isLoading && (
-            <GlassContainer>
-              <p
-                role="status"
-                className="text-muted-foreground animate-pulse text-sm"
-              >
-                Loading course grades…
-              </p>
-            </GlassContainer>
-          )}
+          {isLoading && <GradesSkeleton />}
           {error && (
             <GradeNotice retry={() => void mutate()} loading={isValidating} />
           )}
@@ -470,16 +552,11 @@ export function GradesDashboard({
                 <GlassContainer
                   className={
                     by === "course"
-                      ? "relative flex flex-col gap-3 overflow-hidden bg-[oklch(var(--c-light)/0.1)] pl-6 dark:bg-[oklch(var(--c-dark)/0.1)]"
+                      ? "relative flex flex-col gap-3 overflow-hidden bg-[oklch(var(--c-light)/0.1)] pl-6 dark:bg-[oklch(var(--c-dark)/0.04)]"
                       : "space-y-3"
                   }
                 >
-                  {by === "course" && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-y-0 left-0 w-2 bg-[oklch(var(--c-light))] dark:bg-[oklch(var(--c-dark))]"
-                    />
-                  )}
+                  {by === "course" && <CourseGlassEdge />}
                   <div className="flex items-start justify-between gap-2 px-1">
                     <div className="flex min-w-0 items-center gap-3">
                       {by === "student" && (

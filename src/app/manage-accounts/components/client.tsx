@@ -179,7 +179,8 @@ export default function ManageAccountsClient({
                 {filteredAccounts.map((account) => (
                   <li
                     key={account.id}
-                    className="glass-border bg-glass/5 hover:bg-glass/10 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-3 rounded-2xl p-3 shadow-sm transition-colors hover:shadow-md sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-4 sm:p-5"
+                    data-glass-pointer=""
+                    className="glass-border bg-glass/5 hover:bg-glass/10 relative grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-3 rounded-2xl p-3 shadow-sm transition-colors hover:shadow-md sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-4 sm:p-5"
                   >
                     <Avatar
                       size="lg"
@@ -226,7 +227,7 @@ export default function ManageAccountsClient({
                     <div className="col-start-2 flex shrink-0 items-center justify-start gap-2 sm:col-start-auto sm:justify-end">
                       <FormModal
                         trigger={
-                          <button className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/40 px-3 py-1.5 text-xs font-medium text-blue-700 backdrop-blur transition-all hover:border-blue-300/70 hover:bg-blue-100/70 hover:shadow-md dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:border-blue-400/30 dark:hover:bg-blue-500/20">
+                          <button className="glass-control inline-flex items-center gap-1.5 rounded-full border border-blue-200/60 bg-blue-50/40 px-3 py-1.5 text-xs font-medium text-blue-700 backdrop-blur transition-all hover:border-blue-300/70 hover:bg-blue-100/70 hover:shadow-md dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:border-blue-400/30 dark:hover:bg-blue-500/20">
                             Update
                           </button>
                         }
@@ -243,7 +244,7 @@ export default function ManageAccountsClient({
                       </FormModal>
 
                       <button
-                        className="inline-flex transform items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/40 px-3 py-1.5 text-xs font-medium text-red-700 backdrop-blur transition-all hover:border-red-300/70 hover:bg-red-100/70 hover:shadow-md disabled:pointer-events-none disabled:opacity-60 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300 dark:hover:border-red-400/30 dark:hover:bg-red-500/20"
+                        className="glass-control inline-flex transform items-center gap-1.5 rounded-full border border-red-200/60 bg-red-50/40 px-3 py-1.5 text-xs font-medium text-red-700 backdrop-blur transition-all hover:border-red-300/70 hover:bg-red-100/70 hover:shadow-md disabled:pointer-events-none disabled:opacity-60 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300 dark:hover:border-red-400/30 dark:hover:bg-red-500/20"
                         disabled={deletingId === account.id}
                         onClick={() => handleDelete(account.id)}
                       >
@@ -255,7 +256,10 @@ export default function ManageAccountsClient({
               </ul>
 
               {filteredAccounts.length === 0 && (
-                <div className="glass-border bg-glass/5 rounded-2xl px-4 py-8 text-center">
+                <div
+                  data-glass-pointer=""
+                  className="glass-border bg-glass/5 relative rounded-2xl px-4 py-8 text-center"
+                >
                   <p className="text-foreground/90 text-sm font-medium">
                     No linked accounts match your search.
                   </p>

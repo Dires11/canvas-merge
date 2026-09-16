@@ -3,6 +3,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Monitor, Moon, ShieldCheck, Sun } from "lucide-react";
+import { SettingsDialog } from "@/components/settings-dialog";
 import { GlassContainer } from "./glass-container";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
@@ -115,6 +116,7 @@ export function Navbar() {
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-5">
+          <SettingsDialog />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
