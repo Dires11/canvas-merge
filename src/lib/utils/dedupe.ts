@@ -1,18 +1,17 @@
-// lib/dedupe.ts
+import { LRUCache } from "lru-cache";
 
-type Entry<T> = {
-  promise?: Promise<T>;
-  value?: T;
-  ts?: number;
-};
+type Entry<T> = { promise: Promise<T> } | { value: T };
 
-const store = new Map<string, Entry<unknown>>();
+// Date-range keys can vary indefinitely. Bound retained responses and remove
+// expired entries even when that exact range is never requested again.
+const store = new LRUCache<string, Entry<unknown>>({
+  max: 128,
+  ttlAutopurge: true,
+});
 
 export function invalidateDedupeWithPrefix(prefix: string) {
   for (const key of store.keys()) {
-    if (key.startsWith(prefix)) {
-      store.delete(key);
-    }
+    if (key.startsWith(prefix)) store.delete(key);
   }
 }
 
@@ -21,37 +20,25 @@ export async function dedupeWithTtl<T>(
   ttlMs: number,
   fn: () => Promise<T>,
 ): Promise<{ hit: "cache" | "inflight" | "miss"; data: T }> {
-  const now = Date.now();
-  const entry = (store.get(key) as Entry<T> | undefined) ?? {};
+  const existing = store.get(key) as Entry<T> | undefined;
+  if (existing) {
+    if ("value" in existing) return { hit: "cache", data: existing.value };
+    return { hit: "inflight", data: await existing.promise };
+  }
+
+  // A request has no TTL while running; the result's TTL starts on completion.
+  const entry: Entry<T> = { promise: Promise.resolve().then(fn) };
   store.set(key, entry);
-
-  // Fresh cached value
-  if (
-    entry.value !== undefined &&
-    entry.ts !== undefined &&
-    now - entry.ts < ttlMs
-  ) {
-    return { hit: "cache", data: entry.value as T };
-  }
-
-  // In-flight request
-  if (entry.promise) {
+  try {
     const data = await entry.promise;
-    return { hit: "inflight", data };
-  }
-
-  // Start new request
-  entry.promise = (async () => {
-    try {
-      const data = await fn();
-      entry.value = data;
-      entry.ts = Date.now();
-      return data;
-    } finally {
-      entry.promise = undefined;
+    // An invalidated or evicted request must not repopulate stale results.
+    if (store.peek(key) === entry) {
+      if (ttlMs > 0) store.set(key, { value: data }, { ttl: ttlMs });
+      else store.delete(key);
     }
-  })();
-
-  const data = await entry.promise;
-  return { hit: "miss", data };
+    return { hit: "miss", data };
+  } catch (error) {
+    if (store.peek(key) === entry) store.delete(key);
+    throw error;
+  }
 }
