@@ -1,5 +1,7 @@
 "use client";
 
+import { GradesSettings } from "@/components/grades-settings";
+import { AssignmentWindowSettings } from "@/components/assignment-window-settings";
 import { Settings } from "lucide-react";
 import { AppearanceSettings } from "@/components/appearance-settings";
 import {
@@ -19,9 +21,10 @@ export function SettingsDialog() {
           type="button"
           aria-label="Settings"
           title="Settings"
-          className="glass-control hover:bg-glass/20 focus-visible:ring-ring flex size-8 cursor-pointer items-center justify-center rounded-full focus-visible:ring-2"
+          data-glass-pointer=""
+          className="glass-control group relative flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full transition-all duration-300 ease-out hover:bg-background/30 dark:hover:bg-glass/15 focus-visible:ring-ring focus-visible:ring-2"
         >
-          <Settings className="size-4" />
+          <Settings className="text-foreground/70 size-4 -rotate-6 stroke-[2] transition-all duration-300 ease-out group-hover:scale-110 group-hover:text-foreground" />
         </button>
       </DialogTrigger>
       <DialogContent
@@ -36,6 +39,8 @@ export function SettingsDialog() {
           </DialogDescription>
         </DialogHeader>
         <AppearanceSettings />
+        <AssignmentWindowSettings />
+        <GradesSettings />
       </DialogContent>
     </Dialog>
   );

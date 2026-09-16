@@ -39,6 +39,8 @@ export function AppearanceSettings() {
               key={value}
               variant={theme === value ? "default" : "ghost"}
               aria-pressed={theme === value}
+              data-glass-pointer=""
+              className={theme === value ? "glass-primary relative rounded-full" : "relative rounded-full"}
               onClick={() => setTheme(value)}
             >
               <Icon aria-hidden="true" />

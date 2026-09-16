@@ -5,6 +5,7 @@ export type CourseGrade = {
   courseId: number;
   courseName: string;
   courseCode: string;
+  color?: { l: number; c: number; h: number };
   baseUrl: string;
   school: string;
   score: number | null;

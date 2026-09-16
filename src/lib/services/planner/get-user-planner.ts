@@ -374,6 +374,7 @@ export async function getUserPlanner(
   userId: string,
   merge: boolean = true,
   filter: PlannerItemFilter = "incomplete_items",
+  range?: { startISO: string; endISO: string },
 ): Promise<UserPlanner> {
   let allAccounts = await getUserCanvasAccountsWithTokens(userId);
 
@@ -384,7 +385,7 @@ export async function getUserPlanner(
   const accountsWithErrors: string[] = [];
 
   const timezone = (await getDetectedTimeZoneForUser(userId)) || "UTC";
-  const { startISO, endISO } = getUTCWeekRange(timezone);
+  const { startISO, endISO } = range ?? getUTCWeekRange(timezone);
 
   const fetchPromises = allAccounts.map(async (account) => {
     if (account.expiredAt !== null) {

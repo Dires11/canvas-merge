@@ -1,5 +1,15 @@
 "use client";
 
+import { useAssignmentWindow } from "@/components/assignment-window-settings";
+import {
+  getAssignmentWindow,
+  type AssignmentWindow,
+} from "@/lib/utils/assignment-window";
+import {
+  AssignmentDatePicker,
+  type AssignmentDateRange,
+} from "@/components/assignment-date-picker";
+import { Skeleton } from "@/components/ui/skeleton";
 import useSWR, { useSWRConfig } from "swr";
 import { useEffect, useMemo, useState } from "react";
 import { AssignmentCard } from "./assignment-card";
@@ -32,6 +42,7 @@ import { AssignmentDashboardControls } from "./dashboard-controls";
 import type { CanvasDomainInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { GlassPill } from "@/components/ui/glass-pill";
 import { Button } from "@/components/ui/button";
 import { updatePlannerOverride } from "./planner-override";
 
@@ -192,9 +203,8 @@ function matchesQuickFilter(
 
     if (quickFilter === "this_week") {
       if (!dueDay) return false;
-      const nextWeek = new Date(today);
-      nextWeek.setDate(today.getDate() + 7);
-      return dueDay >= today && dueDay < nextWeek;
+      const week = getAssignmentWindow("week", today);
+      return dueDay >= week.start && dueDay < new Date(week.endISO);
     }
 
     if (quickFilter === "no_due_date") {
@@ -525,27 +535,49 @@ export function AssignmentDashboardClient({
   dataEndpoint,
   readOnly = false,
 }: Props) {
+  const { defaultWindow } = useAssignmentWindow();
+  const dayKey = useDayKey();
+  const [chosenRange, setChosenRange] = useState<{
+    defaultView: AssignmentWindow;
+    range: AssignmentDateRange;
+  } | null>(null);
+  const defaultRange = useMemo(
+    () => getAssignmentWindow(defaultWindow, new Date(`${dayKey}T00:00:00`)),
+    [defaultWindow, dayKey],
+  );
+  const range =
+    chosenRange?.defaultView === defaultWindow
+      ? chosenRange.range
+      : defaultRange;
+  const usesWindow = mode === "active" && !dataEndpoint;
+  const rangeQuery = usesWindow
+    ? `&start=${encodeURIComponent(range.startISO)}&end=${encodeURIComponent(range.endISO)}`
+    : "";
   const plannerFilter =
     mode === "completed" ? "complete_items" : "incomplete_items";
   const key =
     dataEndpoint ??
-    `/api/planner/user-planner?merge=true&filter=${plannerFilter}`;
+    `/api/planner/user-planner?merge=true&filter=${plannerFilter}${rangeQuery}`;
 
-  const { data, error, isValidating, mutate } = useSWR(key, fetcher, {
-    fallbackData: initialData ?? undefined,
-    revalidateOnFocus: true,
-    revalidateIfStale: false,
-    revalidateOnReconnect: true,
-    dedupingInterval: 10_000,
-    keepPreviousData: false,
-  });
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    key,
+    fetcher,
+    {
+      fallbackData: usesWindow ? undefined : (initialData ?? undefined),
+      revalidateOnFocus: true,
+      revalidateIfStale: true,
+      revalidateOnReconnect: true,
+      dedupingInterval: 10_000,
+      keepPreviousData: false,
+    },
+  );
   const { mutate: mutatePlannerCache } = useSWRConfig();
   const oppositePlannerFilter =
     mode === "completed" ? "incomplete_items" : "complete_items";
   const oppositeKey = `/api/planner/user-planner?merge=true&filter=${oppositePlannerFilter}`;
 
-  const dayKey = useDayKey();
-  const accounts = data?.accountsSafeInfo ?? EMPTY_ACCOUNTS;
+  const accounts =
+    data?.accountsSafeInfo ?? initialData?.accountsSafeInfo ?? EMPTY_ACCOUNTS;
   const accountsWithErrors = data?.accountsWithErrors ?? EMPTY_ACCOUNT_ERRORS;
 
   const searchParams = useSearchParams();
@@ -730,6 +762,14 @@ export function AssignmentDashboardClient({
 
     void mutatePlannerCache(key);
     void mutatePlannerCache(oppositeKey);
+    // Other date windows may also contain this assignment after a status change.
+    void mutatePlannerCache(
+      (cacheKey) =>
+        typeof cacheKey === "string" &&
+        cacheKey.startsWith("/api/planner/user-planner?") &&
+        cacheKey !== key &&
+        cacheKey !== oppositeKey,
+    );
   }
 
   const accountMap = useMemo<Record<string, AccountSafeInfo>>(() => {
@@ -837,7 +877,11 @@ export function AssignmentDashboardClient({
       assignments = assignments.filter(
         (assignment) =>
           matchesSearch(assignment, searchQuery, accountMap) &&
-          matchesQuickFilter(assignment, mode, quickFilter),
+          matchesQuickFilter(assignment, mode, quickFilter) &&
+          (!usesWindow ||
+            !assignment.due_at ||
+            (Date.parse(assignment.due_at) >= Date.parse(range.startISO) &&
+              Date.parse(assignment.due_at) < Date.parse(range.endISO))),
       );
 
       if (assignments.length > 0) {
@@ -848,6 +892,9 @@ export function AssignmentDashboardClient({
     return result;
   }, [
     data?.merged,
+    usesWindow,
+    range.startISO,
+    range.endISO,
     dayKey,
     filters.account,
     filters.domain,
@@ -864,25 +911,6 @@ export function AssignmentDashboardClient({
     filters.course.length > 0 ||
     searchQuery.trim().length > 0 ||
     quickFilter !== "all";
-
-  if (error) {
-    return (
-      <div className="rounded-md border border-red-500 p-3 text-red-600">
-        {error.message}
-        <div className="mt-2">
-          <button
-            disabled={isValidating}
-            className="rounded-md border px-3 py-1 disabled:opacity-50"
-            onClick={() => void mutate()}
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) return <div>No data</div>;
 
   const hasAssignments = Object.keys(groupedByDomain).length > 0;
 
@@ -940,23 +968,63 @@ export function AssignmentDashboardClient({
           </button>
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(5.75rem,1fr))] gap-1.5 px-1 sm:flex sm:flex-wrap sm:items-center">
-          {quickFilters.map((filter) => (
-            <Button
-              key={filter.value}
-              type="button"
-              size="xs"
-              variant={quickFilter === filter.value ? "default" : "outline"}
-              className={cn(
-                "h-7 w-full rounded-md px-2 text-xs sm:w-auto sm:px-2.5",
-                quickFilter !== filter.value &&
-                  "dark:bg-glass/5 dark:hover:bg-glass/15 border-slate-300/35 bg-white/35 shadow-[0_1px_2px_rgb(15_23_42_/_0.06)] hover:bg-white/55 dark:border-white/10 dark:shadow-none",
-              )}
-              onClick={() => setQuickFilter(filter.value)}
-            >
-              {filter.label}
-            </Button>
-          ))}
+        <div className="flex min-w-0 flex-wrap items-center gap-2 px-1 py-1 sm:flex-nowrap sm:overflow-x-auto">
+          {usesWindow && (
+            <AssignmentDatePicker
+              value={range}
+              today={new Date(`${dayKey}T00:00:00`)}
+              onChange={(next) => {
+                setChosenRange({ defaultView: defaultWindow, range: next });
+                setQuickFilter("all");
+              }}
+            />
+          )}
+
+          {usesWindow && (
+            <span
+              aria-hidden="true"
+              className="bg-foreground/10 mx-1 hidden h-5 w-px shrink-0 sm:block"
+            />
+          )}
+          <div
+            className="flex min-w-0 items-center gap-1 sm:hidden"
+            role="group"
+            aria-label="Filter assignments"
+          >
+            {quickFilters.slice(0, 3).map((filter) => (
+              <GlassPill
+                key={filter.value}
+                type="button"
+                active={quickFilter === filter.value}
+                aria-pressed={quickFilter === filter.value}
+                aria-label={filter.label}
+                className="h-7 px-2 text-[11px]"
+                onClick={() => setQuickFilter(filter.value)}
+              >
+                {filter.value === "due_today"
+                  ? "Today"
+                  : filter.value === "pending_grade"
+                    ? "Pending"
+                    : filter.label}
+              </GlassPill>
+            ))}
+          </div>
+          <div className="hidden shrink-0 items-center gap-1.5 sm:flex">
+            {quickFilters
+              .filter((filter) => !usesWindow || filter.value !== "this_week")
+              .map((filter) => (
+                <GlassPill
+                  key={filter.value}
+                  type="button"
+                  active={quickFilter === filter.value}
+                  aria-pressed={quickFilter === filter.value}
+                  className="shrink-0 px-2.5"
+                  onClick={() => setQuickFilter(filter.value)}
+                >
+                  {filter.label}
+                </GlassPill>
+              ))}
+          </div>
         </div>
 
         {hasStructuredFilters && (
@@ -1041,7 +1109,37 @@ export function AssignmentDashboardClient({
         readOnly={readOnly}
       />
 
-      {!hasAssignments && (
+      {error && (
+        <GlassContainer role="alert">
+          <p className="text-destructive text-sm">{error.message}</p>
+          <Button variant="outline" size="sm" onClick={() => void mutate()}>
+            Retry
+          </Button>
+        </GlassContainer>
+      )}
+      {isLoading && (
+        <div
+          role="status"
+          aria-label="Loading assignments"
+          className="space-y-3"
+        >
+          <span className="sr-only">Loading assignments</span>
+          {[0, 1, 2].map((item) => (
+            <GlassContainer
+              key={item}
+              aria-hidden="true"
+              className="flex items-center gap-4"
+            >
+              <Skeleton className="size-12 motion-reduce:animate-none" />
+              <div className="flex-1 space-y-3">
+                <Skeleton className="h-4 w-2/3 motion-reduce:animate-none" />
+                <Skeleton className="h-3 w-1/3 motion-reduce:animate-none" />
+              </div>
+            </GlassContainer>
+          ))}
+        </div>
+      )}
+      {!isLoading && !error && !hasAssignments && (
         <GlassContainer className="w-full">
           <p className="text-muted-foreground text-sm">
             {mode === "completed"

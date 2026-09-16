@@ -3,24 +3,40 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Tabs as TabsPrimitive } from "radix-ui";
+import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
+const SelectedTabContext = React.createContext<string | undefined>(undefined);
+const AnimatedTabsContext = React.createContext(false);
+
 function Tabs({
   className,
   orientation = "horizontal",
+  value,
+  defaultValue,
+  onValueChange,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  const [localValue, setLocalValue] = React.useState(defaultValue);
+  const selectedValue = value ?? localValue;
   return (
-    <TabsPrimitive.Root
-      data-slot="tabs"
-      data-orientation={orientation}
-      orientation={orientation}
-      className={cn(
-        "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
-        className,
-      )}
-      {...props}
-    />
+    <SelectedTabContext.Provider value={selectedValue}>
+      <TabsPrimitive.Root
+        data-slot="tabs"
+        data-orientation={orientation}
+        orientation={orientation}
+        value={selectedValue}
+        onValueChange={(next) => {
+          setLocalValue(next);
+          onValueChange?.(next);
+        }}
+        className={cn(
+          "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
+          className,
+        )}
+        {...props}
+      />
+    </SelectedTabContext.Provider>
   );
 }
 
@@ -42,23 +58,33 @@ const tabsListVariants = cva(
 function TabsList({
   className,
   variant = "default",
+  animated = false,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.List> &
-  VariantProps<typeof tabsListVariants>) {
+  VariantProps<typeof tabsListVariants> & { animated?: boolean }) {
+  const id = React.useId();
   return (
-    <TabsPrimitive.List
-      data-slot="tabs-list"
-      data-variant={variant}
-      className={cn(tabsListVariants({ variant }), className)}
-      {...props}
-    />
+    <LayoutGroup id={id}>
+      <AnimatedTabsContext.Provider value={animated && variant === "default"}>
+        <TabsPrimitive.List
+          data-slot="tabs-list"
+          data-variant={variant}
+          className={cn(tabsListVariants({ variant }), className)}
+          {...props}
+        />
+      </AnimatedTabsContext.Provider>
+    </LayoutGroup>
   );
 }
 
 function TabsTrigger({
   className,
+  children,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+  const animated = React.useContext(AnimatedTabsContext);
+  const selected = React.useContext(SelectedTabContext);
+  const reducedMotion = useReducedMotion();
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
@@ -67,10 +93,26 @@ function TabsTrigger({
         "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent dark:group-data-[variant=line]/tabs-list:data-[state=active]:border-transparent dark:group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent",
         "dark:data-[state=active]:text-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 data-[state=active]:text-foreground data-[state=active]:bg-black/7",
         "after:bg-foreground after:absolute after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
+        animated &&
+          "isolate data-[state=active]:bg-transparent group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none dark:data-[state=active]:bg-transparent",
         className,
       )}
       {...props}
-    />
+    >
+      {animated && selected === props.value && (
+        <motion.span
+          aria-hidden="true"
+          layoutId="selected-tab-background"
+          className="glass-control pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-white/35 dark:bg-glass/5"
+          transition={
+            reducedMotion
+              ? { duration: 0 }
+              : { type: "spring", stiffness: 420, damping: 36 }
+          }
+        />
+      )}
+      {children}
+    </TabsPrimitive.Trigger>
   );
 }
 

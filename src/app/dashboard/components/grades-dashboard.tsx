@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  compareGradeScores,
+  groupGradeScore,
+  type GradeSort,
+} from "@/lib/utils/grade-sort";
+import {
+  CourseColorPicker,
+  type CourseColorChange,
+} from "./course-color-picker";
+import { useSupportSpaces } from "@/components/grades-settings";
 import { isSupportSpace } from "@/lib/utils/course-classification";
 import { useState } from "react";
 import useSWR from "swr";
@@ -16,6 +26,7 @@ import {
   Users,
 } from "lucide-react";
 import { GlassContainer } from "@/components/glass-container";
+import { GlassPill } from "@/components/ui/glass-pill";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,13 +38,10 @@ import type {
 } from "@/lib/types/grades";
 
 import type { UserCourse, CanvasDomainInfo } from "@/lib/types";
+import { updateCourseColor } from "@/app/actions/course-actions";
 import { convertToDark, resolveCourseColor } from "@/lib/utils/colors/colors";
 import { AssignmentCardFrame } from "./assignment-card-frame";
 import { AccountAttentionCard } from "./account-attention-card";
-
-function viewButtonClass(active: boolean) {
-  return `h-7 rounded-md px-2.5 text-xs ${active ? "" : "border-slate-300/35 bg-white/35 shadow-[0_1px_2px_rgb(15_23_42_/_0.06)] hover:bg-white/55 dark:border-white/10 dark:bg-glass/5 dark:hover:bg-glass/15 dark:shadow-none"}`;
-}
 
 function CourseGlassEdge() {
   return (
@@ -302,7 +310,10 @@ function GradesSkeleton() {
             <Skeleton className="bg-foreground/10 h-6 w-20 rounded-full motion-reduce:animate-none" />
           </div>
           {[0, 1].map((row) => (
-            <div key={row} className="glass-border flex items-center gap-3 rounded-2xl bg-glass/5 p-4 sm:p-5">
+            <div
+              key={row}
+              className="glass-border bg-glass/5 flex items-center gap-3 rounded-2xl p-4 sm:p-5"
+            >
               <Skeleton className="bg-foreground/10 size-9 shrink-0 rounded-full motion-reduce:animate-none" />
               <div className="min-w-0 flex-1 space-y-2">
                 <Skeleton className="bg-foreground/10 h-4 w-2/5 motion-reduce:animate-none" />
@@ -324,7 +335,9 @@ function GradeRow({
   row,
   by,
   color,
+  colorPicker,
 }: {
+  colorPicker?: React.ReactNode;
   row: CourseGrade;
   by: "course" | "student";
   color: UserCourse["color"];
@@ -337,38 +350,41 @@ function GradeRow({
       className={`glass-border relative overflow-hidden rounded-2xl shadow-sm backdrop-blur-lg ${by === "student" ? "bg-[oklch(var(--c-light)/0.07)] pl-2 dark:bg-[oklch(var(--c-dark)/0.06)] dark:backdrop-blur-sm" : "bg-glass/5 dark:bg-white/[0.015] dark:backdrop-blur-sm"}`}
     >
       {by === "student" && <CourseGlassEdge />}
-      <button
-        className="hover:bg-glass/[0.03] dark:hover:bg-white/[0.02] focus-visible:outline-primary flex w-full items-center gap-3 p-4 text-left transition-colors duration-200 focus-visible:outline-2 sm:p-5"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-      >
-        {by === "course" ? (
-          <StudentAvatar row={row} />
-        ) : (
-          <div className="bg-glass/15 flex size-9 shrink-0 items-center justify-center rounded-full">
-            <BookOpen className="size-4" />
+      <div className="flex items-center gap-2 pr-3">
+        <button
+          className="hover:bg-glass/[0.03] focus-visible:outline-primary flex min-w-0 flex-1 items-center gap-3 p-4 text-left transition-colors duration-200 focus-visible:outline-2 sm:p-5 dark:hover:bg-white/[0.02]"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+        >
+          {by === "course" ? (
+            <StudentAvatar row={row} />
+          ) : (
+            <div className="bg-glass/15 flex size-9 shrink-0 items-center justify-center rounded-full">
+              <BookOpen className="size-4" />
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium">
+              {by === "course" ? row.studentName : row.courseName}
+            </p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              {by === "course" ? "View assignments & grades" : row.courseCode}
+            </p>
           </div>
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium">
-            {by === "course" ? row.studentName : row.courseName}
-          </p>
-          <p className="text-muted-foreground mt-1 text-xs">
-            {by === "course" ? "View assignments & grades" : row.courseCode}
-          </p>
-        </div>
-        <div className="shrink-0 text-right">
-          <p
-            className={`${row.score == null && !row.grade ? "text-muted-foreground text-xs" : "text-lg font-semibold"} tabular-nums`}
-          >
-            {scoreLabel(row)}
-          </p>
-          <p className="text-muted-foreground text-xs">Current grade</p>
-        </div>
-        <ChevronDown
-          className={`text-muted-foreground size-4 shrink-0 transition ${open ? "rotate-180" : ""}`}
-        />
-      </button>
+          <div className="shrink-0 text-right">
+            <p
+              className={`${row.score == null && !row.grade ? "text-muted-foreground text-xs" : "text-lg font-semibold"} tabular-nums`}
+            >
+              {scoreLabel(row)}
+            </p>
+            <p className="text-muted-foreground text-xs">Current grade</p>
+          </div>
+          <ChevronDown
+            className={`text-muted-foreground size-4 shrink-0 transition ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+        {colorPicker}
+      </div>
       {open && <Assignments row={row} color={color} />}
     </div>
   );
@@ -376,7 +392,9 @@ function GradeRow({
 export function GradesDashboard({
   courses,
   domains,
+  onColorChange,
 }: {
+  onColorChange: CourseColorChange;
   courses: UserCourse[];
   domains: CanvasDomainInfo[];
 }) {
@@ -389,12 +407,40 @@ export function GradesDashboard({
     const domain = domains.find((d) => d.baseUrl === row.baseUrl);
     return (
       course?.color ??
+      row.color ??
       resolveCourseColor(row.courseId, domain?.slug ?? row.baseUrl)
+    );
+  }
+  function pickerFor(row: CourseGrade) {
+    const course = courses.find(
+      (course) =>
+        course.id === row.courseId &&
+        course.baseUrl.replace(/\/$/, "") === row.baseUrl.replace(/\/$/, ""),
+    );
+    if (course) return <CourseColorPicker course={course} onColorChange={onColorChange} />;
+    const domain = domains.find(
+      (domain) => domain.baseUrl.replace(/\/$/, "") === row.baseUrl.replace(/\/$/, ""),
+    );
+    if (!domain) return null;
+    return (
+      <CourseColorPicker
+        course={{ id: row.courseId, name: row.courseName, domainSlug: domain.slug, color: colorFor(row) }}
+        onColorChange={async (id, slug, color) => {
+          await updateCourseColor(id, slug, color);
+          await mutate((current) => current ? {
+            ...current,
+            grades: current.grades.map((grade) =>
+              grade.courseId === id && grade.baseUrl === row.baseUrl ? { ...grade, color } : grade,
+            ),
+          } : current, { revalidate: false });
+        }}
+      />
     );
   }
   const [by, setBy] = useState<"course" | "student">("course");
   const [search, setSearch] = useState("");
-  const [showSupportSpaces, setShowSupportSpaces] = useState(false);
+  const [sort, setSort] = useState<GradeSort>("name");
+  const { showSupportSpaces } = useSupportSpaces();
   const { data, error, isLoading, isValidating, mutate } = useSWR<GradesData>(
     "/api/grades",
     fetcher,
@@ -439,17 +485,45 @@ export function GradesDashboard({
             <div className="relative min-w-0 flex-1">
               <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
               <Input
-                aria-label="Search grades"
+                aria-label="Search courses or students"
                 placeholder="Search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="glass-control dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
               />
             </div>
+            <div
+              className="flex shrink-0 items-center gap-1.5"
+              role="group"
+              aria-label="Grade view"
+            >
+              <GlassPill
+                active={by === "course"}
+                aria-label="By course"
+                aria-pressed={by === "course"}
+                onClick={() => {
+                  setBy("course");
+                }}
+              >
+                <BookOpen />
+                <span className="hidden sm:inline">By course</span>
+              </GlassPill>
+              <GlassPill
+                active={by === "student"}
+                aria-label="By student"
+                aria-pressed={by === "student"}
+                onClick={() => {
+                  setBy("student");
+                }}
+              >
+                <Users />
+                <span className="hidden sm:inline">By student</span>
+              </GlassPill>
+            </div>
             <Button
               size="sm"
               variant="outline"
-              aria-label="Refresh grades"
+              aria-label="Refresh courses"
               disabled={isValidating}
               onClick={() => void mutate()}
               className="dark:bg-glass/5 dark:hover:bg-glass/15 h-8 border-slate-300/40 bg-white/40 shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] hover:bg-white/60 dark:border-white/10 dark:shadow-none"
@@ -460,48 +534,31 @@ export function GradesDashboard({
           </div>
         }
         <div
-          className="flex flex-wrap items-center gap-1.5 px-1"
-          role="group"
-          aria-label="Grade view"
+          className="flex flex-wrap items-center gap-2 px-1"
+          aria-label="Grade sorting"
         >
-          <Button
-            size="xs"
-            variant={by === "course" ? "default" : "outline"}
-            className={viewButtonClass(by === "course")}
-            aria-pressed={by === "course"}
-            onClick={() => {
-              setBy("course");
-            }}
+          <div
+            className="flex items-center gap-1.5"
+            role="group"
+            aria-label="Sort grades"
           >
-            <BookOpen />
-            By course
-          </Button>
-          <Button
-            size="xs"
-            variant={by === "student" ? "default" : "outline"}
-            className={viewButtonClass(by === "student")}
-            aria-pressed={by === "student"}
-            onClick={() => {
-              setBy("student");
-            }}
-          >
-            <Users />
-            By student
-          </Button>
-          {supportSpaceKeys.size > 0 && (
-            <label
-              className="text-muted-foreground ml-auto flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-xs"
-              title="Include likely student hubs and support centers, identified by name"
-            >
-              <input
-                type="checkbox"
-                className="accent-primary size-3.5"
-                checked={showSupportSpaces}
-                onChange={(e) => setShowSupportSpaces(e.target.checked)}
-              />
-              Show support spaces
-            </label>
-          )}
+            {(
+              [
+                { value: "name", label: "Name" },
+                { value: "lowest", label: "Lowest score" },
+                { value: "highest", label: "Highest score" },
+              ] as const
+            ).map((filter) => (
+              <GlassPill
+                key={filter.value}
+                active={sort === filter.value}
+                aria-pressed={sort === filter.value}
+                onClick={() => setSort(filter.value)}
+              >
+                {filter.label}
+              </GlassPill>
+            ))}
+          </div>
         </div>
       </div>
       {
@@ -536,14 +593,21 @@ export function GradesDashboard({
                   {search
                     ? "Try a different student, course, or school name."
                     : supportSpaceKeys.size && !showSupportSpaces
-                      ? "Turn on Show support spaces to see your other Canvas enrollments."
+                      ? "Turn on Show support spaces in Settings to see your other Canvas enrollments."
                       : "Connect a student account or check your Canvas enrollments."}
                 </p>
               </div>
             </GlassContainer>
           )}
           {Array.from(groups)
-            .sort(([, a], [, b]) => a.name.localeCompare(b.name))
+            .sort(
+              ([, a], [, b]) =>
+                compareGradeScores(
+                  groupGradeScore(a.rows, sort),
+                  groupGradeScore(b.rows, sort),
+                  sort,
+                ) || a.name.localeCompare(b.name),
+            )
             .map(([key, group]) => (
               <div
                 key={`${by}|${key}`}
@@ -569,25 +633,42 @@ export function GradesDashboard({
                         </p>
                       </div>
                     </div>
-                    <span className="bg-background/50 text-muted-foreground shrink-0 rounded-full px-2.5 py-1 text-xs">
-                      {group.rows.length}{" "}
-                      {by === "course"
-                        ? group.rows.length === 1
-                          ? "student"
-                          : "students"
-                        : group.rows.length === 1
-                          ? "course"
-                          : "courses"}
-                    </span>
+                    <div className="flex shrink-0 items-center gap-2">
+                      {by === "course" && pickerFor(group.rows[0])}
+                      <span className="bg-background/50 text-muted-foreground shrink-0 rounded-full px-2.5 py-1 text-xs">
+                        {group.rows.length}{" "}
+                        {by === "course"
+                          ? group.rows.length === 1
+                            ? "student"
+                            : "students"
+                          : group.rows.length === 1
+                            ? "course"
+                            : "courses"}
+                      </span>
+                    </div>
                   </div>
-                  {group.rows.map((row) => (
-                    <GradeRow
-                      key={`${row.accountId}|${row.courseId}`}
-                      row={row}
-                      by={by}
-                      color={colorFor(row)}
-                    />
-                  ))}
+                  {[...group.rows]
+                    .sort(
+                      (a, b) =>
+                        compareGradeScores(a.score, b.score, sort) ||
+                        (by === "course"
+                          ? a.studentName
+                          : a.courseName
+                        ).localeCompare(
+                          by === "course" ? b.studentName : b.courseName,
+                        ),
+                    )
+                    .map((row) => (
+                      <GradeRow
+                        key={`${row.accountId}|${row.courseId}`}
+                        row={row}
+                        by={by}
+                        color={colorFor(row)}
+                        colorPicker={
+                          by === "student" ? pickerFor(row) : undefined
+                        }
+                      />
+                    ))}
                 </GlassContainer>
               </div>
             ))}

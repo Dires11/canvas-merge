@@ -2,35 +2,33 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { UserCourse, UserPlanner } from "@/lib/types";
-import { CourseSidebar } from "./course-sidebar";
 import { AssignmentDashboardClient } from "./assignment-dashboard-client";
 import { updateCourseColor } from "@/app/actions/course-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseTab } from "./course-tab";
 import { useRouter } from "next/navigation";
 import { GlassContainer } from "@/components/glass-container";
 import type { CanvasDomainInfo } from "@/lib/types";
 import { AnnouncementsDashboard } from "./announcements-dashboard";
 import { cn } from "@/lib/utils";
 import {
-  GraduationCap,
   CheckCircle2,
   BookMarked,
   ClipboardList,
   Megaphone,
 } from "lucide-react";
 import { GradesDashboard } from "./grades-dashboard";
+const dashboardTabClassName =
+  "rounded-full duration-300 ease-out hover:cursor-pointer data-[state=inactive]:hover:bg-background/30 dark:data-[state=inactive]:hover:bg-glass/15 [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-out hover:[&_svg]:scale-110 motion-reduce:transition-none motion-reduce:[&_svg]:transition-none motion-reduce:hover:[&_svg]:scale-100";
+
 type CourseColor = UserCourse["color"];
 type MobileDashboardTab =
   | "completed"
-  | "grades"
   | "courses"
   | "assignments"
   | "announcements";
 
 const MOBILE_TAB_LABELS: Record<MobileDashboardTab, string> = {
   completed: "Completed",
-  grades: "Grades",
   courses: "Courses",
   assignments: "Assignments",
   announcements: "Announcements",
@@ -38,7 +36,6 @@ const MOBILE_TAB_LABELS: Record<MobileDashboardTab, string> = {
 
 const MOBILE_TAB_ICONS = {
   completed: CheckCircle2,
-  grades: GraduationCap,
   courses: BookMarked,
   assignments: ClipboardList,
   announcements: Megaphone,
@@ -125,10 +122,12 @@ export function DashboardClient({
 
       console.error("Failed to update course color:", error);
       setCourses(prevCourses); // rollback
+      throw error;
     }
   };
 
   const mobileTabClassName = cn(
+    dashboardTabClassName,
     "min-w-max shrink-0 border-0 transition-all duration-300 ease-out",
     mobileTabsCompact ? "h-8 px-3 text-xs" : "h-9 px-4 text-sm",
   );
@@ -163,11 +162,12 @@ export function DashboardClient({
           }}
           className="w-full"
         >
-          <TabsContent value="grades" className="min-w-0">
-            <GradesDashboard courses={courses} domains={domainsData} />
-          </TabsContent>
           <TabsContent value="courses" className="min-w-0">
-            <CourseTab courses={courses} onColorChange={handleColorChange} />
+            <GradesDashboard
+              courses={courses}
+              domains={domainsData}
+              onColorChange={handleColorChange}
+            />
           </TabsContent>
           <TabsContent value="assignments" className="min-w-0">
             <AssignmentDashboardClient
@@ -208,6 +208,7 @@ export function DashboardClient({
               )}
             >
               <TabsList
+                animated
                 ref={mobileTabsListRef}
                 className={cn(
                   "scrollbar-hide flex overflow-x-auto overflow-y-hidden bg-transparent p-0 transition-all duration-300 ease-out",
@@ -231,14 +232,6 @@ export function DashboardClient({
                   </button>
                 ) : (
                   <>
-                    <TabsTrigger
-                      value="grades"
-                      data-value="grades"
-                      className={mobileTabClassName}
-                    >
-                      <GraduationCap className="size-4" />
-                      Grades
-                    </TabsTrigger>
                     <TabsTrigger
                       value="courses"
                       data-value="courses"
@@ -279,37 +272,40 @@ export function DashboardClient({
         </Tabs>
       </div>
 
-      {/* Desktop: Sidebar + Assignment Tabs */}
-      <div className="hidden min-h-screen grid-cols-[320px_minmax(0,1fr)] gap-4 p-4 md:grid">
-        <CourseSidebar courses={courses} onColorChange={handleColorChange} />
+      {/* Desktop dashboard */}
+      <div className="mx-auto hidden min-h-screen max-w-6xl px-6 py-4 md:block lg:px-8">
         <main className="min-w-0">
-          <div className="mx-auto w-full max-w-4xl">
+          <div className="mx-auto w-full">
             <Tabs defaultValue="assignments" className="w-full">
               <GlassContainer className="mb-4 w-full p-0">
-                <TabsList className="w-full bg-inherit">
-                  <TabsTrigger value="grades" className="flex-1 border-0">
-                    <GraduationCap className="size-4" />
-                    Grades
+                <TabsList animated className="w-full bg-inherit">
+                  <TabsTrigger value="courses" className={cn("flex-1 border-0", dashboardTabClassName)}>
+                    <BookMarked className="size-4" />
+                    Courses
                   </TabsTrigger>
-                  <TabsTrigger value="assignments" className="flex-1 border-0">
+                  <TabsTrigger value="assignments" className={cn("flex-1 border-0", dashboardTabClassName)}>
                     <ClipboardList className="size-4" />
                     Assignments
                   </TabsTrigger>
-                  <TabsTrigger value="completed" className="flex-1 border-0">
+                  <TabsTrigger value="completed" className={cn("flex-1 border-0", dashboardTabClassName)}>
                     <CheckCircle2 className="size-4" />
                     Completed
                   </TabsTrigger>
                   <TabsTrigger
                     value="announcements"
-                    className="flex-1 border-0"
+                    className={cn("flex-1 border-0", dashboardTabClassName)}
                   >
                     <Megaphone className="size-4" />
                     Announcements
                   </TabsTrigger>
                 </TabsList>
               </GlassContainer>
-              <TabsContent value="grades" className="min-w-0">
-                <GradesDashboard courses={courses} domains={domainsData} />
+              <TabsContent value="courses" className="min-w-0">
+                <GradesDashboard
+                  courses={courses}
+                  domains={domainsData}
+                  onColorChange={handleColorChange}
+                />
               </TabsContent>
               <TabsContent value="assignments" className="min-w-0">
                 <AssignmentDashboardClient

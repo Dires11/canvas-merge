@@ -7,15 +7,42 @@ import type { PlannerItemFilter } from "@/lib/canvas";
 export async function GET(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) {
-    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    return NextResponse.json(
+      { error: "User not authenticated" },
+      { status: 401 },
+    );
   }
 
   const merge = req.nextUrl.searchParams.get("merge") === "true";
   const requestedFilter = req.nextUrl.searchParams.get("filter");
   const filter: PlannerItemFilter =
-    requestedFilter === "complete_items" ? "complete_items" : "incomplete_items";
+    requestedFilter === "complete_items"
+      ? "complete_items"
+      : "incomplete_items";
 
-  const key = `weekly-assignments|user=${userId}|merge=${merge}|filter=${filter}`;
+  const start = req.nextUrl.searchParams.get("start");
+  const end = req.nextUrl.searchParams.get("end");
+  let range: { startISO: string; endISO: string } | undefined;
+  if (start !== null || end !== null) {
+    const startTime = start ? Date.parse(start) : NaN;
+    const endTime = end ? Date.parse(end) : NaN;
+    if (
+      !Number.isFinite(startTime) ||
+      !Number.isFinite(endTime) ||
+      endTime <= startTime ||
+      endTime - startTime > 367 * 86400000
+    ) {
+      return NextResponse.json(
+        { error: "Provide a valid date range of up to one year." },
+        { status: 400 },
+      );
+    }
+    range = {
+      startISO: new Date(startTime).toISOString(),
+      endISO: new Date(endTime).toISOString(),
+    };
+  }
+  const key = `weekly-assignments|user=${userId}|merge=${merge}|filter=${filter}|start=${range?.startISO ?? "default"}|end=${range?.endISO ?? "default"}`;
   console.log("---- API: received request for /api/planner/weekly-assignments");
   try {
     const { hit, data } = await dedupeWithTtl(key, 10_000, async () => {
@@ -24,7 +51,7 @@ export async function GET(req: NextRequest) {
         merge,
         filter,
       });
-      return await getUserPlanner(userId, merge, filter);
+      return await getUserPlanner(userId, merge, filter, range);
     });
 
     return NextResponse.json(data, {

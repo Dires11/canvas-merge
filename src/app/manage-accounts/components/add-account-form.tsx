@@ -303,7 +303,8 @@ export function AddAccountForm({ onSubmit, domains }: Props) {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="mt-2 h-11 w-full text-sm sm:mt-3"
+          data-glass-pointer=""
+          className="glass-primary relative mt-2 h-11 w-full text-sm sm:mt-3"
         >
           {isSubmitting ? "Connecting..." : "Connect Account"}
         </Button>

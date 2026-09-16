@@ -1,3 +1,4 @@
+import { prisma } from "@/db";
 import { getUserCanvasAccountsWithTokens } from "@/lib/data/canvas-account";
 import { decryptToken } from "@/lib/server/crypto";
 import { getGradeCourses } from "@/lib/canvas/grades";
@@ -5,6 +6,16 @@ import type { GradesData } from "@/lib/types/grades";
 
 export async function getUserGrades(userId: string): Promise<GradesData> {
   const accounts = await getUserCanvasAccountsWithTokens(userId);
+  const colors = await prisma.courseMetadata.findMany({
+    where: { userId },
+    select: { courseId: true, domain: true, l: true, c: true, h: true },
+  });
+  const colorMap = new Map(
+    colors.map((color) => [
+      `${color.domain}|${color.courseId}`,
+      { l: color.l, c: color.c, h: color.h },
+    ]),
+  );
   const data: GradesData = {
     grades: [],
     failures: [],
@@ -32,6 +43,7 @@ export async function getUserGrades(userId: string): Promise<GradesData> {
             courseId: course.id,
             courseName: course.name,
             courseCode: course.course_code,
+            color: colorMap.get(`${account.canvasDomain.slug}|${course.id}`),
             baseUrl: account.canvasDomain.baseUrl,
             school: account.canvasDomain.name,
             score: course.hide_final_grades

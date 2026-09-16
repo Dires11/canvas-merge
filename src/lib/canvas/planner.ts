@@ -1,5 +1,5 @@
 import { Plannable, RawPlannerItem } from "../types";
-import { canvasFetchJson, CanvasResult } from "./fetch";
+import { canvasFetchAll, canvasFetchJson, CanvasResult } from "./fetch";
 
 export type PlannerItemFilter = "incomplete_items" | "complete_items";
 
@@ -62,7 +62,7 @@ export async function getPlannerItems(
   endISO: string,
   filter: PlannerItemFilter = "incomplete_items",
 ): Promise<CanvasResult<RawPlannerItem[]>> {
-  return canvasFetchJson<RawPlannerItem[]>(domain, "/api/v1/planner/items", {
+  return canvasFetchAll<RawPlannerItem>(domain, "/api/v1/planner/items", {
     token,
     searchParams: {
       start_date: startISO,

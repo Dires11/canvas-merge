@@ -117,7 +117,7 @@ export default function ManageAccountsClient({
             {optimisticAccounts.length > 0 && (
               <FormModal
                 trigger={
-                  <Button className="w-full text-sm sm:w-auto">
+                  <Button data-glass-pointer="" className="glass-control glass-primary relative w-full text-sm sm:w-auto">
                     Link New Account
                   </Button>
                 }
@@ -169,7 +169,7 @@ export default function ManageAccountsClient({
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     placeholder="Search accounts"
-                    className="dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-3 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
+                    className="glass-control dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-3 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
                     aria-label="Search linked accounts"
                   />
                 </div>
@@ -210,7 +210,7 @@ export default function ManageAccountsClient({
                         </h3>
 
                         {account.expiredAt !== null && (
-                          <span className="text-foreground/90 inline-flex items-center rounded-full bg-red-500 px-2.5 py-1 text-xs font-medium">
+                          <span className="glass-control inline-flex items-center rounded-full border bg-red-500/15 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-500/10 dark:text-red-300">
                             Token expired
                           </span>
                         )}
@@ -235,6 +235,7 @@ export default function ManageAccountsClient({
                       >
                         {({ close }) => (
                           <UpdateAccountForm
+                            baseUrl={account.canvasDomain.baseUrl}
                             onSubmit={async (values) => {
                               await submitUpdate(account.id, values);
                               close();
