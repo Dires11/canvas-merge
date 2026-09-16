@@ -187,7 +187,10 @@ export function ConnectAccountGuide({
                 to see it again!
               </p>
               <div className="grid gap-3">
-                <figure className="glass-border bg-glass/5 overflow-hidden rounded-2xl p-2 shadow-sm">
+                <figure
+                  data-glass-pointer=""
+                  className="glass-border bg-glass/5 relative overflow-hidden rounded-2xl p-2 shadow-sm"
+                >
                   <div className="text-muted-foreground mb-2 flex items-center gap-2 px-1 text-xs font-medium">
                     <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-[11px]">
                       1
@@ -205,7 +208,10 @@ export function ConnectAccountGuide({
                 </figure>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <figure className="glass-border bg-glass/5 overflow-hidden rounded-2xl p-2 shadow-sm">
+                  <figure
+                    data-glass-pointer=""
+                    className="glass-border bg-glass/5 relative overflow-hidden rounded-2xl p-2 shadow-sm"
+                  >
                     <div className="text-muted-foreground mb-2 flex items-center gap-2 px-1 text-xs font-medium">
                       <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-[11px]">
                         2
@@ -222,7 +228,10 @@ export function ConnectAccountGuide({
                     />
                   </figure>
 
-                  <figure className="glass-border bg-glass/5 overflow-hidden rounded-2xl p-2 shadow-sm">
+                  <figure
+                    data-glass-pointer=""
+                    className="glass-border bg-glass/5 relative overflow-hidden rounded-2xl p-2 shadow-sm"
+                  >
                     <div className="text-muted-foreground mb-2 flex items-center gap-2 px-1 text-xs font-medium">
                       <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-[11px]">
                         3

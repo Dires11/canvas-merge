@@ -2,42 +2,47 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { UserCourse, UserPlanner } from "@/lib/types";
-import { CourseSidebar } from "./course-sidebar";
 import { AssignmentDashboardClient } from "./assignment-dashboard-client";
 import { updateCourseColor } from "@/app/actions/course-actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseTab } from "./course-tab";
 import { useRouter } from "next/navigation";
 import { GlassContainer } from "@/components/glass-container";
 import type { CanvasDomainInfo } from "@/lib/types";
 import { AnnouncementsDashboard } from "./announcements-dashboard";
 import { cn } from "@/lib/utils";
 import {
-  BookMarked,
   CheckCircle2,
+  BookMarked,
   ClipboardList,
   Megaphone,
 } from "lucide-react";
+import { GradesDashboard } from "./grades-dashboard";
+const dashboardTabClassName =
+  "rounded-full duration-300 ease-out hover:cursor-pointer data-[state=inactive]:hover:bg-background/30 dark:data-[state=inactive]:hover:bg-glass/15 [&_svg]:transition-transform [&_svg]:duration-300 [&_svg]:ease-out hover:[&_svg]:scale-110 motion-reduce:transition-none motion-reduce:[&_svg]:transition-none motion-reduce:hover:[&_svg]:scale-100";
+
 type CourseColor = UserCourse["color"];
 type MobileDashboardTab =
+  | "completed"
   | "courses"
   | "assignments"
-  | "completed"
   | "announcements";
 
 const MOBILE_TAB_LABELS: Record<MobileDashboardTab, string> = {
+  completed: "Completed",
   courses: "Courses",
   assignments: "Assignments",
-  completed: "Completed",
   announcements: "Announcements",
 };
 
 const MOBILE_TAB_ICONS = {
+  completed: CheckCircle2,
   courses: BookMarked,
   assignments: ClipboardList,
-  completed: CheckCircle2,
   announcements: Megaphone,
-} satisfies Record<MobileDashboardTab, React.ComponentType<{ className?: string }>>;
+} satisfies Record<
+  MobileDashboardTab,
+  React.ComponentType<{ className?: string }>
+>;
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "";
@@ -56,8 +61,7 @@ export function DashboardClient({
 }) {
   const [courses, setCourses] = useState<UserCourse[]>(initialCourses);
   const [mobileTabsCompact, setMobileTabsCompact] = useState(false);
-  const [mobileTab, setMobileTab] =
-    useState<MobileDashboardTab>("assignments");
+  const [mobileTab, setMobileTab] = useState<MobileDashboardTab>("assignments");
   const mobileTabsListRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
@@ -118,10 +122,12 @@ export function DashboardClient({
 
       console.error("Failed to update course color:", error);
       setCourses(prevCourses); // rollback
+      throw error;
     }
   };
 
   const mobileTabClassName = cn(
+    dashboardTabClassName,
     "min-w-max shrink-0 border-0 transition-all duration-300 ease-out",
     mobileTabsCompact ? "h-8 px-3 text-xs" : "h-9 px-4 text-sm",
   );
@@ -157,7 +163,11 @@ export function DashboardClient({
           className="w-full"
         >
           <TabsContent value="courses" className="min-w-0">
-            <CourseTab courses={courses} onColorChange={handleColorChange} />
+            <GradesDashboard
+              courses={courses}
+              domains={domainsData}
+              onColorChange={handleColorChange}
+            />
           </TabsContent>
           <TabsContent value="assignments" className="min-w-0">
             <AssignmentDashboardClient
@@ -193,11 +203,12 @@ export function DashboardClient({
               className={cn(
                 "mx-auto transition-all duration-300 ease-out",
                 mobileTabsCompact
-                  ? "flex size-7.5 items-center justify-center rounded-full bg-glass/25 p-0 shadow-[0_8px_28px_rgb(15_23_42_/_0.18)] backdrop-blur-lg dark:shadow-[0_8px_28px_rgb(0_0_0_/_0.24)]"
+                  ? "bg-glass/25 flex size-7.5 items-center justify-center rounded-full p-0 shadow-[0_8px_28px_rgb(15_23_42_/_0.18)] backdrop-blur-lg dark:shadow-[0_8px_28px_rgb(0_0_0_/_0.24)]"
                   : "w-full max-w-xl p-1.5",
               )}
             >
               <TabsList
+                animated
                 ref={mobileTabsListRef}
                 className={cn(
                   "scrollbar-hide flex overflow-x-auto overflow-y-hidden bg-transparent p-0 transition-all duration-300 ease-out",
@@ -210,7 +221,7 @@ export function DashboardClient({
                 {mobileTabsCompact ? (
                   <button
                     type="button"
-                    className="flex size-7.5 min-w-0 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground shadow-none transition-all duration-300 ease-out hover:cursor-pointer"
+                    className="text-foreground flex size-7.5 min-w-0 shrink-0 items-center justify-center rounded-full border-0 bg-transparent p-0 shadow-none transition-all duration-300 ease-out hover:cursor-pointer"
                     aria-label={MOBILE_TAB_LABELS[mobileTab]}
                     onClick={(event) => {
                       event.stopPropagation();
@@ -261,31 +272,41 @@ export function DashboardClient({
         </Tabs>
       </div>
 
-      {/* Desktop: Sidebar + Assignment Tabs */}
-      <div className="hidden min-h-screen grid-cols-[320px_minmax(0,1fr)] gap-4 p-4 md:grid">
-        <CourseSidebar courses={courses} onColorChange={handleColorChange} />
+      {/* Desktop dashboard */}
+      <div className="mx-auto hidden min-h-screen max-w-6xl px-6 py-4 md:block lg:px-8">
         <main className="min-w-0">
-          <div className="mx-auto w-full max-w-4xl">
+          <div className="mx-auto w-full">
             <Tabs defaultValue="assignments" className="w-full">
               <GlassContainer className="mb-4 w-full p-0">
-                <TabsList className="w-full bg-inherit">
-                  <TabsTrigger value="assignments" className="flex-1 border-0">
+                <TabsList animated className="w-full bg-inherit">
+                  <TabsTrigger value="courses" className={cn("flex-1 border-0", dashboardTabClassName)}>
+                    <BookMarked className="size-4" />
+                    Courses
+                  </TabsTrigger>
+                  <TabsTrigger value="assignments" className={cn("flex-1 border-0", dashboardTabClassName)}>
                     <ClipboardList className="size-4" />
                     Assignments
                   </TabsTrigger>
-                  <TabsTrigger value="completed" className="flex-1 border-0">
+                  <TabsTrigger value="completed" className={cn("flex-1 border-0", dashboardTabClassName)}>
                     <CheckCircle2 className="size-4" />
                     Completed
                   </TabsTrigger>
                   <TabsTrigger
                     value="announcements"
-                    className="flex-1 border-0"
+                    className={cn("flex-1 border-0", dashboardTabClassName)}
                   >
                     <Megaphone className="size-4" />
                     Announcements
                   </TabsTrigger>
                 </TabsList>
               </GlassContainer>
+              <TabsContent value="courses" className="min-w-0">
+                <GradesDashboard
+                  courses={courses}
+                  domains={domainsData}
+                  onColorChange={handleColorChange}
+                />
+              </TabsContent>
               <TabsContent value="assignments" className="min-w-0">
                 <AssignmentDashboardClient
                   initialData={plannerData}

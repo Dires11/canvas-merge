@@ -1,11 +1,12 @@
 import type { MergedAssignment } from "@/lib/types";
 import type { AccountSafeInfo } from "@/lib/types";
-import { convertToDark } from "@/lib/utils/colors/colors";
+import { AssignmentCardFrame } from "./assignment-card-frame";
 import {
   NotebookPen,
   CopyCheck,
   MessageSquareMore,
   ListTodo,
+  UsersRound,
   CheckCircle2,
   ListFilter,
   RotateCcw,
@@ -287,7 +288,8 @@ function AccountAssignmentPopover({
         align="center"
         side="top"
         sideOffset={8}
-        className="glass-border bg-glass/25 dark:bg-background/55 w-[min(26rem,calc(100vw-2rem))] rounded-xl p-3 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.45),0_18px_50px_rgb(15_23_42_/_0.18)] backdrop-blur-xl dark:shadow-xl"
+        data-glass-pointer=""
+        className="glass-border bg-glass/25 dark:bg-background/55 relative w-[min(26rem,calc(100vw-2rem))] rounded-xl p-3 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.45),0_18px_50px_rgb(15_23_42_/_0.18)] backdrop-blur-xl dark:shadow-xl"
       >
         <div className="flex min-w-0 items-start gap-3">
           <Avatar size="lg" className="ring-card-foreground/15 mt-0.5 ring">
@@ -331,7 +333,10 @@ function AccountAssignmentPopover({
         )}
 
         {mode === "completed" && (
-          <div className="glass-border bg-background/25 dark:bg-glass/5 mt-3 rounded-lg px-3 py-2">
+          <div
+            data-glass-pointer=""
+            className="glass-border bg-background/25 dark:bg-glass/5 relative mt-3 rounded-lg px-3 py-2"
+          >
             <p className="text-muted-foreground text-xs font-medium">
               Teacher comments
             </p>
@@ -446,6 +451,7 @@ export function AssignmentCard({
   accountMap,
   color,
   onMarkComplete,
+  onMarkAllComplete,
   onUndoComplete,
   onPlannerChanged,
   onToggleAccountFilter,
@@ -459,6 +465,7 @@ export function AssignmentCard({
   onMarkComplete?: (
     payload: MarkCompletePayload,
   ) => Promise<PlannerOverrideResult>;
+  onMarkAllComplete?: (item: MergedAssignment) => Promise<void>;
   onUndoComplete?: (
     payload: UndoCompletePayload,
   ) => Promise<PlannerOverrideResult>;
@@ -468,6 +475,22 @@ export function AssignmentCard({
   mode?: "active" | "completed";
   readOnly?: boolean;
 }) {
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkPending, setBulkPending] = useState(false);
+  const [bulkError, setBulkError] = useState<string | null>(null);
+  async function markAllDone() {
+    if (!onMarkAllComplete || bulkPending) return;
+    setBulkPending(true);
+    setBulkError(null);
+    try {
+      await onMarkAllComplete(item);
+      setBulkOpen(false);
+    } catch (error) {
+      setBulkError(error instanceof Error ? error.message : "Could not mark all students done. Try again.");
+    } finally {
+      setBulkPending(false);
+    }
+  }
   const IconMap: Record<string, LucideIcon> = {
     assignment: NotebookPen,
     quiz: CopyCheck,
@@ -497,30 +520,17 @@ export function AssignmentCard({
     isDueAtMidnight = date.getHours() === 23 && date.getMinutes() === 59;
   }
 
-  const dark = convertToDark(color);
   const pointsLabel =
     item.points_possible != null
       ? `${formatPoints(item.points_possible)} pts`
       : null;
 
   return (
-    <div
-      className="glass-border flex items-stretch gap-4 overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.07)] shadow-sm dark:bg-[oklch(var(--c-dark)/0.05)]"
-      style={
-        {
-          "--c-light": `${color.l} ${color.c} ${color.h}`,
-          "--c-dark": `${dark.l} ${dark.c} ${dark.h}`,
-        } as React.CSSProperties
-      }
+    <AssignmentCardFrame
+      color={color}
+      icon={IconComponent}
+      iconLabel={`Assignment type: ${item.type}`}
     >
-      <div className="border-glass/10 flex flex-none items-center justify-center border-r bg-[oklch(var(--c-light)/0.5)] px-2 md:px-5 dark:bg-[oklch(var(--c-dark)/0.5)]">
-        <IconComponent
-          className="size-9 opacity-80 lg:size-10"
-          strokeWidth={1.5}
-          aria-label={`Assignment type: ${item.type}`}
-        />
-      </div>
-
       <div className="flex min-w-0 flex-5 flex-col py-2 md:py-3">
         <p className="text-card-foreground/40 block truncate text-xs font-semibold">
           {item.course_name}
@@ -539,7 +549,8 @@ export function AssignmentCard({
           pointsLabel={pointsLabel}
           className="md:hidden"
         />
-        <div className="scrollbar-hide mt-2 flex min-w-0 gap-1.5 overflow-x-auto">
+        <div className="mt-2 flex min-w-0 items-center gap-2">
+        <div className="scrollbar-hide flex min-w-0 gap-1.5 overflow-x-auto">
           {visibleAccounts.map((acc) => {
             const account = accountMap[acc.accountId];
             if (!account) return;
@@ -560,6 +571,45 @@ export function AssignmentCard({
             );
           })}
         </div>
+        {!readOnly && mode === "active" && onMarkAllComplete && (
+          <Popover open={bulkOpen} onOpenChange={setBulkOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label={`Options for all students assigned to ${item.title}`}
+                title="All students"
+                data-glass-pointer=""
+                className="glass-control group relative flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-foreground/70 transition duration-300 hover:bg-background/30 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-glass/15"
+              >
+                <UsersRound className="size-4 transition-transform duration-300 group-hover:scale-110 motion-reduce:transform-none" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="center"
+              side="top"
+              sideOffset={8}
+              aria-label="All assigned students"
+              data-glass-pointer=""
+              className="glass-border bg-glass/25 dark:bg-background/55 relative w-[min(26rem,calc(100vw-2rem))] rounded-xl p-3 shadow-[inset_0_1px_0_rgb(255_255_255_/_0.45),0_18px_50px_rgb(15_23_42_/_0.18)] backdrop-blur-xl dark:shadow-xl"
+            >
+              <div className="flex items-start gap-3">
+                <div className="glass-control flex size-10 shrink-0 items-center justify-center rounded-full"><UsersRound className="size-5" /></div>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold">All assigned students</h3>
+                  <p className="text-muted-foreground mt-0.5 truncate text-xs">{item.title}</p>
+                </div>
+              </div>
+              <div className="mt-3 flex justify-end">
+                <Button type="button" size="sm" className="glass-primary text-white" disabled={bulkPending} onClick={() => void markAllDone()}>
+                  <CheckCircle2 className="size-4" />
+                  {bulkPending ? "Marking all done…" : "Mark all done"}
+                </Button>
+              </div>
+              {bulkError && <p role="alert" className="text-destructive mt-2 text-xs">{bulkError}</p>}
+            </PopoverContent>
+          </Popover>
+        )}
+        </div>
       </div>
       <div className="hidden flex-none flex-col items-end self-center pr-2 md:flex">
         <p className="text-card-foreground/60 text-base font-medium lg:text-lg">
@@ -567,6 +617,6 @@ export function AssignmentCard({
         </p>
         <DueLabel dueDate={dueDate} isDueAtMidnight={isDueAtMidnight} />
       </div>
-    </div>
+    </AssignmentCardFrame>
   );
 }

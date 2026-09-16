@@ -13,7 +13,8 @@ export async function updateCourseColor(
   if (!userId) throw new Error("UNAUTHORIZED");
 
   try {
-    await upsertCourseColor({ userId, courseId, domain, color });
+    const result = await upsertCourseColor({ userId, courseId, domain, color });
+    if (!result.ok) throw new Error("Failed to save course color");
   } catch (error) {
     console.error("Error updating course color:", error);
     throw new Error("Failed to update course color");

@@ -27,6 +27,7 @@ export function Step({
 
   return (
     <div
+      data-glass-pointer=""
       className={cn(
         completed
           ? "border-green-500/80"

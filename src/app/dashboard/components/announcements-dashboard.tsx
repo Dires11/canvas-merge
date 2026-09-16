@@ -184,7 +184,10 @@ export function AnnouncementsDashboard({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="glass-border bg-glass/10 flex flex-col gap-2 rounded-xl p-2 backdrop-blur-lg">
+      <div
+        data-glass-pointer=""
+        className="glass-border bg-glass/10 relative flex flex-col gap-2 rounded-xl p-2 backdrop-blur-lg"
+      >
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative min-w-0 flex-1">
             <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
@@ -192,7 +195,7 @@ export function AnnouncementsDashboard({
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search announcements"
-              className="dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-8 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
+              className="glass-control dark:bg-input/10 h-8 rounded-md border-slate-300/40 bg-white/40 pr-8 pl-8 text-sm shadow-[0_1px_3px_rgb(15_23_42_/_0.08)] dark:border-white/10 dark:shadow-none"
             />
             {searchQuery && (
               <button
@@ -280,7 +283,7 @@ export function AnnouncementsDashboard({
                 <button
                   key={courseValue}
                   type="button"
-                  className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
+                  className="glass-control bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                   onClick={() => toggleCourse(courseValue, false)}
                 >
                   {course?.course_code ?? courseValue}
@@ -292,7 +295,7 @@ export function AnnouncementsDashboard({
             {searchQuery.trim().length > 0 && (
               <button
                 type="button"
-                className="bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
+                className="glass-control bg-background/35 hover:bg-background/55 dark:bg-glass/5 dark:hover:bg-glass/15 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 onClick={() => setSearchQuery("")}
               >
                 Search: {searchQuery.trim()}
@@ -331,10 +334,11 @@ export function AnnouncementsDashboard({
               return (
                 <div
                   key={announcementKey}
+                  data-glass-pointer=""
                   aria-expanded={isExpandableBody ? showFullBody : undefined}
                   tabIndex={isExpandableBody ? 0 : undefined}
                   className={cn(
-                    "glass-border group focus-visible:ring-ring flex items-stretch overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.08)] shadow-sm transition hover:bg-[oklch(var(--c-light)/0.13)] hover:shadow-md focus-visible:ring-2 focus-visible:ring-inset dark:bg-[oklch(var(--c-dark)/0.08)] dark:hover:bg-[oklch(var(--c-dark)/0.13)]",
+                    "glass-border group focus-visible:ring-ring relative flex items-stretch overflow-hidden rounded-2xl bg-[oklch(var(--c-light)/0.08)] shadow-sm transition hover:bg-[oklch(var(--c-light)/0.13)] hover:shadow-md focus-visible:ring-2 focus-visible:ring-inset dark:bg-[oklch(var(--c-dark)/0.08)] dark:hover:bg-[oklch(var(--c-dark)/0.13)]",
                     isExpandableBody && "cursor-pointer outline-none",
                   )}
                   style={

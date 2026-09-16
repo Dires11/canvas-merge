@@ -29,6 +29,7 @@ export function CourseList({
         return (
           <li
             key={course.id}
+            data-glass-pointer=""
             className="glass-border text-foreground/90 relative mb-2 flex overflow-hidden rounded-lg bg-[oklch(var(--c-light)/0.1)] pr-5 text-sm shadow-sm dark:bg-[oklch(var(--c-dark)/0.1)]"
             style={
               {

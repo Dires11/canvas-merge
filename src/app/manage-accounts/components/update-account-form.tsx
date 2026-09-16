@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,10 +18,12 @@ import { UpdateTokenSchema } from "@/lib/schemas/manage-accounts";
 type FormValues = z.infer<typeof UpdateTokenSchema>;
 
 type Props = {
+  baseUrl: string;
   onSubmit: (data: FormValues) => Promise<void>;
 };
 
-export function UpdateAccountForm({ onSubmit }: Props) {
+export function UpdateAccountForm({ baseUrl, onSubmit }: Props) {
+  const settingsUrl = `${baseUrl.replace(/\/$/, "")}/profile/settings#:~:text=Approved%20Integrations`;
   const {
     register,
     handleSubmit,
@@ -53,6 +56,18 @@ export function UpdateAccountForm({ onSubmit }: Props) {
       className="text-card-foreground space-y-3 sm:space-y-4"
     >
       <FieldGroup className="gap-3 sm:gap-4">
+        <div className="space-y-2">
+          <p className="text-muted-foreground text-sm">
+            Create a new token under Approved Integrations in Canvas, then paste it below.
+          </p>
+          <Button asChild variant="outline" size="sm">
+            <a href={settingsUrl} target="_blank" rel="noopener noreferrer">
+              Open Canvas Settings
+              <ExternalLink className="size-4" />
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </Button>
+        </div>
         <Field className="gap-1" data-invalid={!!errors.token}>
           <FieldLabel htmlFor="token" className="text-sm font-medium">
             Canvas API Token
@@ -83,7 +98,8 @@ export function UpdateAccountForm({ onSubmit }: Props) {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="h-11 w-full text-sm"
+          data-glass-pointer=""
+          className="glass-primary relative h-11 w-full text-sm"
         >
           {isSubmitting ? "Updating..." : "Update Token"}
         </Button>

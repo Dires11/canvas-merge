@@ -1,7 +1,7 @@
 import { readCanvasError, type CanvasError } from "./errors";
 
 export type CanvasResult<T> =
-  | { ok: true; data: T; status: number }
+  | { ok: true; data: T; status: number; nextPage?: string }
   | { ok: false; error: CanvasError; status: number };
 
 type CanvasFetchOptions = {
@@ -147,7 +147,18 @@ export async function canvasFetchJson<T>(
   }
 
   try {
-    return { ok: true, status: res.status, data: JSON.parse(text) as T };
+    const nextPage = res.headers
+      .get("link")
+      ?.split(",")
+      .map((link) => link.trim())
+      .find((link) => /rel="next"/.test(link))
+      ?.match(/<([^>]+)>/)?.[1];
+    return {
+      ok: true,
+      status: res.status,
+      data: JSON.parse(text) as T,
+      nextPage,
+    };
   } catch {
     return {
       ok: false,
@@ -155,4 +166,43 @@ export async function canvasFetchJson<T>(
       error: { raw: text.slice(0, 200), message: "Invalid JSON response" },
     };
   }
+}
+
+/** Follow Canvas pagination without sending credentials to another origin. */
+export async function canvasFetchAll<T>(
+  domain: string,
+  path: string,
+  opts: CanvasFetchOptions,
+): Promise<CanvasResult<T[]>> {
+  const items: T[] = [];
+  let next: string | undefined = path;
+  const visited = new Set<string>();
+  while (next) {
+    const url = new URL(next, domain);
+    if (url.origin !== new URL(domain).origin || visited.has(url.href)) {
+      return {
+        ok: false,
+        status: 502,
+        error: { message: "Invalid Canvas pagination", raw: "" },
+      };
+    }
+    visited.add(url.href);
+    const result: CanvasResult<T[]> = await canvasFetchJson<T[]>(domain, next, {
+      ...opts,
+      searchParams:
+        items.length === 0 && visited.size === 1
+          ? opts.searchParams
+          : undefined,
+    });
+    if (!result.ok) return result;
+    if (!Array.isArray(result.data))
+      return {
+        ok: false,
+        status: 502,
+        error: { message: "Invalid Canvas response", raw: "" },
+      };
+    items.push(...result.data);
+    next = result.nextPage;
+  }
+  return { ok: true, status: 200, data: items };
 }
