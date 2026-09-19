@@ -1,5 +1,6 @@
 "use client";
 
+import { getOverdueWindow, getActivePlannerWindow, matchesActivePlannerWindow } from "@/lib/utils/overdue-window";
 import { useAssignmentWindow } from "@/components/assignment-window-settings";
 import {
   getAssignmentWindow,
@@ -537,6 +538,7 @@ export function AssignmentDashboardClient({
 }: Props) {
   const { defaultWindow } = useAssignmentWindow();
   const dayKey = useDayKey();
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
   const [chosenRange, setChosenRange] = useState<{
     defaultView: AssignmentWindow;
     range: AssignmentDateRange;
@@ -550,8 +552,11 @@ export function AssignmentDashboardClient({
       ? chosenRange.range
       : defaultRange;
   const usesWindow = mode === "active" && !dataEndpoint;
+  const hasCustomRange = chosenRange?.defaultView === defaultWindow;
+  const overdueWindow = useMemo(() => getOverdueWindow(new Date(`${dayKey}T00:00:00`)), [dayKey]);
+  const requestRange = getActivePlannerWindow(range, overdueWindow, hasCustomRange, quickFilter === "overdue");
   const rangeQuery = usesWindow
-    ? `&start=${encodeURIComponent(range.startISO)}&end=${encodeURIComponent(range.endISO)}`
+    ? `&start=${encodeURIComponent(requestRange.startISO)}&end=${encodeURIComponent(requestRange.endISO)}`
     : "";
   const plannerFilter =
     mode === "completed" ? "complete_items" : "incomplete_items";
@@ -587,7 +592,6 @@ export function AssignmentDashboardClient({
   const [filters, setFilters] = useState<Filters>(urlFilters);
   const [searchQuery, setSearchQuery] = useState("");
   const [bulkCompletionError, setBulkCompletionError] = useState<string | null>(null);
-  const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
 
   function updateUrl(nextFilters: Filters) {
     const params = new URLSearchParams();
@@ -913,10 +917,9 @@ export function AssignmentDashboardClient({
         (assignment) =>
           matchesSearch(assignment, searchQuery, accountMap) &&
           matchesQuickFilter(assignment, mode, quickFilter) &&
-          (!usesWindow ||
-            !assignment.due_at ||
-            (Date.parse(assignment.due_at) >= Date.parse(range.startISO) &&
-              Date.parse(assignment.due_at) < Date.parse(range.endISO))),
+          (!usesWindow || matchesActivePlannerWindow(
+            assignment.due_at, range, overdueWindow, hasCustomRange, quickFilter === "overdue",
+          )),
       );
 
       if (assignments.length > 0) {
@@ -928,8 +931,9 @@ export function AssignmentDashboardClient({
   }, [
     data?.merged,
     usesWindow,
-    range.startISO,
-    range.endISO,
+    range,
+    hasCustomRange,
+    overdueWindow,
     dayKey,
     filters.account,
     filters.domain,
@@ -1033,6 +1037,7 @@ export function AssignmentDashboardClient({
                 key={filter.value}
                 type="button"
                 active={quickFilter === filter.value}
+                title={filter.value === "overdue" ? "Overdue in the last 7 days" : undefined}
                 aria-pressed={quickFilter === filter.value}
                 aria-label={filter.label}
                 className="h-7 px-2 text-[11px]"
@@ -1054,6 +1059,7 @@ export function AssignmentDashboardClient({
                   key={filter.value}
                   type="button"
                   active={quickFilter === filter.value}
+                  title={filter.value === "overdue" ? "Overdue in the last 7 days" : undefined}
                   aria-pressed={quickFilter === filter.value}
                   className="shrink-0 px-2.5"
                   onClick={() => setQuickFilter(filter.value)}
